@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RestrictR (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "RestrictR (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
