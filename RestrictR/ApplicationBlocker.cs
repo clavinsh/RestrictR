@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Windows.Media.Devices;
+using Microsoft.Management;
+using Microsoft.Management.Infrastructure;
 
 namespace RestrictR
 {
@@ -45,15 +47,25 @@ namespace RestrictR
         // testing method for active process retrieval
         public static void GetProcessesTest() 
         {
-            Process[] processes = Process.GetProcesses();
+            using CimSession session = CimSession.Create(null);
 
-            foreach (Process process in processes) 
+            if (!session.TestConnection())
             {
-                Debug.WriteLine($"id: {process.Id}, {process.ProcessName}");
+                throw new InvalidOperationException("Cannot establish connection with the WMI service.");
             }
 
-            
+            string query = "SELECT ProcessId, Name, ExecutablePath FROM WIN32_Process";
 
+            IEnumerable<CimInstance> queryResults = session.QueryInstances("root\\CIMv2", "WQL", query);
+
+            foreach (CimInstance instance in queryResults)
+            {
+                int processId = Convert.ToInt32(instance.CimInstanceProperties["ProcessId"].Value);
+                string name = instance.CimInstanceProperties["Name"].ToString();
+                string path = instance.CimInstanceProperties["ExecutablePath"].ToString();
+
+                Debug.WriteLine($"ProcessID: {processId}, Name: {name}, Path: {path}");
+            }
         }
     }
 }
