@@ -45,4 +45,13 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="ProcessWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="ProcessWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Remove="ProcessWindow.xaml" />
+  </ItemGroup>
 </Project>

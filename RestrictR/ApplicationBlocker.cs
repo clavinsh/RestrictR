@@ -43,6 +43,17 @@ namespace RestrictR
             throw new NotImplementedException();
         }
 
+        // retrieves installed applications that can be found
+        // by looking what is stored in 'Microsoft\Windows\CurrentVersion\Uninstall'
+        // registry path
+        //
+        // this method implements something similar to the powershell script 
+        // by Jeff Hicks: https://petri.com/powershell-problem-solver-finding-installed-software-part-4/
+        public static void GetInstalledApplicationsFromRegistry()
+        {
+            throw new NotImplementedException();
+        }
+
 
         // testing method for active process retrieval
         public static void GetProcessesTest() 

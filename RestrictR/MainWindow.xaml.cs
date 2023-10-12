@@ -68,13 +68,12 @@ namespace RestrictR
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var imageInfo = (sender as Button)?.DataContext as ImageInfo;
-
-            if(imageInfo != null)
+            if (sender is Button { DataContext: ImageInfo imageInfo })
             {
-                Image image = new();
-
-                image.Source = new BitmapImage(new Uri(imageInfo.Path, UriKind.Absolute));
+                Image image = new()
+                {
+                    Source = new BitmapImage(new Uri(imageInfo.Path, UriKind.Absolute))
+                };
 
                 Window window = new()
                 {
