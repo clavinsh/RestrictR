@@ -43,14 +43,76 @@ namespace RestrictR
             throw new NotImplementedException();
         }
 
-        // retrieves installed applications that can be found
-        // by looking what is stored in 'Microsoft\Windows\CurrentVersion\Uninstall'
-        // registry path
-        //
+        // retrieves installed applications that can be found by looking at what
+        // is stored in 'Microsoft\Windows\CurrentVersion\Uninstall' registry path
+        // 
         // this method implements something similar to the powershell script 
         // by Jeff Hicks: https://petri.com/powershell-problem-solver-finding-installed-software-part-4/
         public static void GetInstalledApplicationsFromRegistry()
         {
+            string registryPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath);
+
+            if (key != null)
+            {
+                string[] subKeyNames = key.GetSubKeyNames();
+                List<Dictionary<string, string>> resultList = new();
+
+                
+                // looking through each of the subkeys in the ...\Uninstall registry path as per the 'registryPath' variable
+                foreach (string subKeyName in subKeyNames) 
+                {
+                    string keyPath = $"{registryPath}\\{subKeyName}";
+
+                    RegistryKey subKey = key.OpenSubKey(subKeyName);
+
+                    if (subKey != null)
+                    {
+                        // for clarity, the registry path to a sub key will be added
+                        // to the dictionary for that particular key
+                        Dictionary<string, string> valuesDict = new()
+                        {
+                            { "Path", keyPath}
+                        };
+
+                        string[] valueNames = subKey.GetValueNames();
+
+                        // if some name matches any of the following literals (common for applications)
+                        // its corresponding value will be added to the dict
+                        foreach (string valueName in valueNames)
+                        {
+                            if (new[] { "Displayname", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" }.Contains(valueName))
+                            {
+                                string value = subKey.GetValue(valueName)?.ToString();
+                                valuesDict[valueName] = value;
+                            }
+                        }
+
+                        subKey.Close();
+
+                        resultList.Add(valuesDict);
+                    }
+                }
+
+                key.Close();
+
+
+                foreach (var result in resultList)
+                {
+                    foreach (var pair in result) 
+                    {
+                        Debug.WriteLine($"{pair.Key}: {pair.Value}");
+                    }
+                    Debug.WriteLine("");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Registry path not found.");
+            }
+
             throw new NotImplementedException();
         }
 

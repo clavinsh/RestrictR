@@ -44,7 +44,7 @@ namespace RestrictR
             m_window = new MainWindow();
             m_window.Activate();
 
-            ApplicationBlocker.GetProcessesTest();
+            ApplicationBlocker.GetInstalledApplicationsFromRegistry();
         }
 
         private Window m_window;
