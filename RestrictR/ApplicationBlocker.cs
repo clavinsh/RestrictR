@@ -8,6 +8,7 @@ using System.Diagnostics;
 using Windows.Media.Devices;
 using Microsoft.Management;
 using Microsoft.Management.Infrastructure;
+using ABI.Microsoft.UI.Xaml.Media.Animation;
 
 namespace RestrictR
 {
@@ -48,69 +49,129 @@ namespace RestrictR
         // 
         // this method implements something similar to the powershell script 
         // by Jeff Hicks: https://petri.com/powershell-problem-solver-finding-installed-software-part-4/
-        public static void GetInstalledApplicationsFromRegistry()
+        public static List<Dictionary<string, string>> GetInstalledApplicationsFromRegistry()
         {
-            string registryPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+            string[] registryPaths = { "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
 
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath);
+            List<Dictionary<string, string>> resultList = new();
 
-            if (key != null)
+            foreach (string registryPath in registryPaths) 
             {
-                string[] subKeyNames = key.GetSubKeyNames();
-                List<Dictionary<string, string>> resultList = new();
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath);
 
-                
-                // looking through each of the subkeys in the ...\Uninstall registry path as per the 'registryPath' variable
-                foreach (string subKeyName in subKeyNames) 
+                if (key != null)
                 {
-                    string keyPath = $"{registryPath}\\{subKeyName}";
-
-                    RegistryKey subKey = key.OpenSubKey(subKeyName);
-
-                    if (subKey != null)
+                    string[] subKeyNames = key.GetSubKeyNames();
+               
+                    // looking through each of the subkeys in the ...\Uninstall registry path as per the 'registryPath' variable
+                    foreach (string subKeyName in subKeyNames) 
                     {
-                        // for clarity, the registry path to a sub key will be added
-                        // to the dictionary for that particular key
+                        string keyPath = $"{registryPath}\\{subKeyName}";
+
+                        RegistryKey subKey = key.OpenSubKey(subKeyName);
+
+                        if (subKey != null)
+                        {
+                            // for clarity, the registry path to a sub key will be added
+                            // to the dictionary for that particular key
+                            Dictionary<string, string> valuesDict = new()
+                            {
+                                { "Path", keyPath}
+                            };
+
+                            string[] valueNames = subKey.GetValueNames();
+
+                            // if some name matches any of the following literals (common for applications)
+                            // its corresponding value will be added to the dict
+                            foreach (string valueName in valueNames)
+                            {
+                                if (new[] { "Displayname", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" }.Contains(valueName))
+                                {
+                                    string value = subKey.GetValue(valueName)?.ToString();
+                                    valuesDict[valueName] = value;
+                                }
+                            }
+
+                            subKey.Close();
+
+                            resultList.Add(valuesDict);
+                        }
+                    }
+
+                    key.Close();
+                }
+                else
+                {
+                    Console.WriteLine("Registry path not found.");
+                }
+            }
+
+            return resultList;
+
+            //foreach (var result in resultList)
+            //{
+            //    foreach (var pair in result)
+            //    {
+            //        Debug.WriteLine($"{pair.Key}: {pair.Value}");
+            //    }
+            //    Debug.WriteLine("");
+            //}
+        }
+
+        public static void GetUserSpecificApps()
+        {
+            RegistryKey key = Registry.Users;
+
+            string[] users = key.GetSubKeyNames();
+
+            List<Dictionary<string, string>> resultList = new();
+
+            if (key == null)
+            {
+                throw new System.IO.IOException($"Registry path not found.");
+            }
+
+            foreach (string user in users)
+            {
+                // filter out actual system users
+                if (!user.EndsWith("_Classes", StringComparison.OrdinalIgnoreCase) && !user.Equals(".DEFAULT", StringComparison.OrdinalIgnoreCase))
+                {
+                    string registryPath = $@"{user}\Software\Microsoft\Windows\CurrentVersion\Uninstall";
+                    RegistryKey userKey = key.OpenSubKey(registryPath);
+                    if(userKey != null) 
+                    {
+                        string[] valueNames = userKey.GetValueNames();
+
                         Dictionary<string, string> valuesDict = new()
                         {
-                            { "Path", keyPath}
+                            {"Username", user},
+                            {"Path", registryPath}
                         };
 
-                        string[] valueNames = subKey.GetValueNames();
-
-                        // if some name matches any of the following literals (common for applications)
-                        // its corresponding value will be added to the dict
                         foreach (string valueName in valueNames)
                         {
                             if (new[] { "Displayname", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" }.Contains(valueName))
                             {
-                                string value = subKey.GetValue(valueName)?.ToString();
+                                string value = userKey.GetValue(valueName)?.ToString();
                                 valuesDict[valueName] = value;
                             }
                         }
 
-                        subKey.Close();
-
+                        userKey.Close();
                         resultList.Add(valuesDict);
                     }
                 }
-
-                key.Close();
-
-
-                foreach (var result in resultList)
-                {
-                    foreach (var pair in result) 
-                    {
-                        Debug.WriteLine($"{pair.Key}: {pair.Value}");
-                    }
-                    Debug.WriteLine("");
-                }
-
             }
-            else
+
+            key.Close();
+
+            foreach (var result in resultList)
             {
-                Console.WriteLine("Registry path not found.");
+                foreach (var pair in result)
+                {
+                    Debug.WriteLine($"{pair.Key}: {pair.Value}");
+                }
+                Debug.WriteLine("");
             }
 
             throw new NotImplementedException();

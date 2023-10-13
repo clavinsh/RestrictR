@@ -44,7 +44,7 @@ namespace RestrictR
             m_window = new MainWindow();
             m_window.Activate();
 
-            ApplicationBlocker.GetInstalledApplicationsFromRegistry();
+            ApplicationBlocker.GetUserSpecificApps();
         }
 
         private Window m_window;
