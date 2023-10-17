@@ -11,12 +11,18 @@ using Microsoft.Management.Infrastructure;
 using ABI.Microsoft.UI.Xaml.Media.Animation;
 using Windows.Devices.Geolocation;
 using Windows.Data.Text;
+using System.Xml.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Text.RegularExpressions;
+using System.IO;
 
 namespace RestrictR
 {
     internal class ApplicationBlocker
     {
         private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun";
+
+        private static readonly string[] REGISTRY_APP_UNINSTALL_PATHS = { "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
 
         public static void BlockApplication(string applicationName)
         {
@@ -46,42 +52,67 @@ namespace RestrictR
             throw new NotImplementedException();
         }
 
+
+
+
         // retrieves installed applications that can be found by looking at what
         // is stored in 'Microsoft\Windows\CurrentVersion\Uninstall' registry path
         // 
         // this method implements something similar to the powershell script 
         // by Jeff Hicks: https://petri.com/powershell-problem-solver-finding-installed-software-part-4/
-        public static List<Dictionary<string, string>> GetInstalledApplicationsFromRegistry()
+        public static List<ApplicationInfo> GetInstalledApplicationsFromRegistry()
         {
-            // have to explore both 32-bit and 64-bit paths
-            string[] registryPaths = { "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
+            List<ApplicationInfo> resultList = new();
+            var specifiedKeys = new[] { "DisplayName", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" };
 
-            List<Dictionary<string, string>> resultList = new();
-
-            foreach (string registryPath in registryPaths) 
+            foreach (string registryPath in REGISTRY_APP_UNINSTALL_PATHS) 
             {
                 RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath) 
                     ?? throw new System.IO.IOException("Registry path not found.");
 
                 string[] possibleAppNames = key.GetSubKeyNames();
                
-                // looking through each of the subkeys in the ...\Uninstall registry path as per the 'registryPath' variable
+                // looking through each of the subkeys (keys used by installed apps)
+                // in the ...\Uninstall registry path as per the 'registryPath' variable
                 foreach (string appName in possibleAppNames) 
                 {
-                    //string keyPath = $"{registryPath}\\{subKeyName}";
-
                     RegistryKey appKey = key.OpenSubKey(appName);
 
                     if (appKey != null)
                     {
-                        // for clarity, the registry path to a sub key will be added
-                        // to the dictionary for that particular key
                         Dictionary<string, string> valuesDict = new()
                         {
-                            { "Path", key.ToString()}
+                            { "RegistryPath", appKey.ToString()}
                         };
 
-                        resultList.Add(GetAppInfo(appKey, valuesDict));
+                        valuesDict = GetAppInfo(appKey, valuesDict);
+
+                        //string[] valueNames = appKey.GetValueNames();
+
+                        //foreach (string specifiedKey in specifiedKeys)
+                        //{
+                        //    valuesDict[specifiedKey] = "";
+                        //}
+
+                        //// if some name matches any of the specifiedKey strings (common for applications)
+                        //// its corresponding value will be added to the dict
+                        //foreach (string valueName in valueNames)
+                        //{
+                        //    if (specifiedKeys.Contains(valueName))
+                        //    {
+                        //        string value = key.GetValue(valueName)?.ToString() ?? "";
+                        //        valuesDict[valueName] = value;
+                        //    }
+                        //}
+
+                        if (ValidAppInfo(valuesDict))
+                        {
+                            resultList.Add(new ApplicationInfo(valuesDict["DisplayName"],
+                                valuesDict["DisplayVersion"], valuesDict["Publisher"],
+                                valuesDict["InstallDate"], valuesDict["InstallLocation"],
+                                valuesDict["Comments"], valuesDict["UninstallString"],
+                                valuesDict["RegistryPath"]));
+                        }
                     }
                 }
 
@@ -90,6 +121,29 @@ namespace RestrictR
 
             return resultList;
         }
+
+        private static bool ValidAppInfo(Dictionary<string, string> valuesDict)
+        {
+            string[] requiredKeys = { "DisplayName", "DisplayVersion", "Publisher", "InstallDate",
+                              "InstallLocation", "Comments", "UninstallString", "RegistryPath" };
+
+            foreach (var key in requiredKeys)
+            {
+                if (!valuesDict.TryGetValue(key, out _))
+                {
+                    return false;
+                }
+            }
+
+            // check for a valid install location
+            if (!Path.IsPathFullyQualified(valuesDict["InstallLocation"]))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
 
         public static void GetUserSpecificApps()
         {

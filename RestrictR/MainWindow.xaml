@@ -9,15 +9,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     
-    
-    
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Grid.Row="0">
@@ -54,45 +50,13 @@
             </CommandBar.SecondaryCommands>
         </CommandBar>
 
-        <!-- The ItemsRepeater and ScrollViewer used: -->
-        <ScrollViewer 
-            VerticalScrollBarVisibility="Auto"
-            VerticalScrollMode="Auto"
-            Grid.Row="1">
-
-            <ScrollViewer.Resources>
-                <!-- The Layout specifications used: -->
-
-                <UniformGridLayout x:Name="UniformGridLayout" MinRowSpacing="8" MinColumnSpacing="8" ItemsJustification="SpaceEvenly"/>
-
-                <!-- The DataTemplate used: CircularTemplate-->
-
-                <DataTemplate x:Key="ImageTemplate" x:DataType="local:ImageInfo">
-                    <Button Click="Button_Click" DataContext="{x:Bind}" PointerEntered="element_PointerEntered" PointerExited="element_PointerExited">
-                        <Image Source="{x:Bind Path}" MaxHeight="360" MaxWidth="360"></Image>
-                    </Button>
-                </DataTemplate>
-            </ScrollViewer.Resources>
-
-            <ItemsRepeater
-               ItemsSource="{x:Bind ImagesRepository.Images}"
-               Layout="{StaticResource UniformGridLayout}"
-               ItemTemplate="{StaticResource ImageTemplate}" />
-        </ScrollViewer>
-
-        <InfoBar 
-            x:Name="ImageInfoBar"
-            Severity="Informational"
-            Title="Images in gallery"
-            Grid.Row="2"/>
-
         <ListView
             SelectionMode="None"
             ItemsSource="{x:Bind AppList.Apps}"
-            Grid.Row="3">
+            Grid.Row="1">
 
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:AppInfo">
+                <DataTemplate x:DataType="local:ApplicationInfo">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -127,5 +91,11 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <InfoBar 
+            x:Name="ImageInfoBar"
+            Severity="Informational"
+            Title="Images in gallery"
+            Grid.Row="2"/>
     </Grid>
 </Window>

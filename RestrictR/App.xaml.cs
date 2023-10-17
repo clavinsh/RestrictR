@@ -44,19 +44,19 @@ namespace RestrictR
             m_window = new MainWindow();
             m_window.Activate();
 
-            var apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
+            //var apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
 
 
             // temporary for testing purposes
-            foreach (var app in apps)
-            {
-                foreach (var pair in app)
-                {
-                    System.Diagnostics.Debug.WriteLine($"{pair.Key}: {pair.Value}");
-                }
+            //foreach (var app in apps)
+            //{
+            //    foreach (var pair in app)
+            //    {
+            //        System.Diagnostics.Debug.WriteLine($"{pair.Key}: {pair.Value}");
+            //    }
 
-                System.Diagnostics.Debug.WriteLine("");
-            }
+            //    System.Diagnostics.Debug.WriteLine("");
+            //}
         }
 
         private Window m_window;

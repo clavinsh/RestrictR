@@ -30,64 +30,58 @@ namespace RestrictR
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        ImagesRepository ImagesRepository { get; } = new();
-
         AppList AppList { get; } = new();
 
         public MainWindow()
         {
             this.InitializeComponent();
 
-            string folderPath = "C:\\Users\\hazya\\Pictures\\Screenshots";
-
-            LoadImages(folderPath);
-
-            AppList.GetApps();
+            LoadApps();
         }
 
-        private void LoadImages(string folderPath)
+        private void LoadApps()
         {
-            ImagesRepository.GetImages(folderPath);
-            var numImages = ImagesRepository.Images.Count;
-            ImageInfoBar.Message = $"{numImages} loaded.";
+            AppList.GetApps();
+            var appCount = AppList.Apps.Count;
+            ImageInfoBar.Message = $"{appCount} apps found.";
             ImageInfoBar.IsOpen = true;
         }
 
         private async void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            FolderPicker folderPicker = new FolderPicker();
-            folderPicker.FileTypeFilter.Add("*");
+            //FolderPicker folderPicker = new FolderPicker();
+            //folderPicker.FileTypeFilter.Add("*");
 
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            //var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
-            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
+            //WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 
-            var folder = await folderPicker.PickSingleFolderAsync();
+            //var folder = await folderPicker.PickSingleFolderAsync();
 
-            if(folder != null)
-            {
-                LoadImages(folder.Path);
-            }
+            //if (folder != null)
+            //{
+            //    LoadImages(folder.Path);
+            //}
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button { DataContext: ImageInfo imageInfo })
-            {
-                Image image = new()
-                {
-                    Source = new BitmapImage(new Uri(imageInfo.Path, UriKind.Absolute))
-                };
+            //if (sender is Button { DataContext: ImageInfo imageInfo })
+            //{
+            //    Image image = new()
+            //    {
+            //        Source = new BitmapImage(new Uri(imageInfo.Path, UriKind.Absolute))
+            //    };
 
-                Window window = new()
-                {
-                    Title = imageInfo.Name,
-                    Content = image
-                };
+            //    Window window = new()
+            //    {
+            //        Title = imageInfo.Name,
+            //        Content = image
+            //    };
 
-                SetWindowSize(window, 640, 400);
-                window.Activate();
-            }
+            //    SetWindowSize(window, 640, 400);
+            //    window.Activate();
+            //}
         }
 
         private static void SetWindowSize(Window window, int height, int width)
@@ -124,74 +118,19 @@ namespace RestrictR
 
             (sender as UIElement).StartAnimation(_springAnimation);
         }
-
-    }
-
-    public class ImageInfo
-    {
-        public ImageInfo(string name, string path)
-        {
-            Name = name;
-            Path = path;
-        }
-        public string Name { get; set; }
-        public string Path { get; set; }
-    }
-
-    public class ImagesRepository
-    {
-        public ObservableCollection<ImageInfo> Images = new();
-
-        public void GetImages(string folderPath)
-        {
-            Images.Clear();
-
-            var dir = new DirectoryInfo(folderPath);
-
-            var files = dir.GetFiles("*.png");
-
-            foreach (var file in files)
-            {
-                Images.Add(new ImageInfo(file.Name, file.FullName));
-            }
-        }
-    }
-
-    public class AppInfo
-    {
-        public AppInfo(Dictionary<string, string> registryInfo)
-        {
-            //appInfo = registryInfo;
-
-            DisplayName = registryInfo["DisplayName"];
-            DisplayVersion = registryInfo["DisplayVersion"];
-            Publisher = registryInfo["Publisher"];
-            InstallDate = registryInfo["InstallDate"];
-            InstallLocation = registryInfo["InstallLocation"];
-            Comments = registryInfo["Comments"];
-            UninstallString = registryInfo["UninstallString"];
-        }
-
-        public string DisplayName { get; private set; }
-        public string DisplayVersion { get; private set; }
-        public string Publisher { get; private set; }
-        public string InstallDate { get; private set; }
-        public string InstallLocation { get; private set; }
-        public string Comments { get; private set; }
-        public string UninstallString { get; private set; }
     }
 
     public class AppList 
     {
-        public ObservableCollection<AppInfo> Apps = new();
+        public ObservableCollection<ApplicationInfo> Apps = new();
 
         public void GetApps()
         {
-            var apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
+            var appInfos = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
 
-            foreach (var app in apps) 
+            foreach (var appInfo in appInfos) 
             {
-                Apps.Add(new AppInfo(app));
+                Apps.Add(appInfo);
             }
         }
     }
