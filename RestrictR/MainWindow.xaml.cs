@@ -30,7 +30,9 @@ namespace RestrictR
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-       ImagesRepository ImagesRepository { get; } = new();
+        ImagesRepository ImagesRepository { get; } = new();
+
+        AppList AppList { get; } = new();
 
         public MainWindow()
         {
@@ -39,6 +41,8 @@ namespace RestrictR
             string folderPath = "C:\\Users\\hazya\\Pictures\\Screenshots";
 
             LoadImages(folderPath);
+
+            AppList.GetApps();
         }
 
         private void LoadImages(string folderPath)
@@ -149,6 +153,45 @@ namespace RestrictR
             foreach (var file in files)
             {
                 Images.Add(new ImageInfo(file.Name, file.FullName));
+            }
+        }
+    }
+
+    public class AppInfo
+    {
+        public AppInfo(Dictionary<string, string> registryInfo)
+        {
+            //appInfo = registryInfo;
+
+            DisplayName = registryInfo["DisplayName"];
+            DisplayVersion = registryInfo["DisplayVersion"];
+            Publisher = registryInfo["Publisher"];
+            InstallDate = registryInfo["InstallDate"];
+            InstallLocation = registryInfo["InstallLocation"];
+            Comments = registryInfo["Comments"];
+            UninstallString = registryInfo["UninstallString"];
+        }
+
+        public string DisplayName { get; private set; }
+        public string DisplayVersion { get; private set; }
+        public string Publisher { get; private set; }
+        public string InstallDate { get; private set; }
+        public string InstallLocation { get; private set; }
+        public string Comments { get; private set; }
+        public string UninstallString { get; private set; }
+    }
+
+    public class AppList 
+    {
+        public ObservableCollection<AppInfo> Apps = new();
+
+        public void GetApps()
+        {
+            var apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
+
+            foreach (var app in apps) 
+            {
+                Apps.Add(new AppInfo(app));
             }
         }
     }

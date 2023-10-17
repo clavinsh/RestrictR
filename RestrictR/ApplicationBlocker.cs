@@ -9,6 +9,8 @@ using Windows.Media.Devices;
 using Microsoft.Management;
 using Microsoft.Management.Infrastructure;
 using ABI.Microsoft.UI.Xaml.Media.Animation;
+using Windows.Devices.Geolocation;
+using Windows.Data.Text;
 
 namespace RestrictR
 {
@@ -51,62 +53,95 @@ namespace RestrictR
         // by Jeff Hicks: https://petri.com/powershell-problem-solver-finding-installed-software-part-4/
         public static List<Dictionary<string, string>> GetInstalledApplicationsFromRegistry()
         {
+            // have to explore both 32-bit and 64-bit paths
             string[] registryPaths = { "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
 
             List<Dictionary<string, string>> resultList = new();
 
             foreach (string registryPath in registryPaths) 
             {
-                RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath);
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath) 
+                    ?? throw new System.IO.IOException("Registry path not found.");
 
-                if (key != null)
-                {
-                    string[] subKeyNames = key.GetSubKeyNames();
+                string[] possibleAppNames = key.GetSubKeyNames();
                
-                    // looking through each of the subkeys in the ...\Uninstall registry path as per the 'registryPath' variable
-                    foreach (string subKeyName in subKeyNames) 
-                    {
-                        string keyPath = $"{registryPath}\\{subKeyName}";
-
-                        RegistryKey subKey = key.OpenSubKey(subKeyName);
-
-                        if (subKey != null)
-                        {
-                            // for clarity, the registry path to a sub key will be added
-                            // to the dictionary for that particular key
-                            Dictionary<string, string> valuesDict = new()
-                            {
-                                { "Path", keyPath}
-                            };
-
-                            string[] valueNames = subKey.GetValueNames();
-
-                            // if some name matches any of the following literals (common for applications)
-                            // its corresponding value will be added to the dict
-                            foreach (string valueName in valueNames)
-                            {
-                                if (new[] { "Displayname", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" }.Contains(valueName))
-                                {
-                                    string value = subKey.GetValue(valueName)?.ToString();
-                                    valuesDict[valueName] = value;
-                                }
-                            }
-
-                            subKey.Close();
-
-                            resultList.Add(valuesDict);
-                        }
-                    }
-
-                    key.Close();
-                }
-                else
+                // looking through each of the subkeys in the ...\Uninstall registry path as per the 'registryPath' variable
+                foreach (string appName in possibleAppNames) 
                 {
-                    Console.WriteLine("Registry path not found.");
+                    //string keyPath = $"{registryPath}\\{subKeyName}";
+
+                    RegistryKey appKey = key.OpenSubKey(appName);
+
+                    if (appKey != null)
+                    {
+                        // for clarity, the registry path to a sub key will be added
+                        // to the dictionary for that particular key
+                        Dictionary<string, string> valuesDict = new()
+                        {
+                            { "Path", key.ToString()}
+                        };
+
+                        resultList.Add(GetAppInfo(appKey, valuesDict));
+                    }
                 }
+
+                key.Close();
             }
 
             return resultList;
+        }
+
+        public static void GetUserSpecificApps()
+        {
+
+            throw new NotImplementedException();
+            //RegistryKey key = Registry.Users;
+
+            //string[] users = key.GetSubKeyNames();
+
+            //List<Dictionary<string, string>> resultList = new();
+
+            //if (key == null)
+            //{
+            //    throw new System.IO.IOException($"Registry path not found.");
+            //}
+
+            //foreach (string user in users)
+            //{
+            //    // filter out actual system users
+            //    if (!user.EndsWith("_Classes", StringComparison.OrdinalIgnoreCase) && !user.Equals(".DEFAULT", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        string registryPath = $@"{user}\Software\Microsoft\Windows\CurrentVersion\Uninstall";
+            //        RegistryKey userKey = key.OpenSubKey(registryPath);
+
+            //        // data structure to store users - username, reg path, list of app values (dictionary)
+
+            //        if(userKey != null) 
+            //        {
+            //            string[] possibleAppsNames = key.GetSubKeyNames();
+
+            //            Dictionary<string, string> valuesDict = new()
+            //            {
+            //                {"Username", user},
+            //                {"Path", registryPath}
+            //            };
+
+
+            //            foreach (string possibleAppName in possibleAppsNames) 
+            //            {
+            //                var appKey = userKey.OpenSubKey(possibleAppName);
+
+
+                            
+            //            }
+            //        }
+
+            //        userKey.Close();
+            //        resultList.Add(valuesDict);
+            //    }
+            //}
+
+            //key.Close();
 
             //foreach (var result in resultList)
             //{
@@ -116,67 +151,46 @@ namespace RestrictR
             //    }
             //    Debug.WriteLine("");
             //}
+
+            //throw new NotImplementedException();
         }
 
-        public static void GetUserSpecificApps()
+        public static List<Dictionary<string, string>> GetAppsFromWindowsInstaller()
         {
-            RegistryKey key = Registry.Users;
+            using CimSession session = CimSession.Create(null); //localhost cim session
 
-            string[] users = key.GetSubKeyNames();
-
-            List<Dictionary<string, string>> resultList = new();
-
-            if (key == null)
+            if (!session.TestConnection())
             {
-                throw new System.IO.IOException($"Registry path not found.");
+                throw new InvalidOperationException("Cannot establish connection with the WMI service.");
             }
 
-            foreach (string user in users)
+            string query = "SELECT * FROM Win32_Product";
+
+            IEnumerable<CimInstance> queryResults = session.QueryInstances("root\\cimv2", "WQL", query);
+
+            List<Dictionary<string, string>> apps = new();
+
+            foreach (CimInstance instance in queryResults)
             {
-                // filter out actual system users
-                if (!user.EndsWith("_Classes", StringComparison.OrdinalIgnoreCase) && !user.Equals(".DEFAULT", StringComparison.OrdinalIgnoreCase))
+                Dictionary<string, string> appInfo = new()
                 {
-                    string registryPath = $@"{user}\Software\Microsoft\Windows\CurrentVersion\Uninstall";
-                    RegistryKey userKey = key.OpenSubKey(registryPath);
-                    if(userKey != null) 
-                    {
-                        string[] valueNames = userKey.GetValueNames();
+                    { "Caption", instance.CimInstanceProperties["Caption"].Value?.ToString() },
+                    { "Description", instance.CimInstanceProperties["Description"].Value?.ToString() },
+                    { "IdentifyingNumber", instance.CimInstanceProperties["IdentifyingNumber"].Value?.ToString() },
+                    { "InstallLocation", instance.CimInstanceProperties["InstallLocation"].Value?.ToString() },
+                    { "InstallState", instance.CimInstanceProperties["InstallState"].Value?.ToString() },
+                    { "Name", instance.CimInstanceProperties["Name"].Value?.ToString() },
+                    { "PackageCache", instance.CimInstanceProperties["PackageCache"].Value?.ToString() },
+                    { "SKUNumber", instance.CimInstanceProperties["SKUNumber"].Value?.ToString() },
+                    { "Vendor", instance.CimInstanceProperties["Vendor"].Value?.ToString() },
+                    { "Version", instance.CimInstanceProperties["Version"].Value?.ToString() }
+                };
 
-                        Dictionary<string, string> valuesDict = new()
-                        {
-                            {"Username", user},
-                            {"Path", registryPath}
-                        };
-
-                        foreach (string valueName in valueNames)
-                        {
-                            if (new[] { "Displayname", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" }.Contains(valueName))
-                            {
-                                string value = userKey.GetValue(valueName)?.ToString();
-                                valuesDict[valueName] = value;
-                            }
-                        }
-
-                        userKey.Close();
-                        resultList.Add(valuesDict);
-                    }
-                }
+                apps.Add(appInfo);
             }
 
-            key.Close();
-
-            foreach (var result in resultList)
-            {
-                foreach (var pair in result)
-                {
-                    Debug.WriteLine($"{pair.Key}: {pair.Value}");
-                }
-                Debug.WriteLine("");
-            }
-
-            throw new NotImplementedException();
+            return apps;
         }
-
 
         // testing method for active process retrieval
         public static void GetProcessesTest() 
@@ -200,6 +214,34 @@ namespace RestrictR
 
                 Debug.WriteLine($"ProcessID: {processId}, Name: {name}, Path: {path}");
             }
+        }
+
+        private static Dictionary<string, string> GetAppInfo(RegistryKey key, Dictionary<string, string> valuesDict)
+        {
+            if (key != null)
+            {
+                string[] valueNames = key.GetValueNames();
+                var specifiedKeys = new[] { "DisplayName", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" };
+
+                foreach (string specifiedKey in specifiedKeys)
+                {
+                    valuesDict[specifiedKey] = "";
+                }
+
+                // if some name matches any of the following literals (common for applications)
+                // its corresponding value will be added to the dict
+                foreach (string valueName in valueNames)
+                {
+                    if (specifiedKeys.Contains(valueName))
+                    {
+                        string value = key.GetValue(valueName)?.ToString() ?? "";
+                        valuesDict[valueName] = value;
+                    }
+                }
+
+                return valuesDict;
+            }
+            else throw new ArgumentNullException(nameof(key));
         }
     }
 }
