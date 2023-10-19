@@ -51,8 +51,9 @@
         </CommandBar>
 
         <ListView
+            x:Name="FilteredListView"
             SelectionMode="None"
-            ItemsSource="{x:Bind AppList.Apps}"
+            ItemsSource="{x:Bind AppsFiltered}"
             Grid.Row="1">
 
             <ListView.ItemTemplate>
@@ -76,12 +77,12 @@
                              VerticalAlignment="Center"
                              HorizontalAlignment="Center"
                              Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
-                                                <TextBlock Grid.Column="1"
+                        <TextBlock Grid.Column="1"
                                Text="{x:Bind DisplayName}"
                                x:Phase="1"
                                Style="{ThemeResource BaseTextBlockStyle}"
                                Margin="12,6,0,0"/>
-                                                <TextBlock  Grid.Column="1"
+                        <TextBlock  Grid.Column="1"
                                 Grid.Row="1"
                                 Text="{x:Bind DisplayVersion}"
                                 x:Phase="2"
@@ -92,7 +93,14 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <InfoBar 
+        <StackPanel Width="200">
+            <TextBlock Margin="8,8,8,4" Style="{ThemeResource BaseTextBlockStyle}">Filter by...</TextBlock>
+            <TextBox x:Name="FilterByFirstName" Width="150" Header="First name" Margin="8"
+                     HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
+        </StackPanel>
+            
+            
+            <InfoBar 
             x:Name="ImageInfoBar"
             Severity="Informational"
             Title="Images in gallery"

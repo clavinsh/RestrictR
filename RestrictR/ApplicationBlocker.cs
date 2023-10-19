@@ -1,20 +1,10 @@
-﻿using System;
+﻿using Microsoft.Management.Infrastructure;
 using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using Windows.Media.Devices;
-using Microsoft.Management;
-using Microsoft.Management.Infrastructure;
-using ABI.Microsoft.UI.Xaml.Media.Animation;
-using Windows.Devices.Geolocation;
-using Windows.Data.Text;
-using System.Xml.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.RegularExpressions;
 using System.IO;
+using System.Linq;
 
 namespace RestrictR
 {
@@ -26,7 +16,8 @@ namespace RestrictR
 
         public static void BlockApplication(string applicationName)
         {
-            if (applicationName == null) {
+            if (applicationName == null)
+            {
                 throw new ArgumentNullException(nameof(applicationName),
                     "Invalid application name specified.");
             }
@@ -34,7 +25,7 @@ namespace RestrictR
             using RegistryKey key = Registry.LocalMachine.OpenSubKey(RegistryKeyPath)
                 ?? throw new InvalidOperationException($"Registry key path: {RegistryKeyPath} was not found.");
 
-            if(key.GetValueNames().Contains(applicationName))
+            if (key.GetValueNames().Contains(applicationName))
             {
                 Console.WriteLine($"{applicationName} is allready blocked in the registry.");
                 return;
@@ -65,16 +56,16 @@ namespace RestrictR
             List<ApplicationInfo> resultList = new();
             var specifiedKeys = new[] { "DisplayName", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" };
 
-            foreach (string registryPath in REGISTRY_APP_UNINSTALL_PATHS) 
+            foreach (string registryPath in REGISTRY_APP_UNINSTALL_PATHS)
             {
-                RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath) 
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath)
                     ?? throw new System.IO.IOException("Registry path not found.");
 
                 string[] possibleAppNames = key.GetSubKeyNames();
-               
+
                 // looking through each of the subkeys (keys used by installed apps)
                 // in the ...\Uninstall registry path as per the 'registryPath' variable
-                foreach (string appName in possibleAppNames) 
+                foreach (string appName in possibleAppNames)
                 {
                     RegistryKey appKey = key.OpenSubKey(appName);
 
@@ -186,7 +177,7 @@ namespace RestrictR
             //                var appKey = userKey.OpenSubKey(possibleAppName);
 
 
-                            
+
             //            }
             //        }
 
@@ -247,7 +238,7 @@ namespace RestrictR
         }
 
         // testing method for active process retrieval
-        public static void GetProcessesTest() 
+        public static void GetProcessesTest()
         {
             using CimSession session = CimSession.Create(null);
 

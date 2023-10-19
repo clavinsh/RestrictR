@@ -30,7 +30,9 @@ namespace RestrictR
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        AppList AppList { get; } = new();
+        List<ApplicationInfo> Apps = new();
+
+        ObservableCollection<ApplicationInfo> AppsFiltered;
 
         public MainWindow()
         {
@@ -39,12 +41,13 @@ namespace RestrictR
             LoadApps();
         }
 
+        // Fills the list of all apps and the collection that will hold the filtered data
+        // The collection is also set as the ListView's ItemSource (viewable UI elem)
         private void LoadApps()
         {
-            AppList.GetApps();
-            var appCount = AppList.Apps.Count;
-            ImageInfoBar.Message = $"{appCount} apps found.";
-            ImageInfoBar.IsOpen = true;
+            Apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
+            AppsFiltered = new ObservableCollection<ApplicationInfo>(Apps);
+            FilteredListView.ItemsSource = AppsFiltered;
         }
 
         private async void AppBarButton_Click(object sender, RoutedEventArgs e)
@@ -118,19 +121,33 @@ namespace RestrictR
 
             (sender as UIElement).StartAnimation(_springAnimation);
         }
-    }
 
-    public class AppList 
-    {
-        public ObservableCollection<ApplicationInfo> Apps = new();
-
-        public void GetApps()
+        // Event method that gets called every time the filtering input field gets changed
+        // (something gets written). Updates the Collection 'AppsFiltered'
+        // by querying 'Apps' - DisplayName based on the input 
+        private void OnFilterChanged(object sender, TextChangedEventArgs args)
         {
-            var appInfos = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
+            List<ApplicationInfo> TempFiltered = Apps.Where(app => app.DisplayName.Contains(FilterByFirstName.Text, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            foreach (var appInfo in appInfos) 
+            // remove all apps from observ. collection 'AppsFiltered'
+            // that are in not in the newly filtered list
+            for (int i = AppsFiltered.Count - 1; i >= 0; i--)
             {
-                Apps.Add(appInfo);
+                var item = AppsFiltered[i];
+                if (!TempFiltered.Contains(item))
+                {
+                    AppsFiltered.Remove(item); 
+                }
+            }
+
+            // add all apps from the newly filtered list
+            // to observ. collection that were missing
+            foreach (var item in TempFiltered)
+            {
+                if (!AppsFiltered.Contains(item))
+                {
+                    AppsFiltered.Add(item);
+                }
             }
         }
     }
