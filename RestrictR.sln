@@ -3,18 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestrictR", "RestrictR\RestrictR.csproj", "{1FD131D7-73DD-4720-A3FE-9028E76B394E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestrictR", "RestrictR\RestrictR.csproj", "{1FD131D7-73DD-4720-A3FE-9028E76B394E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestrictRService", "RestrictRService\RestrictRService.csproj", "{86E13F6A-D6E3-44F2-BC39-202C78BA101E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|Any CPU.Build.0 = Debug|x64
+		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|Any CPU.Deploy.0 = Debug|x64
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|ARM64.Build.0 = Debug|ARM64
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|ARM64.Deploy.0 = Debug|ARM64
@@ -24,6 +31,9 @@ Global
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|x86.ActiveCfg = Debug|x86
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|x86.Build.0 = Debug|x86
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Debug|x86.Deploy.0 = Debug|x86
+		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|Any CPU.ActiveCfg = Release|x64
+		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|Any CPU.Build.0 = Release|x64
+		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|Any CPU.Deploy.0 = Release|x64
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|ARM64.ActiveCfg = Release|ARM64
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|ARM64.Build.0 = Release|ARM64
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|ARM64.Deploy.0 = Release|ARM64
@@ -33,6 +43,22 @@ Global
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|x86.ActiveCfg = Release|x86
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|x86.Build.0 = Release|x86
 		{1FD131D7-73DD-4720-A3FE-9028E76B394E}.Release|x86.Deploy.0 = Release|x86
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|x64.Build.0 = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Debug|x86.Build.0 = Debug|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|ARM64.Build.0 = Release|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|x64.ActiveCfg = Release|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|x64.Build.0 = Release|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|x86.ActiveCfg = Release|Any CPU
+		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -63,6 +63,7 @@ namespace RestrictR
 
             using var baseKey64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView64);
             using var baseKey32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView32);
+
             var key64 = baseKey64.OpenSubKey(UninstallPath);
             var key32 = baseKey32.OpenSubKey(UninstallPath);
 
