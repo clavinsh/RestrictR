@@ -10,31 +10,34 @@ namespace RestrictR
 {
     internal class ApplicationBlocker
     {
-        private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun";
+        //private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun";
 
-        private static readonly string[] REGISTRY_APP_UNINSTALL_PATHS = { "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
+        //private static readonly string[] REGISTRY_APP_UNINSTALL_PATHS = { "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
 
-        public static void BlockApplication(string applicationName)
-        {
-            if (applicationName == null)
-            {
-                throw new ArgumentNullException(nameof(applicationName),
-                    "Invalid application name specified.");
-            }
+        const string UninstallPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+        //const string Registry64BitAppUninstallPath = @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall";
 
-            using RegistryKey key = Registry.LocalMachine.OpenSubKey(RegistryKeyPath)
-                ?? throw new InvalidOperationException($"Registry key path: {RegistryKeyPath} was not found.");
+        //public static void BlockApplication(string applicationName)
+        //{
+        //    if (applicationName == null)
+        //    {
+        //        throw new ArgumentNullException(nameof(applicationName),
+        //            "Invalid application name specified.");
+        //    }
 
-            if (key.GetValueNames().Contains(applicationName))
-            {
-                Console.WriteLine($"{applicationName} is allready blocked in the registry.");
-                return;
-            }
+        //    using RegistryKey key = Registry.LocalMachine.OpenSubKey(RegistryKeyPath)
+        //        ?? throw new InvalidOperationException($"Registry key path: {RegistryKeyPath} was not found.");
 
-            key.SetValue(applicationName, 1, RegistryValueKind.DWord);
-            Console.WriteLine("Application blocked.");
-            return;
-        }
+        //    if (key.GetValueNames().Contains(applicationName))
+        //    {
+        //        Console.WriteLine($"{applicationName} is allready blocked in the registry.");
+        //        return;
+        //    }
+
+        //    key.SetValue(applicationName, 1, RegistryValueKind.DWord);
+        //    Console.WriteLine("Application blocked.");
+        //    return;
+        //}
 
         // Method sets up the Windows Registry keys
         // and values for application blocking
@@ -54,20 +57,36 @@ namespace RestrictR
         public static List<ApplicationInfo> GetInstalledApplicationsFromRegistry()
         {
             List<ApplicationInfo> resultList = new();
-            var specifiedKeys = new[] { "DisplayName", "DisplayVersion", "Publisher", "InstallDate", "InstallLocation", "Comments", "UninstallString" };
 
-            foreach (string registryPath in REGISTRY_APP_UNINSTALL_PATHS)
+            var registryView64 = RegistryView.Registry64;
+            var registryView32 = RegistryView.Registry32;
+
+            using var baseKey64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView64);
+            using var baseKey32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView32);
+            var key64 = baseKey64.OpenSubKey(UninstallPath);
+            var key32 = baseKey32.OpenSubKey(UninstallPath);
+
+            if (key64 != null)
             {
-                RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath)
-                    ?? throw new System.IO.IOException("Registry path not found.");
+                ProcessSubKeys(key64);
+                key64.Close();
+            }
 
+            if (key32 != null)
+            {
+                ProcessSubKeys(key32);
+                key32.Close();
+            }
+
+            return resultList;
+
+            void ProcessSubKeys(RegistryKey key)
+            {
                 string[] possibleAppNames = key.GetSubKeyNames();
 
-                // looking through each of the subkeys (keys used by installed apps)
-                // in the ...\Uninstall registry path as per the 'registryPath' variable
                 foreach (string appName in possibleAppNames)
                 {
-                    RegistryKey appKey = key.OpenSubKey(appName);
+                    using RegistryKey appKey = key.OpenSubKey(appName);
 
                     if (appKey != null)
                     {
@@ -77,24 +96,6 @@ namespace RestrictR
                         };
 
                         valuesDict = GetAppInfo(appKey, valuesDict);
-
-                        //string[] valueNames = appKey.GetValueNames();
-
-                        //foreach (string specifiedKey in specifiedKeys)
-                        //{
-                        //    valuesDict[specifiedKey] = "";
-                        //}
-
-                        //// if some name matches any of the specifiedKey strings (common for applications)
-                        //// its corresponding value will be added to the dict
-                        //foreach (string valueName in valueNames)
-                        //{
-                        //    if (specifiedKeys.Contains(valueName))
-                        //    {
-                        //        string value = key.GetValue(valueName)?.ToString() ?? "";
-                        //        valuesDict[valueName] = value;
-                        //    }
-                        //}
 
                         if (ValidAppInfo(valuesDict))
                         {
@@ -106,31 +107,27 @@ namespace RestrictR
                         }
                     }
                 }
-
-                key.Close();
             }
-
-            return resultList;
         }
 
         private static bool ValidAppInfo(Dictionary<string, string> valuesDict)
         {
-            string[] requiredKeys = { "DisplayName", "DisplayVersion", "Publisher", "InstallDate",
-                              "InstallLocation", "Comments", "UninstallString", "RegistryPath" };
+            //string[] requiredKeys = { "DisplayName", "DisplayVersion", "Publisher", "InstallDate",
+            //                  "InstallLocation", "Comments", "UninstallString", "RegistryPath" };
 
-            foreach (var key in requiredKeys)
-            {
-                if (!valuesDict.TryGetValue(key, out _))
-                {
-                    return false;
-                }
-            }
+            //foreach (var key in requiredKeys)
+            //{
+            //    if (!valuesDict.TryGetValue(key, out _))
+            //    {
+            //        return false;
+            //    }
+            //}
 
-            // check for a valid install location
-            if (!Path.IsPathFullyQualified(valuesDict["InstallLocation"]))
-            {
-                return false;
-            }
+            //// check for a valid install location
+            //if (!Path.IsPathFullyQualified(valuesDict["InstallLocation"]))
+            //{
+            //    return false;
+            //}
 
             return true;
         }

@@ -103,7 +103,7 @@
             <InfoBar 
             x:Name="ImageInfoBar"
             Severity="Informational"
-            Title="Images in gallery"
+            Title="Applications on this computer"
             Grid.Row="2"/>
     </Grid>
 </Window>

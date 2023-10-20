@@ -48,6 +48,8 @@ namespace RestrictR
             Apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
             AppsFiltered = new ObservableCollection<ApplicationInfo>(Apps);
             FilteredListView.ItemsSource = AppsFiltered;
+            ImageInfoBar.Message = Apps.Count.ToString();
+            ImageInfoBar.IsOpen = true;
         }
 
         private async void AppBarButton_Click(object sender, RoutedEventArgs e)
