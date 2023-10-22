@@ -66,6 +66,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <!-- Config for data that will be displayed-->
@@ -88,14 +89,17 @@
                                 x:Phase="2"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Margin="12,0,0,6"/>
+                        <Button Grid.Column="2">
+                            Block
+                        </Button>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <StackPanel Width="200">
+        <StackPanel Width="200" HorizontalAlignment="Left">
             <TextBlock Margin="8,8,8,4" Style="{ThemeResource BaseTextBlockStyle}">Filter by...</TextBlock>
-            <TextBox x:Name="FilterByFirstName" Width="150" Header="First name" Margin="8"
+            <TextBox x:Name="FilterByFirstName" Width="150" Header="Filter by name" Margin="8"
                      HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
         </StackPanel>
             

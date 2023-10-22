@@ -44,6 +44,13 @@ namespace RestrictR
             m_window = new MainWindow();
             m_window.Activate();
 
+
+            ApplicationBlocker applicationBlocker = new ApplicationBlocker();
+
+            applicationBlocker.AddBlockedApp(@"C:\Program Files\Notepad++\notepad++.exe");
+
+            applicationBlocker.ManageActiveProcesses();
+
             //var apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
 
 

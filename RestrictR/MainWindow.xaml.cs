@@ -45,7 +45,7 @@ namespace RestrictR
         // The collection is also set as the ListView's ItemSource (viewable UI elem)
         private void LoadApps()
         {
-            Apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
+            Apps = ApplicationRetriever.GetInstalledApplicationsFromRegistry();
             AppsFiltered = new ObservableCollection<ApplicationInfo>(Apps);
             FilteredListView.ItemsSource = AppsFiltered;
             ImageInfoBar.Message = Apps.Count.ToString();
