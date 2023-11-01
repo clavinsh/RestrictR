@@ -11,6 +11,8 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-PipeClient pipeClient = new PipeClient();
+PipeCommunication pipeCommunication = new();
+
+//PipeClient pipeClient = new PipeClient();
 
 await host.RunAsync();

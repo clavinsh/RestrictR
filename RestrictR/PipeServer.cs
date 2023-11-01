@@ -31,11 +31,36 @@ namespace RestrictR
 
             Debug.WriteLine("Client has connected");
 
-            StreamString ss = new StreamString(namedPipeServerStream);
 
-            string msg = ss.ReadString();
+            while (namedPipeServerStream.IsConnected)
+            {
+                Thread.Sleep(1000); // sleep for a second
+            }
 
-            Debug.WriteLine($"received msg: {msg}");
+            try 
+            {
+                StreamString ss = new StreamString(namedPipeServerStream);
+
+                while (true)
+                {
+                    if (!namedPipeServerStream.IsConnected)
+                    {
+                        Debug.WriteLine("connection lost");
+                        // heart beat implementation here
+                    }
+
+                    string msg = ss.ReadString();
+
+                    Debug.WriteLine($"received msg: {msg}");
+
+                    Thread.Sleep(1000); // sleep for a second
+                }
+            }
+            catch ( Exception e )
+            {
+                Debug.WriteLine("ERROR: " + e.ToString() );
+            }
+
 
             namedPipeServerStream.Close();
         }

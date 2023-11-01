@@ -8,71 +8,37 @@ using System.Threading.Tasks;
 
 namespace RestrictRService
 {
-    public class PipeClient
+    public class PipeCommunication
     {
         private static string pipeName = "testPipe";
-        private static string writePipeName = "wPipe";
 
-        public PipeClient()
+        public PipeCommunication()
         {
-            Thread clientWriteThread = new(ClientThread);
-
-            clientWriteThread.Start();
+            Thread serverReadThread = new(ServerReadThread);
+            serverReadThread.Start();
         }
 
-        private void ClientThread()
+        // this pipe connection on the worker service is used
+        // for receiving configuration information from the GUI directly
+        private void ServerReadThread()
         {
-            NamedPipeClientStream namedPipeClientStream = new(".", pipeName, PipeDirection.Out);
-
-            namedPipeClientStream.Connect();
-
-            var hmm = namedPipeClientStream.IsConnected;
-
-            Debug.WriteLine("Connected to server!");
-
-            StreamString ss = new StreamString(namedPipeClientStream);
-
-            ss.WriteString("hello from windows service worker!");
-
-            namedPipeClientStream.Close();
-        }
-
-
-        private void ClientReadThread()
-        {
-            NamedPipeClientStream namedPipeClientStream = new(".", pipeName, PipeDirection.Out);
-        }
-
-        private static string ReceiveConfigurationOverNamedPipe()
-        {
-            using NamedPipeClientStream pipeClient = new(".", writePipeName, PipeDirection.In);
-
-            while(!pipeClient.IsConnected)
+            // listen continuously
+            while(true)
             {
-                try
-                {
-                    pipeClient.Connect();
-                }
-                catch
-                { 
+                using NamedPipeServerStream namedPipeServerStream = new(pipeName, PipeDirection.In);
+                namedPipeServerStream.WaitForConnection();
 
-                }
+                byte[] buffer = new byte[1024];
+
+                int bytesRead = namedPipeServerStream.Read(buffer);
+
+                string config = Encoding.UTF8.GetString(buffer);
+
+                // process new config data
+                Debug.WriteLine("new config received: " + config);
                 Thread.Sleep(1000);
             }
-
-
-
-            pipeClient.Connect();
-
-            byte[] buffer = new byte[4096];
-
-            int bytesRead = pipeClient.Read(buffer, 0, buffer.Length);
-
-            string config = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-            return config;
         }
-
 
         public class StreamString
         {
@@ -113,6 +79,5 @@ namespace RestrictRService
                 return outBuffer.Length + 2;
             }
         }
-
     }
 }

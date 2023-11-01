@@ -52,7 +52,9 @@ namespace RestrictR
 
             // serializes the blocked apps list and writes it to the common config file
             // used by the worker service
-            var configString = JsonSerializer.Serialize(BlockedApplications);
+            string configString = JsonSerializer.Serialize(BlockedApplications);
+
+            await PipeCommunication.SendConfig(configString);
             //await ConfigWriter.WriteToCommonFolder(configString);
         }
 

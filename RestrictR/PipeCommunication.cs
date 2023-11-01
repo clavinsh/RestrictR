@@ -1,26 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace RestrictRService
+namespace RestrictR
 {
-    public class PipeClient
+    public class PipeCommunication
     {
         private static string pipeName = "testPipe";
-        private static string writePipeName = "wPipe";
 
-        public PipeClient()
+        public PipeCommunication()
         {
-            Thread clientWriteThread = new(ClientThread);
-
-            clientWriteThread.Start();
+            //Thread serverReadThread = new(ClientWriteThread);
+            //serverReadThread.Start();
         }
 
-        private void ClientThread()
+        // this pipe connection on the GUI is used to send configuration information
+        // to the worker service directly
+        // method is meant to be called right when the configuration changes
+        public static async Task SendConfig(string config)
+        {
+            using NamedPipeClientStream namedPipeClientStream = new(".", pipeName, PipeDirection.Out);
+            await namedPipeClientStream.ConnectAsync();
+            Debug.WriteLine("Connected to server!");
+
+            byte[] configBytes = Encoding.UTF8.GetBytes(config);
+
+            await namedPipeClientStream.WriteAsync(configBytes);
+        }
+
+        private void ClientWriteThread()
         {
             NamedPipeClientStream namedPipeClientStream = new(".", pipeName, PipeDirection.Out);
 
@@ -32,47 +46,12 @@ namespace RestrictRService
 
             StreamString ss = new StreamString(namedPipeClientStream);
 
-            ss.WriteString("hello from windows service worker!");
+            ss.WriteString(@"[{applicationInstallLocation: ""C:\somedirectory\bannable_app_folder""}]");
+
+            Debug.WriteLine("Closing connection to the server");
 
             namedPipeClientStream.Close();
         }
-
-
-        private void ClientReadThread()
-        {
-            NamedPipeClientStream namedPipeClientStream = new(".", pipeName, PipeDirection.Out);
-        }
-
-        private static string ReceiveConfigurationOverNamedPipe()
-        {
-            using NamedPipeClientStream pipeClient = new(".", writePipeName, PipeDirection.In);
-
-            while(!pipeClient.IsConnected)
-            {
-                try
-                {
-                    pipeClient.Connect();
-                }
-                catch
-                { 
-
-                }
-                Thread.Sleep(1000);
-            }
-
-
-
-            pipeClient.Connect();
-
-            byte[] buffer = new byte[4096];
-
-            int bytesRead = pipeClient.Read(buffer, 0, buffer.Length);
-
-            string config = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-            return config;
-        }
-
 
         public class StreamString
         {
@@ -113,6 +92,5 @@ namespace RestrictRService
                 return outBuffer.Length + 2;
             }
         }
-
     }
 }
