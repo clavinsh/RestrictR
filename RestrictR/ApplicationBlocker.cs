@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RestrictR
 {
@@ -28,7 +30,7 @@ namespace RestrictR
             BlockedApplications.Add(installPath);
         }
 
-        public void SetBlockedApps(List<ApplicationInfo> apps)
+        public async Task SetBlockedApps(List<ApplicationInfo> apps)
         {
             foreach (ApplicationInfo app in apps)
             {
@@ -47,6 +49,11 @@ namespace RestrictR
                     BlockedApplications.Add(app.InstallLocation);
                 }
             }
+
+            // serializes the blocked apps list and writes it to the common config file
+            // used by the worker service
+            var configString = JsonSerializer.Serialize(BlockedApplications);
+            //await ConfigWriter.WriteToCommonFolder(configString);
         }
 
 

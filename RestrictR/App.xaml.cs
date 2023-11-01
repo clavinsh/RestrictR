@@ -30,6 +30,8 @@ namespace RestrictR
 
             bool v = ApplicationBlocker.IsUserAdmin();
 
+            PipeServer pipeServer = new PipeServer();
+
             //var apps = ApplicationBlocker.GetInstalledApplicationsFromRegistry();
 
 
