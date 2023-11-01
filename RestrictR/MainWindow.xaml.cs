@@ -1,24 +1,12 @@
-using Helper;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Security.Cryptography.Core;
-using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,11 +22,15 @@ namespace RestrictR
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
+        ApplicationBlocker applicationBlocker;
+
         public MainWindow()
         {
             this.InitializeComponent();
 
             LoadApps();
+
+            applicationBlocker = new ApplicationBlocker();
         }
 
         // Fills the list of all apps and the collection that will hold the filtered data
@@ -71,22 +63,18 @@ namespace RestrictR
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //if (sender is Button { DataContext: ImageInfo imageInfo })
-            //{
-            //    Image image = new()
-            //    {
-            //        Source = new BitmapImage(new Uri(imageInfo.Path, UriKind.Absolute))
-            //    };
+            if (sender is Button b)
+            {
+                List<ApplicationInfo> appsToBlock = new();
+                var selectedApps = FilteredListView.SelectedItems.ToList();
 
-            //    Window window = new()
-            //    {
-            //        Title = imageInfo.Name,
-            //        Content = image
-            //    };
+                foreach( var app in selectedApps) 
+                {
+                    appsToBlock.Add((ApplicationInfo)app);
+                }
 
-            //    SetWindowSize(window, 640, 400);
-            //    window.Activate();
-            //}
+                applicationBlocker.SetBlockedApps(appsToBlock);
+            }
         }
 
         private static void SetWindowSize(Window window, int height, int width)
@@ -138,7 +126,7 @@ namespace RestrictR
                 var item = AppsFiltered[i];
                 if (!TempFiltered.Contains(item))
                 {
-                    AppsFiltered.Remove(item); 
+                    AppsFiltered.Remove(item);
                 }
             }
 
@@ -150,6 +138,14 @@ namespace RestrictR
                 {
                     AppsFiltered.Add(item);
                 }
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button b)
+            {
+                applicationBlocker.ManageActiveProcesses();
             }
         }
     }

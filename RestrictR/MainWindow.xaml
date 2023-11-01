@@ -14,7 +14,12 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
         <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Grid.Row="0">
             <AppBarButton Icon="Folder" Label="Select Folder" Click="AppBarButton_Click"/>
@@ -50,9 +55,15 @@
             </CommandBar.SecondaryCommands>
         </CommandBar>
 
+        <StackPanel Width="200" HorizontalAlignment="Left">
+            <TextBlock Margin="8,8,8,4" Style="{ThemeResource BaseTextBlockStyle}">Filter by...</TextBlock>
+            <TextBox x:Name="FilterByFirstName" Width="150" Header="Filter by name" Margin="8"
+                     HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
+        </StackPanel>
+
         <ListView
             x:Name="FilteredListView"
-            SelectionMode="None"
+            SelectionMode="Multiple"
             ItemsSource="{x:Bind AppsFiltered}"
             Grid.Row="1">
 
@@ -65,7 +76,6 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
@@ -89,25 +99,26 @@
                                 x:Phase="2"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Margin="12,0,0,6"/>
-                        <Button Grid.Column="2">
+                        <!--<Button Grid.Column="2">
                             Block
-                        </Button>
+                        </Button>-->
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <StackPanel Width="200" HorizontalAlignment="Left">
-            <TextBlock Margin="8,8,8,4" Style="{ThemeResource BaseTextBlockStyle}">Filter by...</TextBlock>
-            <TextBox x:Name="FilterByFirstName" Width="150" Header="Filter by name" Margin="8"
-                     HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
-        </StackPanel>
-            
-            
-            <InfoBar 
-            x:Name="ImageInfoBar"
-            Severity="Informational"
-            Title="Applications on this computer"
-            Grid.Row="2"/>
+        <Button Grid.Row="2" Grid.Column="0"
+                Content="Block"
+                Click="Button_Click" />
+
+        <Button Grid.Row="2" Grid.Column="1"
+                Content="ManageActiveProcesses"
+                Click="Button_Click_1" />
+
+        <InfoBar 
+        x:Name="ImageInfoBar"
+        Severity="Informational"
+        Title="Applications on this computer"
+        Grid.Row="3"/>
     </Grid>
 </Window>
