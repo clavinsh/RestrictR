@@ -1,6 +1,9 @@
 using RestrictRService;
-
 IHost host = Host.CreateDefaultBuilder(args)
+    .UseWindowsService(options =>
+    {
+        options.ServiceName = "RestrictR Blocking Service";
+    })
     //.ConfigureAppConfiguration((hostingContext, config) => {
     //    config.SetBasePath(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     //    config.AddJsonFile("myconfig.json", optional: false, reloadOnChange: true);
