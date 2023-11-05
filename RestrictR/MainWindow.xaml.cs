@@ -23,7 +23,7 @@ namespace RestrictR
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
-        ApplicationBlocker applicationBlocker;
+        BlockingConfigurator applicationBlocker;
 
         public MainWindow()
         {
@@ -31,7 +31,7 @@ namespace RestrictR
 
             LoadApps();
 
-            applicationBlocker = new ApplicationBlocker();
+            applicationBlocker = new BlockingConfigurator();
         }
 
         // Fills the list of all apps and the collection that will hold the filtered data
@@ -146,7 +146,7 @@ namespace RestrictR
         {
             if (sender is Button b)
             {
-                applicationBlocker.ManageActiveProcesses();
+                //applicationBlocker.ManageActiveProcesses();
             }
         }
     }

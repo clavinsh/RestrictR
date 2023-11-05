@@ -28,7 +28,7 @@ namespace RestrictR
             m_window = new MainWindow();
             m_window.Activate();
 
-            bool v = ApplicationBlocker.IsUserAdmin();
+            bool v = BlockingConfigurator.IsUserAdmin();
 
             //PipeServer pipeServer = new PipeServer();
 

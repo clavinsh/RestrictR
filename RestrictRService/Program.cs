@@ -1,4 +1,8 @@
 using RestrictRService;
+
+ApplicationBlocker applicationBlocker = new();
+PipeCommunication pipe = new(applicationBlocker);
+
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
     {
@@ -10,11 +14,16 @@ IHost host = Host.CreateDefaultBuilder(args)
     //})
     .ConfigureServices(services =>
     {
+        services.AddSingleton(applicationBlocker);
+        services.AddSingleton(pipe);
+        //services.AddSingleton(provider =>
+        //{
+        //    var applicationBlocker = provider.GetRequiredService<ApplicationBlocker>();
+        //    return new PipeCommunication(applicationBlocker);
+        //});
         services.AddHostedService<Worker>();
     })
     .Build();
-
-PipeCommunication pipeCommunication = new();
 
 //PipeClient pipeClient = new PipeClient();
 
