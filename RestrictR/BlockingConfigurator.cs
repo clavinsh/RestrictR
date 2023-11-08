@@ -6,29 +6,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RestrictR
 {
-    internal class ApplicationBlocker
+    internal class BlockingConfigurator
     {
         private List<string> BlockedApplications = new();
 
-        public void AddBlockedApp(string installPath)
-        {
-            if (!Path.IsPathFullyQualified(installPath))
-            {
-                throw new ArgumentException("Invalid fully qualified path.");
-            }
-
-            if (BlockedApplications.Contains(installPath))
-            {
-                return;
-            }
-
-            BlockedApplications.Add(installPath);
-        }
-
-        public void SetBlockedApps(List<ApplicationInfo> apps)
+        public async Task SetBlockedApps(List<ApplicationInfo> apps)
         {
             foreach (ApplicationInfo app in apps)
             {
@@ -47,55 +34,14 @@ namespace RestrictR
                     BlockedApplications.Add(app.InstallLocation);
                 }
             }
+
+            // serializes the blocked apps list and writes it to the common config file
+            // used by the worker service
+            string configString = JsonSerializer.Serialize(BlockedApplications);
+            await PipeCommunication.SendConfig(configString);
+
+            //await ConfigWriter.WriteToCommonFolder(configString);
         }
-
-
-        public void ManageActiveProcesses()
-        {
-            var processes = Process.GetProcesses();
-
-            foreach (var process in processes)
-            {
-                try
-                {
-                    StringBuilder processPathBuilder = new StringBuilder(1024);
-
-                    uint bufferSize = (uint)processPathBuilder.Capacity;
-
-                    if (QueryFullProcessImageName(process.Handle, 0, processPathBuilder, ref bufferSize))
-                    {
-                        string processPath = processPathBuilder.ToString();
-                        string fullProcessPath = Path.GetFullPath(processPath);
-
-
-                        foreach (var blockedAppInstallLocation in BlockedApplications)
-                        {
-                            string fullInstallLocationPath = Path.GetFullPath(blockedAppInstallLocation);
-
-                            if (fullProcessPath.StartsWith(fullInstallLocationPath))
-                            {
-                                process.Kill();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Unable to retrieve process path for process with ID {process.Id}");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Error occured while killing a blocked process: {e.Message}");
-                }
-            }
-        }
-
-        // From the ms docs: https://learn.microsoft.com/lv-lv/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamea?redirectedfrom=MSDN
-        // Retrieves the full name of the executable image for the specified process.
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags,
-            [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpExeName,
-            ref uint lpdwSize);
 
         //private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun";
 
@@ -125,12 +71,6 @@ namespace RestrictR
         //    return;
         //}
 
-        // Method sets up the Windows Registry keys
-        // and values for application blocking
-        public void RegistrySetup()
-        {
-            throw new NotImplementedException();
-        }
 
         public static bool IsUserAdmin()
         {

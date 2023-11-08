@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,7 +23,7 @@ namespace RestrictR
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
-        ApplicationBlocker applicationBlocker;
+        BlockingConfigurator applicationBlocker;
 
         public MainWindow()
         {
@@ -30,7 +31,7 @@ namespace RestrictR
 
             LoadApps();
 
-            applicationBlocker = new ApplicationBlocker();
+            applicationBlocker = new BlockingConfigurator();
         }
 
         // Fills the list of all apps and the collection that will hold the filtered data
@@ -61,7 +62,7 @@ namespace RestrictR
             //}
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button b)
             {
@@ -73,7 +74,7 @@ namespace RestrictR
                     appsToBlock.Add((ApplicationInfo)app);
                 }
 
-                applicationBlocker.SetBlockedApps(appsToBlock);
+                await applicationBlocker.SetBlockedApps(appsToBlock);
             }
         }
 
@@ -145,7 +146,7 @@ namespace RestrictR
         {
             if (sender is Button b)
             {
-                applicationBlocker.ManageActiveProcesses();
+                //applicationBlocker.ManageActiveProcesses();
             }
         }
     }
