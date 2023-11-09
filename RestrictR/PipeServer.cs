@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 
 namespace RestrictR
@@ -37,7 +34,7 @@ namespace RestrictR
                 Thread.Sleep(1000); // sleep for a second
             }
 
-            try 
+            try
             {
                 StreamString ss = new StreamString(namedPipeServerStream);
 
@@ -56,9 +53,9 @@ namespace RestrictR
                     Thread.Sleep(1000); // sleep for a second
                 }
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-                Debug.WriteLine("ERROR: " + e.ToString() );
+                Debug.WriteLine("ERROR: " + e.ToString());
             }
 
 

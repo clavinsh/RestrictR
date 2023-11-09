@@ -1,17 +1,11 @@
-﻿using System;
+﻿using DataPacketLibrary;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Principal;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.DataTransfer;
 using static RestrictR.PipeCommunication;
-using DataPacketLibrary;
 
 namespace RestrictR
 {

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO.Pipes;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RestrictRService
 {
@@ -47,14 +43,14 @@ namespace RestrictRService
         {
             using NamedPipeClientStream pipeClient = new(".", writePipeName, PipeDirection.In);
 
-            while(!pipeClient.IsConnected)
+            while (!pipeClient.IsConnected)
             {
                 try
                 {
                     pipeClient.Connect();
                 }
                 catch
-                { 
+                {
 
                 }
                 Thread.Sleep(1000);

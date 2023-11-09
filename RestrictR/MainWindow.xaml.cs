@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -69,7 +68,7 @@ namespace RestrictR
                 List<ApplicationInfo> appsToBlock = new();
                 var selectedApps = FilteredListView.SelectedItems.ToList();
 
-                foreach( var app in selectedApps) 
+                foreach (var app in selectedApps)
                 {
                     appsToBlock.Add((ApplicationInfo)app);
                 }

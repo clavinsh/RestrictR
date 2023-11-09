@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DataPacketLibrary;
 using System.Diagnostics;
 using System.IO.Pipes;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using DataPacketLibrary;
 
 namespace RestrictRService
 {
@@ -20,7 +16,7 @@ namespace RestrictRService
         {
             _appBlocker = appBlocker;
             Thread serverReadThread = new(ServerReadThread);
-            serverReadThread.Start();  
+            serverReadThread.Start();
         }
 
         // this pipe connection on the worker service is used
@@ -28,7 +24,7 @@ namespace RestrictRService
         private void ServerReadThread()
         {
             // listen continuously
-            while(true)
+            while (true)
             {
                 using NamedPipeServerStream namedPipeServerStream = new(pipeName, PipeDirection.In);
                 namedPipeServerStream.WaitForConnection();
@@ -59,7 +55,7 @@ namespace RestrictRService
                 // set just the sites
                 else if (receivedPacket.BlockedSites != null)
                 {
-                    
+
                 }
 
                 Thread.Sleep(1000);
@@ -72,7 +68,7 @@ namespace RestrictRService
 
             try
             {
-                ConfigurationPacket deserialized = JsonSerializer.Deserialize<ConfigurationPacket>(jsonString) 
+                ConfigurationPacket deserialized = JsonSerializer.Deserialize<ConfigurationPacket>(jsonString)
                     ?? throw new JsonException("Deserialization returned null.");
                 return deserialized;
             }
