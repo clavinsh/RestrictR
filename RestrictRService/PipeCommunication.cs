@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using DataPacketLibrary;
 
 namespace RestrictRService
 {
@@ -41,21 +42,37 @@ namespace RestrictRService
                 // process new config data
                 Debug.WriteLine("new config received: " + config);
 
-                var appInstallLocations = ConvertJsonString(config);
+                ConfigurationPacket receivedPacket = ConvertJsonString(config)
+                    ?? throw new Exception("Received packet from pipe is null");
 
-                _appBlocker.SetBlockedApps(appInstallLocations);
+                // set both apps and sites
+                if (receivedPacket.BlockedAppInstallLocations != null
+                    && receivedPacket.BlockedSites != null)
+                {
+
+                }
+                // set just the apps
+                else if (receivedPacket.BlockedAppInstallLocations != null)
+                {
+                    _appBlocker.SetBlockedApps(receivedPacket.BlockedAppInstallLocations);
+                }
+                // set just the sites
+                else if (receivedPacket.BlockedSites != null)
+                {
+                    
+                }
 
                 Thread.Sleep(1000);
             }
         }
 
-        private static List<string> ConvertJsonString(string jsonString)
+        private static ConfigurationPacket ConvertJsonString(string jsonString)
         {
             jsonString = jsonString.TrimEnd('\0');
 
             try
             {
-                List<string> deserialized = JsonSerializer.Deserialize<List<string>>(jsonString) 
+                ConfigurationPacket deserialized = JsonSerializer.Deserialize<ConfigurationPacket>(jsonString) 
                     ?? throw new JsonException("Deserialization returned null.");
                 return deserialized;
             }
@@ -114,5 +131,24 @@ namespace RestrictRService
                 return outBuffer.Length + 2;
             }
         }
+
+        //[Serializable]
+        //public class ConfigurationPacket
+        //{
+        //    public List<string>? BlockedAppInstallLocations { get; set; }
+
+        //    public BlockedWebsites? BlockedSites { get; set; }
+
+        //    public class BlockedWebsites
+        //    {
+        //        // BlockAllSites defines a 'header' for this data packet
+        //        // false represents that only websites specified in BlockedWebsiteUrls should be handled
+        //        // true represents that 'all of internet' should be blocked
+        //        // a situation where BlockAllSites is true and BlockedWebsiteUrls is not null is an exception
+        //        public bool BlockAllSites { get; set; }
+        //        public List<string>? BlockedWebsiteUrls { get; set; }
+
+        //    }
+        //}
     }
 }

@@ -38,6 +38,11 @@
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="DataPacketLibrary">
+      <HintPath>..\DataPacketLibrary\bin\Debug\net6.0\DataPacketLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
   <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 

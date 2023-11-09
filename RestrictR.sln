@@ -5,7 +5,9 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestrictR", "RestrictR\RestrictR.csproj", "{1FD131D7-73DD-4720-A3FE-9028E76B394E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestrictRService", "RestrictRService\RestrictRService.csproj", "{86E13F6A-D6E3-44F2-BC39-202C78BA101E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestrictRService", "RestrictRService\RestrictRService.csproj", "{86E13F6A-D6E3-44F2-BC39-202C78BA101E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPacketLibrary", "DataPacketLibrary\DataPacketLibrary.csproj", "{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,22 @@ Global
 		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|x64.Build.0 = Release|Any CPU
 		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|x86.ActiveCfg = Release|Any CPU
 		{86E13F6A-D6E3-44F2-BC39-202C78BA101E}.Release|x86.Build.0 = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|x64.Build.0 = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|ARM64.Build.0 = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|x64.ActiveCfg = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|x64.Build.0 = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

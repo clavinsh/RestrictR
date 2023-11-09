@@ -4,10 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using static RestrictR.PipeCommunication;
+using DataPacketLibrary;
 
 namespace RestrictR
 {
@@ -37,8 +41,23 @@ namespace RestrictR
 
             // serializes the blocked apps list and writes it to the common config file
             // used by the worker service
-            string configString = JsonSerializer.Serialize(BlockedApplications);
-            await PipeCommunication.SendConfig(configString);
+
+
+            //ConfigurationPacket data = new()
+            //{
+            //    BlockedAppInstallLocations = BlockedApplications,
+            //    BlockedSites = new ConfigurationPacket.BlockedWebsites()
+            //    { BlockAllSites = true, BlockedWebsiteUrls = null }
+            //};
+
+            ConfigurationPacket data = new()
+            {
+                BlockedAppInstallLocations = BlockedApplications,
+                BlockedSites = null
+            };
+
+            string configString = JsonSerializer.Serialize(data);
+            await SendConfig(configString);
 
             //await ConfigWriter.WriteToCommonFolder(configString);
         }
