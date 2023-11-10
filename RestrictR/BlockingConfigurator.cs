@@ -12,6 +12,7 @@ namespace RestrictR
     internal class BlockingConfigurator
     {
         private List<string> BlockedApplications = new();
+        private List<string> BlockedWebsites = new();
 
         public async Task SetBlockedApps(List<ApplicationInfo> apps)
         {
@@ -55,6 +56,42 @@ namespace RestrictR
 
             //await ConfigWriter.WriteToCommonFolder(configString);
         }
+
+        // method blocks all websites (effectively 'all of internet')
+        public async Task SetBlockALLSites()
+        {
+            ConfigurationPacket data = new()
+            {
+                BlockedAppInstallLocations = null,
+                BlockedSites = new ConfigurationPacket.BlockedWebsites() 
+                {
+                    BlockAllSites = true,
+                    BlockedWebsiteUrls = null
+                }
+            };
+
+            string configString = JsonSerializer.Serialize(data);
+
+            await SendConfig(configString);
+        }
+
+        public async Task SetUnblockALLSites()
+        {
+            ConfigurationPacket data = new()
+            {
+                BlockedAppInstallLocations = null,
+                BlockedSites = new ConfigurationPacket.BlockedWebsites()
+                {
+                    BlockAllSites = false,
+                    BlockedWebsiteUrls = null
+                }
+            };
+
+            string configString = JsonSerializer.Serialize(data);
+
+            await SendConfig(configString);
+        }
+
 
         //private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun";
 

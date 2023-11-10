@@ -1,6 +1,8 @@
 ﻿using DataPacketLibrary;
 using System.Diagnostics;
 using System.IO.Pipes;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 
@@ -11,10 +13,12 @@ namespace RestrictRService
         private static string pipeName = "testPipe";
         private static int bufferSize = 1024;
         private readonly ApplicationBlocker _appBlocker;
+        private readonly WebsiteBlocker _webBlocker;
 
-        public PipeCommunication(ApplicationBlocker appBlocker)
+        public PipeCommunication(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker)
         {
             _appBlocker = appBlocker;
+            _webBlocker = webBlocker;
             Thread serverReadThread = new(ServerReadThread);
             serverReadThread.Start();
         }
@@ -26,7 +30,15 @@ namespace RestrictRService
             // listen continuously
             while (true)
             {
-                using NamedPipeServerStream namedPipeServerStream = new(pipeName, PipeDirection.In);
+                PipeSecurity ps = new();
+                SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+                ps.AddAccessRule( new PipeAccessRule(
+                    sid,
+                    PipeAccessRights.ReadWrite,
+                    AccessControlType.Allow
+                    ));
+
+                using NamedPipeServerStream namedPipeServerStream = NamedPipeServerStreamAcl.Create(pipeName, PipeDirection.In, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.None, 4096, 4096, ps);
                 namedPipeServerStream.WaitForConnection();
 
                 byte[] buffer = new byte[bufferSize];
@@ -55,7 +67,10 @@ namespace RestrictRService
                 // set just the sites
                 else if (receivedPacket.BlockedSites != null)
                 {
-
+                    if (receivedPacket.BlockedSites.BlockAllSites)
+                    {
+                        _webBlocker.AddBlockAllInternetRule();
+                    }
                 }
 
                 Thread.Sleep(1000);
@@ -127,24 +142,5 @@ namespace RestrictRService
                 return outBuffer.Length + 2;
             }
         }
-
-        //[Serializable]
-        //public class ConfigurationPacket
-        //{
-        //    public List<string>? BlockedAppInstallLocations { get; set; }
-
-        //    public BlockedWebsites? BlockedSites { get; set; }
-
-        //    public class BlockedWebsites
-        //    {
-        //        // BlockAllSites defines a 'header' for this data packet
-        //        // false represents that only websites specified in BlockedWebsiteUrls should be handled
-        //        // true represents that 'all of internet' should be blocked
-        //        // a situation where BlockAllSites is true and BlockedWebsiteUrls is not null is an exception
-        //        public bool BlockAllSites { get; set; }
-        //        public List<string>? BlockedWebsiteUrls { get; set; }
-
-        //    }
-        //}
     }
 }

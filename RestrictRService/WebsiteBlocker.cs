@@ -1,16 +1,19 @@
 ﻿using NetFwTypeLib; // For managing Windows Firewall rules
+using Windows.ApplicationModel.VoiceCommands;
 
 namespace RestrictRService
 {
     public class WebsiteBlocker
     {
-        public static void AddBlockAllInternetRule()
+        private const string BlockAllSitesRuleName = "Block Internet";
+
+        public void AddBlockAllInternetRule()
         {
             Type policyType = Type.GetTypeFromProgID("HNetCfg.FwPolicy2")
                 ?? throw new SystemException("Unable to retrieve firewall type HNetCfg.FwPolicy2");
 
             Type ruleType = Type.GetTypeFromProgID("HNetCfg.FWRule")
-                ?? throw new SystemException("Unable to retrieve firewall type HNetCfg.FwPolicy2");
+                ?? throw new SystemException("Unable to retrieve firewall type HNetCfg.FWRule");
 
             object fwPolicyObj = Activator.CreateInstance(policyType)
                 ?? throw new SystemException("Unable to create instance of a firewall policy");
@@ -25,12 +28,24 @@ namespace RestrictRService
             firewallRule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT;
             firewallRule.Enabled = true;
             firewallRule.InterfaceTypes = "All";
-            firewallRule.Name = "Block Internet";
+            firewallRule.Name = BlockAllSitesRuleName;
 
             firewallPolicy.Rules.Add(firewallRule);
         }
 
-        public static void AddWebsiteBlockingRule(string websiteUrl)
+        public void RemoveBlockALlInternetRule()
+        {
+            Type policyType = Type.GetTypeFromProgID("HNetCfg.FwPolicy2")
+                ?? throw new SystemException("Unable to retrieve firewall type HNetCfg.FwPolicy2");
+
+            object fwPolicyObj = Activator.CreateInstance(policyType)
+                ?? throw new SystemException("Unable to create instance of a firewall policy");
+            INetFwPolicy2 firewallPolicy = (INetFwPolicy2)fwPolicyObj;
+
+            firewallPolicy.Rules.Remove(BlockAllSitesRuleName);
+        }
+
+        public void AddWebsiteBlockingRule(string websiteUrl)
         {
             throw new NotImplementedException();
         }

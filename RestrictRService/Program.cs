@@ -1,7 +1,8 @@
 using RestrictRService;
 
 ApplicationBlocker applicationBlocker = new();
-PipeCommunication pipe = new(applicationBlocker);
+WebsiteBlocker websiteBlocker = new();
+PipeCommunication pipe = new(applicationBlocker, websiteBlocker);
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
@@ -15,6 +16,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddSingleton(applicationBlocker);
+        services.AddSingleton(websiteBlocker);
         services.AddSingleton(pipe);
         //services.AddSingleton(provider =>
         //{

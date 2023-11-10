@@ -112,7 +112,7 @@
                 Click="Button_Click" />
 
         <Button Grid.Row="2" Grid.Column="1"
-                Content="ManageActiveProcesses"
+                Content="Block ALL sites"
                 Click="Button_Click_1" />
 
         <InfoBar 

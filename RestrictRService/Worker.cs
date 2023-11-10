@@ -5,12 +5,14 @@ namespace RestrictRService
         private readonly ILogger<Worker> _logger;
         private readonly IConfiguration _configuration; 
         private readonly ApplicationBlocker _appBlocker;
+        private readonly WebsiteBlocker _webBlocker;
 
-        public Worker(ILogger<Worker> logger, IConfiguration configuration, ApplicationBlocker appBlocker)
+        public Worker(ILogger<Worker> logger, IConfiguration configuration, ApplicationBlocker appBlocker, WebsiteBlocker webBlocker)
         {
             _logger = logger;
             _configuration = configuration;
             _appBlocker = appBlocker;
+            _webBlocker = webBlocker;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
