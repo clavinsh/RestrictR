@@ -71,6 +71,14 @@ namespace RestrictRService
                     {
                         _webBlocker.AddBlockAllInternetRule();
                     }
+                    else if (!receivedPacket.BlockedSites.BlockAllSites)
+                    {
+                        _webBlocker.RemoveBlockALlInternetRule();
+                    }
+                    else if (receivedPacket.BlockedSites != null)
+                    {
+                        
+                    }
                 }
 
                 Thread.Sleep(1000);

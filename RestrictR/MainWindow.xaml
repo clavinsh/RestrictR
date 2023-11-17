@@ -19,6 +19,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Grid.Row="0">
@@ -114,6 +115,10 @@
         <Button Grid.Row="2" Grid.Column="1"
                 Content="Block ALL sites"
                 Click="Button_Click_1" />
+
+        <Button Grid.Row="2" Grid.Column="2"
+        Content="Unblock ALL sites"
+        Click="Button_Click_2" />
 
         <InfoBar 
         x:Name="ImageInfoBar"

@@ -149,5 +149,13 @@ namespace RestrictR
                 //applicationBlocker.ManageActiveProcesses();
             }
         }
+
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if(sender is Button b)
+            {
+                await blockingConfig.SetUnblockALLSites();
+            }
+        }
     }
 }
