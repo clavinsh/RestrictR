@@ -117,6 +117,7 @@ namespace RestrictRService
             }
         }
 
+        // adds a firewall rule for a specific website url
         private void AddWebsiteBlockingRule(string websiteUrl)
         {
             IPAddress ipadress = GetIpAdressFromUrl(websiteUrl);
@@ -140,6 +141,7 @@ namespace RestrictRService
             _firewallPolicy.Rules.Add(firewallRule);
         }
 
+        // adds a firewall rule to block all internet access
         private void AddBlockAllInternetRule()
         {
             if (RuleExists(BlockAllSitesRuleName))
@@ -165,6 +167,7 @@ namespace RestrictRService
             _firewallPolicy.Rules.Add(firewallRule);
         }
 
+        // removes the firewall rule that block all internet access
         private void RemoveBlockALlInternetRule()
         {
             if (RuleExists(BlockAllSitesRuleName))
@@ -173,11 +176,13 @@ namespace RestrictRService
             }
         }
 
+        // checks if a rule exists in the Windows Firewall by looking at the name
         private bool RuleExists(string ruleName)
         {
             return _firewallPolicy.Rules.Cast<INetFwRule>().Any(r => r.Name == ruleName);
         }
 
+        // retrieves the IP Adress for the specified URL
         private static IPAddress GetIpAdressFromUrl(string url)
         {
             Uri uri = new(url);
