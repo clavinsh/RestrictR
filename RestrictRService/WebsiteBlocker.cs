@@ -133,8 +133,7 @@ namespace RestrictRService
             firewallRule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT;
             firewallRule.Enabled = true;
             firewallRule.InterfaceTypes = "All";
-            // for a unique name firewall name the current time is added
-            firewallRule.Name = $"BlockWebsiteRule_{DateTime.Now.Ticks}"; 
+            firewallRule.Name = websiteUrl; 
             firewallRule.Grouping = RuleGroupName;
             firewallRule.RemoteAddresses = ipadress.ToString();
 
