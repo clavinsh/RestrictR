@@ -67,18 +67,7 @@ namespace RestrictRService
                 // set just the sites
                 else if (receivedPacket.BlockedSites != null)
                 {
-                    if (receivedPacket.BlockedSites.BlockAllSites)
-                    {
-                        _webBlocker.AddBlockAllInternetRule();
-                    }
-                    else if (!receivedPacket.BlockedSites.BlockAllSites)
-                    {
-                        _webBlocker.RemoveBlockALlInternetRule();
-                    }
-                    else if (receivedPacket.BlockedSites != null)
-                    {
-                        
-                    }
+                    _webBlocker.SetBlockedWebsites(receivedPacket.BlockedSites);
                 }
 
                 Thread.Sleep(1000);
