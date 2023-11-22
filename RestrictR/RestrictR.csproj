@@ -39,9 +39,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DataPacketLibrary">
-      <HintPath>..\DataPacketLibrary\bin\Debug\net6.0\DataPacketLibrary.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\DataPacketLibrary\DataPacketLibrary.csproj" />
   </ItemGroup>
 
   <!-- 
