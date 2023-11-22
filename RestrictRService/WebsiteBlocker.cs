@@ -28,6 +28,16 @@ namespace RestrictRService
 
         public void SetBlockedWebsites(DataPacketLibrary.ConfigurationPacket.BlockedWebsites blockedWebsites)
         {
+            if (blockedWebsites == null)
+            {
+                throw new ArgumentNullException(nameof(blockedWebsites));
+            }
+
+            if(blockedWebsites.BlockedWebsiteUrls == null)
+            {
+                throw new ArgumentException();
+            }
+
             BlockedWebsites = blockedWebsites;
 
             SynchronizeRulesFromBlockedWebsites();
