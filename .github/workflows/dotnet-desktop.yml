@@ -57,7 +57,7 @@ jobs:
 
     env:
       Solution_Name: RestrictR.sln
-      Test_Project_Dll_Path: TestProject\bin\$env:Configuration\net6.0-windows10.0.19041.0\TestProject.dll
+      Test_Project_Dll_Path: TestProject\bin\Release\net6.0-windows10.0.19041.0\TestProject.dll
       
     steps:
     - name: Checkout
