@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace RestrictRService
 {
@@ -47,8 +42,8 @@ namespace RestrictRService
         public void ManageActiveProcesses()
         {
             // No need to evaluate processes if there will be nothing to block
-            if(BlockedApplicationsInstallLocations.Count == 0)
-            { return; } 
+            if (BlockedApplicationsInstallLocations.Count == 0)
+            { return; }
 
             var processes = Process.GetProcesses();
 

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DataPacketLibrary;
 using System.Diagnostics;
 using System.IO.Pipes;
-using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace RestrictRService
 {
@@ -14,12 +13,14 @@ namespace RestrictRService
         private static string pipeName = "testPipe";
         private static int bufferSize = 1024;
         private readonly ApplicationBlocker _appBlocker;
+        private readonly WebsiteBlocker _webBlocker;
 
-        public PipeCommunication(ApplicationBlocker appBlocker)
+        public PipeCommunication(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker)
         {
             _appBlocker = appBlocker;
+            _webBlocker = webBlocker;
             Thread serverReadThread = new(ServerReadThread);
-            serverReadThread.Start();  
+            serverReadThread.Start();
         }
 
         // this pipe connection on the worker service is used
@@ -27,9 +28,17 @@ namespace RestrictRService
         private void ServerReadThread()
         {
             // listen continuously
-            while(true)
+            while (true)
             {
-                using NamedPipeServerStream namedPipeServerStream = new(pipeName, PipeDirection.In);
+                PipeSecurity ps = new();
+                SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+                ps.AddAccessRule( new PipeAccessRule(
+                    sid,
+                    PipeAccessRights.ReadWrite,
+                    AccessControlType.Allow
+                    ));
+
+                using NamedPipeServerStream namedPipeServerStream = NamedPipeServerStreamAcl.Create(pipeName, PipeDirection.In, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.None, 4096, 4096, ps);
                 namedPipeServerStream.WaitForConnection();
 
                 byte[] buffer = new byte[bufferSize];
@@ -41,21 +50,37 @@ namespace RestrictRService
                 // process new config data
                 Debug.WriteLine("new config received: " + config);
 
-                var appInstallLocations = ConvertJsonString(config);
+                ConfigurationPacket receivedPacket = ConvertJsonString(config)
+                    ?? throw new Exception("Received packet from pipe is null");
 
-                _appBlocker.SetBlockedApps(appInstallLocations);
+                // set both apps and sites
+                if (receivedPacket.BlockedAppInstallLocations != null
+                    && receivedPacket.BlockedSites != null)
+                {
+
+                }
+                // set just the apps
+                else if (receivedPacket.BlockedAppInstallLocations != null)
+                {
+                    _appBlocker.SetBlockedApps(receivedPacket.BlockedAppInstallLocations);
+                }
+                // set just the sites
+                else if (receivedPacket.BlockedSites != null)
+                {
+                    _webBlocker.SetBlockedWebsites(receivedPacket.BlockedSites);
+                }
 
                 Thread.Sleep(1000);
             }
         }
 
-        private static List<string> ConvertJsonString(string jsonString)
+        private static ConfigurationPacket ConvertJsonString(string jsonString)
         {
             jsonString = jsonString.TrimEnd('\0');
 
             try
             {
-                List<string> deserialized = JsonSerializer.Deserialize<List<string>>(jsonString) 
+                ConfigurationPacket deserialized = JsonSerializer.Deserialize<ConfigurationPacket>(jsonString)
                     ?? throw new JsonException("Deserialization returned null.");
                 return deserialized;
             }

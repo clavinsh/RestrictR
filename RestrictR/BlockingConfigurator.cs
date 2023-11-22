@@ -1,19 +1,18 @@
-﻿using System;
+﻿using DataPacketLibrary;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static RestrictR.PipeCommunication;
 
 namespace RestrictR
 {
     internal class BlockingConfigurator
     {
         private List<string> BlockedApplications = new();
+        private List<string> BlockedWebsites = new();
 
         public async Task SetBlockedApps(List<ApplicationInfo> apps)
         {
@@ -37,11 +36,62 @@ namespace RestrictR
 
             // serializes the blocked apps list and writes it to the common config file
             // used by the worker service
-            string configString = JsonSerializer.Serialize(BlockedApplications);
-            await PipeCommunication.SendConfig(configString);
+
+
+            //ConfigurationPacket data = new()
+            //{
+            //    BlockedAppInstallLocations = BlockedApplications,
+            //    BlockedSites = new ConfigurationPacket.BlockedWebsites()
+            //    { BlockAllSites = true, BlockedWebsiteUrls = null }
+            //};
+
+            ConfigurationPacket data = new()
+            {
+                BlockedAppInstallLocations = BlockedApplications,
+                BlockedSites = null
+            };
+
+            string configString = JsonSerializer.Serialize(data);
+            await SendConfig(configString);
 
             //await ConfigWriter.WriteToCommonFolder(configString);
         }
+
+        // method blocks all websites (effectively 'all of internet')
+        public async Task SetBlockALLSites()
+        {
+            ConfigurationPacket data = new()
+            {
+                BlockedAppInstallLocations = null,
+                BlockedSites = new ConfigurationPacket.BlockedWebsites() 
+                {
+                    BlockAllSites = true,
+                    BlockedWebsiteUrls = null
+                }
+            };
+
+            string configString = JsonSerializer.Serialize(data);
+
+            await SendConfig(configString);
+        }
+
+        public async Task SetUnblockALLSites()
+        {
+            ConfigurationPacket data = new()
+            {
+                BlockedAppInstallLocations = null,
+                BlockedSites = new ConfigurationPacket.BlockedWebsites()
+                {
+                    BlockAllSites = false,
+                    BlockedWebsiteUrls = null
+                }
+            };
+
+            string configString = JsonSerializer.Serialize(data);
+
+            await SendConfig(configString);
+        }
+
 
         //private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun";
 

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,7 +22,7 @@ namespace RestrictR
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
-        BlockingConfigurator applicationBlocker;
+        BlockingConfigurator blockingConfig;
 
         public MainWindow()
         {
@@ -31,7 +30,7 @@ namespace RestrictR
 
             LoadApps();
 
-            applicationBlocker = new BlockingConfigurator();
+            blockingConfig = new BlockingConfigurator();
         }
 
         // Fills the list of all apps and the collection that will hold the filtered data
@@ -69,12 +68,12 @@ namespace RestrictR
                 List<ApplicationInfo> appsToBlock = new();
                 var selectedApps = FilteredListView.SelectedItems.ToList();
 
-                foreach( var app in selectedApps) 
+                foreach (var app in selectedApps)
                 {
                     appsToBlock.Add((ApplicationInfo)app);
                 }
 
-                await applicationBlocker.SetBlockedApps(appsToBlock);
+                await blockingConfig.SetBlockedApps(appsToBlock);
             }
         }
 
@@ -142,11 +141,20 @@ namespace RestrictR
             }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             if (sender is Button b)
             {
+                await blockingConfig.SetBlockALLSites();
                 //applicationBlocker.ManageActiveProcesses();
+            }
+        }
+
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if(sender is Button b)
+            {
+                await blockingConfig.SetUnblockALLSites();
             }
         }
     }
