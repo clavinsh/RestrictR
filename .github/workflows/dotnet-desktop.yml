@@ -77,6 +77,11 @@ jobs:
       
     - name: Setup VSTest Path
       uses: darenm/Setup-VSTest@v1.2
+      
+    - name: Restore the solution
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
 
     # Build the solution
     - name: Build the solution
