@@ -1,7 +1,10 @@
 ﻿using Microsoft.VisualBasic;
 using NetFwTypeLib; // For managing Windows Firewall rules
 using System.Net;
+using System.Net.Sockets;
 using Windows.ApplicationModel.VoiceCommands;
+using Windows.Networking.NetworkOperators;
+using static System.Net.WebRequestMethods;
 
 namespace RestrictRService
 {
@@ -33,14 +36,24 @@ namespace RestrictRService
                 throw new ArgumentNullException(nameof(blockedWebsites));
             }
 
-            if(blockedWebsites.BlockedWebsiteUrls == null)
-            {
-                throw new ArgumentException();
-            }
-
             BlockedWebsites = blockedWebsites;
 
             SynchronizeRulesFromBlockedWebsites();
+        }
+
+        public void ClearBlockedWebsites()
+        {
+            BlockedWebsites = new()
+            {
+                BlockedWebsiteUrls = new(),
+                BlockAllSites = false
+            };
+            SynchronizeRulesFromBlockedWebsites();
+        }
+
+        public IEnumerable<INetFwRule> GetCreatedFwRules()
+        {
+            return _firewallPolicy.Rules.Cast<INetFwRule>().Where(r => r.Grouping == RuleGroupName);
         }
 
         //public void RemoveAllBlockingRules()
@@ -130,7 +143,17 @@ namespace RestrictRService
         // adds a firewall rule for a specific website url
         private void AddWebsiteBlockingRule(string websiteUrl)
         {
-            IPAddress ipadress = GetIpAdressFromUrl(websiteUrl);
+            IPAddress[] ipaddresses;
+
+            try
+            {
+                ipaddresses = GetIpAddresses(websiteUrl);
+            }
+            catch (Exception ex)
+            {
+                // LOG: warning
+                return;
+            }
 
             Type ruleType = Type.GetTypeFromProgID("HNetCfg.FWRule")
                 ?? throw new SystemException("Unable to retrieve firewall type HNetCfg.FWRule");
@@ -139,14 +162,16 @@ namespace RestrictRService
                 ?? throw new SystemException("Unable to create instance of a firewall rule");
             INetFwRule firewallRule = (INetFwRule)fwRuleObj;
 
+            string addresses = CreateCsvFromIPs(ipaddresses);
+
             firewallRule.Action = NET_FW_ACTION_.NET_FW_ACTION_BLOCK;
-            firewallRule.Description = "Used to block all internet access.";
+            firewallRule.Description = "Used to block internet access to a specific URL.";
             firewallRule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT;
             firewallRule.Enabled = true;
             firewallRule.InterfaceTypes = "All";
-            firewallRule.Name = websiteUrl; 
+            firewallRule.Name = $"{websiteUrl}";
             firewallRule.Grouping = RuleGroupName;
-            firewallRule.RemoteAddresses = ipadress.ToString();
+            firewallRule.RemoteAddresses = addresses;
 
             _firewallPolicy.Rules.Add(firewallRule);
         }
@@ -177,7 +202,7 @@ namespace RestrictRService
             _firewallPolicy.Rules.Add(firewallRule);
         }
 
-        // removes the firewall rule that block all internet access
+        // removes the firewall rule that blocks all internet access
         private void RemoveBlockALlInternetRule()
         {
             if (RuleExists(BlockAllSitesRuleName))
@@ -189,17 +214,48 @@ namespace RestrictRService
         // checks if a rule exists in the Windows Firewall by looking at the name
         private bool RuleExists(string ruleName)
         {
-            return _firewallPolicy.Rules.Cast<INetFwRule>().Any(r => r.Name == ruleName);
+            return _firewallPolicy.Rules.Cast<INetFwRule>().Any(r => r.Name.StartsWith(ruleName));
         }
 
-        // retrieves the IP Adress for the specified URL
-        private static IPAddress GetIpAdressFromUrl(string url)
+        private static IPAddress[] GetIpAddresses(string url)
         {
-            Uri uri = new(url);
+            string? hostName = ExtractHostName(url);
 
-            IPAddress ip = Dns.GetHostAddresses(uri.Host)[0];
+            if (hostName != null)
+            {
+                try
+                {
+                    var ips = Dns.GetHostAddresses(hostName);
 
-            return ip;
+                    return ips;
+                }
+                catch(SocketException ex)
+                {
+                    string msg = ex.Message; // LOG: error no such host is known 
+                    throw;
+                }
+                
+            }
+            else            
+            {
+                throw new ArgumentException("Invalid URL specified");
+            }
+        }
+
+        static string? ExtractHostName(string input)
+        {
+            var uriBuilder = new UriBuilder(input);
+
+            return uriBuilder?.Uri.Host;
+        }
+
+        private static string CreateCsvFromIPs(IPAddress[] ips)
+        {
+            var csv_questionmark = ips.ToString();
+
+            string csv = string.Join(",", ips.Select(x => x.ToString()).ToArray());
+
+            return csv;
         }
     }
 }
