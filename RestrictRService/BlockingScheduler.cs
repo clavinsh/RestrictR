@@ -51,10 +51,39 @@ namespace RestrictRService
             }
         }
 
-        // Check if an event is still active based on start time and duration
+        // Check if an event is still active based on start time and duration, recurrence
         private bool IsEventActive(Event configEvent,  DateTime currentTime)
         {
-            return currentTime >= configEvent.Start && currentTime <= configEvent.Start + configEvent.Duration;
+            // Non-recurring event, simply check if current time falls within event timeframe
+            if (configEvent.Recurrence == Event.RecurrenceType.None)
+            {
+                return currentTime >= configEvent.Start && currentTime <= configEvent.Start + configEvent.Duration;
+            }
+            else
+            {
+                DateTime eventEnd = configEvent.Start + configEvent.Duration;
+
+                return configEvent.Recurrence switch
+                {
+                    Event.RecurrenceType.Daily => currentTime.TimeOfDay >= configEvent.Start.TimeOfDay
+                                                && currentTime.TimeOfDay <= eventEnd.TimeOfDay,
+
+                    Event.RecurrenceType.Weekly => currentTime.DayOfWeek == configEvent.Start.DayOfWeek
+                    && currentTime.TimeOfDay >= configEvent.Start.TimeOfDay
+                    && currentTime.TimeOfDay <= eventEnd.TimeOfDay,
+
+                    Event.RecurrenceType.Monthly => currentTime.Day == configEvent.Start.Day
+                    && currentTime.TimeOfDay >= configEvent.Start.TimeOfDay
+                    && currentTime.TimeOfDay <= eventEnd.TimeOfDay,
+
+                    Event.RecurrenceType.Yearly => currentTime.Month == configEvent.Start.Month
+                    && currentTime.Day == configEvent.Start.Day
+                    && currentTime.TimeOfDay >= configEvent.Start.TimeOfDay
+                    && currentTime.TimeOfDay <= eventEnd.TimeOfDay,
+
+                    _ => false,
+                };
+            }
         }
 
         // Find the next scheduled event based on the current time
@@ -63,7 +92,7 @@ namespace RestrictRService
             return configurationPacket.Events
                 .Where(e => e.Start > currentTime)
                 .OrderBy(e => e.Start)
-                .FirstOrDefault();
+                .FirstOrDefault(e => IsEventActive(e, currentTime));
         }
 
         private void ImplementEventBlocking(Event configEvent)
