@@ -13,7 +13,7 @@ namespace TestProject
         [ExpectedException(typeof(InvalidOperationException))]
         public void ConfigPacket_SetsAllAndEmptyList_InvalidOperationException()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockAllSites = true,
                 BlockedWebsiteUrls = new List<string>()
@@ -24,7 +24,7 @@ namespace TestProject
         [ExpectedException(typeof(InvalidOperationException))]
         public void ConfigPacket_SetsAllAndFilledList_InvalidOperationException()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockAllSites = true,
                 BlockedWebsiteUrls = new List<string>
@@ -38,7 +38,7 @@ namespace TestProject
         [ExpectedException(typeof(InvalidOperationException))]
         public void ConfigPacket_SetsEmptyListAndAll_InvalidOperationException()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockedWebsiteUrls = new List<string>(),
                 BlockAllSites = true,
@@ -49,7 +49,7 @@ namespace TestProject
         [ExpectedException(typeof(InvalidOperationException))]
         public void ConfigPacket_SetsFilledListAndAll_InvalidOperationException()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockedWebsiteUrls = new List<string>
                 {

@@ -50,7 +50,7 @@ namespace RestrictRService
                 // process new config data
                 Debug.WriteLine("new config received: " + config);
 
-                ConfigurationPacket receivedPacket = ConvertJsonString(config)
+                Event receivedPacket = ConvertJsonString(config)
                     ?? throw new Exception("Received packet from pipe is null");
 
                 // set both apps and sites
@@ -74,13 +74,13 @@ namespace RestrictRService
             }
         }
 
-        private static ConfigurationPacket ConvertJsonString(string jsonString)
+        private static Event ConvertJsonString(string jsonString)
         {
             jsonString = jsonString.TrimEnd('\0');
 
             try
             {
-                ConfigurationPacket deserialized = JsonSerializer.Deserialize<ConfigurationPacket>(jsonString)
+                Event deserialized = JsonSerializer.Deserialize<Event>(jsonString)
                     ?? throw new JsonException("Deserialization returned null.");
                 return deserialized;
             }

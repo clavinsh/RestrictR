@@ -34,7 +34,7 @@ namespace RestrictRService.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void SetBlockedWebsites_NullParameter_ThrowsArgumentNullException()
         {
-            ConfigurationPacket.BlockedWebsites? blockedWebsites = null;
+            Event.BlockedWebsites? blockedWebsites = null;
 
             _blocker.SetBlockedWebsites(blockedWebsites);
         }
@@ -42,7 +42,7 @@ namespace RestrictRService.Tests
         [TestMethod()]
         public void SetBlockedWebsites_Empty_NoFWRulesCreated()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new();
+            Event.BlockedWebsites blockedWebsites = new();
 
             _blocker.SetBlockedWebsites(blockedWebsites);
 
@@ -54,7 +54,7 @@ namespace RestrictRService.Tests
         [TestMethod()]
         public void SetBlockedWebsites_AllOfInternet_CreatedFWRule()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockAllSites = true
             };
@@ -81,7 +81,7 @@ namespace RestrictRService.Tests
         [TestMethod()]
         public void SetBlockedWebsites_ListWithExistingHostNames_CreatedFWRules()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockedWebsiteUrls = new List<string>
                 {
@@ -121,7 +121,7 @@ namespace RestrictRService.Tests
         [TestMethod()]
         public void SetBlockedWebsites_ListWithExistingHostNamesNoWWW_CreatedFWRules()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockedWebsiteUrls = new List<string>
                 {
@@ -161,7 +161,7 @@ namespace RestrictRService.Tests
         [TestMethod()]
         public void SetBlockedWebsites_ListWithExistingHostNamesFullySpecifiedURI_CreatedFWRules()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockedWebsiteUrls = new List<string>
                 {
@@ -200,7 +200,7 @@ namespace RestrictRService.Tests
         [TestMethod()]
         public void SetBlockedWebsites_ListWithInvalidHostNames_NoFWRulesCreated()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockedWebsiteUrls = new List<string>
                 {
@@ -222,7 +222,7 @@ namespace RestrictRService.Tests
         [TestMethod()]
         public void SetBlockedWebsites_ListWithNonexistantHostNames_NoFWRulesCreated()
         {
-            ConfigurationPacket.BlockedWebsites blockedWebsites = new()
+            Event.BlockedWebsites blockedWebsites = new()
             {
                 BlockedWebsiteUrls = new List<string>
                 {

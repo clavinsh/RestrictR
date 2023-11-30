@@ -13,7 +13,7 @@ namespace RestrictRService
         private const string BlockAllSitesRuleName = "Block Internet";
         private const string RuleGroupName = "RestrictR";
 
-        private DataPacketLibrary.ConfigurationPacket.BlockedWebsites BlockedWebsites = new();
+        private DataPacketLibrary.Event.BlockedWebsites BlockedWebsites = new();
 
         private Type _firewallPolicyType;
         private INetFwPolicy2 _firewallPolicy;
@@ -29,7 +29,7 @@ namespace RestrictRService
             _firewallPolicy = (INetFwPolicy2)fwPolicyObj;
         }
 
-        public void SetBlockedWebsites(DataPacketLibrary.ConfigurationPacket.BlockedWebsites blockedWebsites)
+        public void SetBlockedWebsites(DataPacketLibrary.Event.BlockedWebsites blockedWebsites)
         {
             if (blockedWebsites == null)
             {

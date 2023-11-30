@@ -45,7 +45,7 @@ namespace RestrictR
             //    { BlockAllSites = true, BlockedWebsiteUrls = null }
             //};
 
-            ConfigurationPacket data = new()
+            Event data = new()
             {
                 BlockedAppInstallLocations = BlockedApplications,
                 BlockedSites = null
@@ -60,10 +60,10 @@ namespace RestrictR
         // method blocks all websites (effectively 'all of internet')
         public async Task SetBlockALLSites()
         {
-            ConfigurationPacket data = new()
+            Event data = new()
             {
                 BlockedAppInstallLocations = null,
-                BlockedSites = new ConfigurationPacket.BlockedWebsites() 
+                BlockedSites = new Event.BlockedWebsites() 
                 {
                     BlockAllSites = true,
                     BlockedWebsiteUrls = null
@@ -77,10 +77,10 @@ namespace RestrictR
 
         public async Task SetUnblockALLSites()
         {
-            ConfigurationPacket data = new()
+            Event data = new()
             {
                 BlockedAppInstallLocations = null,
-                BlockedSites = new ConfigurationPacket.BlockedWebsites()
+                BlockedSites = new Event.BlockedWebsites()
                 {
                     BlockAllSites = false,
                     BlockedWebsiteUrls = null

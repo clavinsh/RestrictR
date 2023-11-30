@@ -5,6 +5,11 @@ namespace DataPacketLibrary
     [Serializable]
     public class ConfigurationPacket
     {
+        public IEnumerable<Event> Events {get; set;} = new List<Event>();
+    }
+
+    public class Event
+    {
         public List<string>? BlockedAppInstallLocations { get; set; }
 
         public BlockedWebsites? BlockedSites { get; set; }
