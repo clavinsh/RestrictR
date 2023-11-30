@@ -13,9 +13,18 @@ namespace RestrictRService
         private ConfigurationPacket configurationPacket;
         private Event? currentEvent;
 
+        private readonly ApplicationBlocker _appBlocker;
+        private readonly WebsiteBlocker _webBlocker;
+
         public BlockingScheduler(ConfigurationPacket config)
         {
             configurationPacket = config;
+        }
+
+        public BlockingScheduler(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker)
+        {
+            _appBlocker = appBlocker;
+            _webBlocker = webBlocker;
         }
 
         public void UpdateConfiguration(ConfigurationPacket newConfig)
@@ -97,22 +106,21 @@ namespace RestrictRService
 
         private void ImplementEventBlocking(Event configEvent)
         {
-            throw new NotImplementedException();
-
             if (configEvent.BlockedAppInstallLocations != null)
             {
-                
+                _appBlocker.SetBlockedApps(configEvent.BlockedAppInstallLocations);
             }
 
             if (configEvent.BlockedSites != null)
             {
-                
+                _webBlocker.SetBlockedWebsites(configEvent.BlockedSites);
             }
         }
 
         private void RemoveEventBlocking(Event configEvent)
         {
-            throw new NotImplementedException();
+            _appBlocker.RemoveBlockedApps();
+            _webBlocker.RemoveBlockedWebsites();
         }
     }
 }

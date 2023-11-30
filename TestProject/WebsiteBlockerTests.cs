@@ -21,13 +21,13 @@ namespace RestrictRService.Tests
         public void TestInitialize()
         {
             _blocker = new WebsiteBlocker();
-            _blocker.ClearBlockedWebsites();
+            _blocker.RemoveBlockedWebsites();
         }
 
         [TestCleanup()]
         public void TestCleanup()
         {
-            _blocker.ClearBlockedWebsites();
+            _blocker.RemoveBlockedWebsites();
         }
 
         [TestMethod()]

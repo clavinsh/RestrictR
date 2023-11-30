@@ -41,7 +41,7 @@ namespace RestrictRService
             SynchronizeRulesFromBlockedWebsites();
         }
 
-        public void ClearBlockedWebsites()
+        public void RemoveBlockedWebsites()
         {
             BlockedWebsites = new()
             {

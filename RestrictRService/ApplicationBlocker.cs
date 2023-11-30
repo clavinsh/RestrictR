@@ -39,6 +39,11 @@ namespace RestrictRService
             }
         }
 
+        public void RemoveBlockedApps()
+        {
+            BlockedApplicationsInstallLocations.Clear();
+        }
+
         public void ManageActiveProcesses()
         {
             // No need to evaluate processes if there will be nothing to block
@@ -82,7 +87,6 @@ namespace RestrictRService
                 }
             }
         }
-
 
         // Method sets up the Windows Registry keys
         // and values for application blocking
