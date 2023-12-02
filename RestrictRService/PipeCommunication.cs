@@ -12,13 +12,11 @@ namespace RestrictRService
     {
         private static string pipeName = "testPipe";
         private static int bufferSize = 1024;
-        private readonly ApplicationBlocker _appBlocker;
-        private readonly WebsiteBlocker _webBlocker;
+        private readonly BlockingScheduler _blockingScheduler;
 
-        public PipeCommunication(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker)
+        public PipeCommunication(BlockingScheduler blockingScheduler)
         {
-            _appBlocker = appBlocker;
-            _webBlocker = webBlocker;
+            _blockingScheduler = blockingScheduler;
             Thread serverReadThread = new(ServerReadThread);
             serverReadThread.Start();
         }
@@ -50,38 +48,24 @@ namespace RestrictRService
                 // process new config data
                 Debug.WriteLine("new config received: " + config);
 
-                Event receivedPacket = ConvertJsonString(config)
+                IEnumerable<Event> receivedPacket = ConvertJsonString(config)
                     ?? throw new Exception("Received packet from pipe is null");
 
-                // set both apps and sites
-                if (receivedPacket.BlockedAppInstallLocations != null
-                    && receivedPacket.BlockedSites != null)
-                {
-
-                }
-                // set just the apps
-                else if (receivedPacket.BlockedAppInstallLocations != null)
-                {
-                    _appBlocker.SetBlockedApps(receivedPacket.BlockedAppInstallLocations);
-                }
-                // set just the sites
-                else if (receivedPacket.BlockedSites != null)
-                {
-                    _webBlocker.SetBlockedWebsites(receivedPacket.BlockedSites);
-                }
+                _blockingScheduler.UpdateConfiguration(receivedPacket.ToList());
 
                 Thread.Sleep(1000);
             }
         }
 
-        private static Event ConvertJsonString(string jsonString)
+        private static IEnumerable<Event> ConvertJsonString(string jsonString)
         {
             jsonString = jsonString.TrimEnd('\0');
 
             try
             {
-                Event deserialized = JsonSerializer.Deserialize<Event>(jsonString)
+                IEnumerable<Event> deserialized = JsonSerializer.Deserialize<IEnumerable<Event>>(jsonString)
                     ?? throw new JsonException("Deserialization returned null.");
+
                 return deserialized;
             }
             catch (JsonException ex)

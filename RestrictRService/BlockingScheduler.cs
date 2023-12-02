@@ -10,26 +10,23 @@ namespace RestrictRService
     public class BlockingScheduler
     {
         //private Timer timer;
-        private ConfigurationPacket configurationPacket;
+        private List<Event> events;
         private Event? currentEvent;
 
         private readonly ApplicationBlocker _appBlocker;
         private readonly WebsiteBlocker _webBlocker;
 
-        public BlockingScheduler(ConfigurationPacket config)
-        {
-            configurationPacket = config;
-        }
-
         public BlockingScheduler(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker)
         {
             _appBlocker = appBlocker;
             _webBlocker = webBlocker;
+
+            events = new();
         }
 
-        public void UpdateConfiguration(ConfigurationPacket newConfig)
+        public void UpdateConfiguration(List<Event> newConfig)
         {
-            configurationPacket = newConfig;
+            events = newConfig;
             CheckSchedule();
         }
 
@@ -98,8 +95,7 @@ namespace RestrictRService
         // Find the next scheduled event based on the current time
         private Event? FindNextEvent(DateTime currentTime)
         {
-            return configurationPacket.Events
-                .Where(e => e.Start > currentTime)
+            return events.Where(e => e.Start > currentTime)
                 .OrderBy(e => e.Start)
                 .FirstOrDefault(e => IsEventActive(e, currentTime));
         }
