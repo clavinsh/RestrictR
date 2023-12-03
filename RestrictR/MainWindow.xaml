@@ -113,12 +113,13 @@
                 Click="Button_Click" />
 
         <Button Grid.Row="2" Grid.Column="1"
-                Content="Block ALL sites"
+                Content="Create a new blocking event"
                 Click="Button_Click_1" />
 
-        <Button Grid.Row="2" Grid.Column="2"
+        <!--<Button Grid.Row="2" Grid.Column="2"
         Content="Unblock ALL sites"
-        Click="Button_Click_2" />
+        Click="Button_Click_2" />-->
+        
 
         <InfoBar 
         x:Name="ImageInfoBar"

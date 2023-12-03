@@ -11,6 +11,9 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="EventForm.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -40,6 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataPacketLibrary\DataPacketLibrary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="EventForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!-- 

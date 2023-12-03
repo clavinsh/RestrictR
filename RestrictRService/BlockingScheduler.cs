@@ -58,7 +58,7 @@ namespace RestrictRService
         }
 
         // Check if an event is still active based on start time and duration, recurrence
-        private bool IsEventActive(Event configEvent,  DateTime currentTime)
+        private static bool IsEventActive(Event configEvent,  DateTime currentTime)
         {
             // Non-recurring event, simply check if current time falls within event timeframe
             if (configEvent.Recurrence == Event.RecurrenceType.None)

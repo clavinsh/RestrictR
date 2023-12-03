@@ -143,19 +143,28 @@ namespace RestrictR
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if (sender is Button b)
+            ContentDialog dialog = new()
             {
-                await blockingConfig.SetBlockALLSites();
-                //applicationBlocker.ManageActiveProcesses();
-            }
+                // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+                XamlRoot = this.Content.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Title = "Save your work?",
+                PrimaryButtonText = "Save",
+                SecondaryButtonText = "Don't Save",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                Content = new EventForm()
+            };
+
+            var result = await dialog.ShowAsync();
         }
 
-        private async void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            if(sender is Button b)
-            {
-                await blockingConfig.SetUnblockALLSites();
-            }
-        }
+        //private async void Button_Click_2(object sender, RoutedEventArgs e)
+        //{
+        //    if(sender is Button b)
+        //    {
+        //        await blockingConfig.SetUnblockALLSites();
+        //    }
+        //}
     }
 }
