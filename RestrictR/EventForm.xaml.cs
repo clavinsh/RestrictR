@@ -23,9 +23,18 @@ namespace RestrictR
     /// </summary>
     public sealed partial class EventForm : Page
     {
+        public EventViewModel ViewModel { get; } = new EventViewModel();
+
         public EventForm()
         {
             this.InitializeComponent();
+
+            DataContext = ViewModel;
+        }
+
+        private void OnSubmitClick(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

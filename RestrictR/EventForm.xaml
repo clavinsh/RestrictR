@@ -6,11 +6,21 @@
     xmlns:local="using:RestrictR"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <TextBlock Text="Create a new blocking event"></TextBlock>
+        <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay}"></DatePicker>
+        <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay}"></TimePicker>
+        <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration}"></TimePicker>
         
+        <!--<ComboBox Header="Recurrence" ItemsSource="{x:Bind ViewModel.Event.Recurrence, Mode=TwoWay}"></ComboBox>-->
+
+        <ComboBox ItemsSource="{x:Bind ViewModel.RecurrenceItems}"
+                  SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay}"
+                  SelectedValuePath="Value" 
+                  DisplayMemberPath="Text" />
     </StackPanel>
 </Page>
+

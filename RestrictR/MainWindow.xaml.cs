@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
+using Windows.AI.MachineLearning;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -150,13 +151,19 @@ namespace RestrictR
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                 Title = "Save your work?",
                 PrimaryButtonText = "Save",
-                SecondaryButtonText = "Don't Save",
                 CloseButtonText = "Cancel",
                 DefaultButton = ContentDialogButton.Primary,
                 Content = new EventForm()
             };
 
             var result = await dialog.ShowAsync();
+
+
+            if (result == ContentDialogResult.Primary)
+            {
+                var model = ((EventForm)dialog.Content).ViewModel;
+
+            }
         }
 
         //private async void Button_Click_2(object sender, RoutedEventArgs e)

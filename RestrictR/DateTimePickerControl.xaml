@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="RestrictR.DateTimePickerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RestrictR"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DataContext="{d:DesignInstance Type=local:EventViewModel}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <local:DateTimeConverter x:Key="DateTimeConverter"></local:DateTimeConverter>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <DatePicker x:Name="datePicker" Header="Select Start Date" Date="{x:Bind Date, Mode=TwoWay, Converter={StaticResource DateTimeConverter}}"/>
+        <TimePicker x:Name="timePicker" Header="Select Start Time" Time="{x:Bind Time, Mode=TwoWay}"/>
+    </StackPanel>
+</UserControl>

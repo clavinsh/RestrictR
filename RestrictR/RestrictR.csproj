@@ -12,6 +12,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="DateTimePickerControl.xaml" />
     <None Remove="EventForm.xaml" />
   </ItemGroup>
 
@@ -43,6 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataPacketLibrary\DataPacketLibrary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="DateTimePickerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="EventForm.xaml">
