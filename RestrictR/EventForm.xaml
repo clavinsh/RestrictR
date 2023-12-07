@@ -6,6 +6,8 @@
     xmlns:local="using:RestrictR"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactions="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -14,13 +16,53 @@
         <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay}"></DatePicker>
         <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay}"></TimePicker>
         <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration}"></TimePicker>
-        
-        <!--<ComboBox Header="Recurrence" ItemsSource="{x:Bind ViewModel.Event.Recurrence, Mode=TwoWay}"></ComboBox>-->
 
         <ComboBox ItemsSource="{x:Bind ViewModel.RecurrenceItems}"
                   SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay}"
                   SelectedValuePath="Value" 
                   DisplayMemberPath="Text" />
+
+        <!--<Grid>
+            <controls:InfoBar
+                x:Name="SuccessInfoBar"
+                Title="Success"
+                Message="The form was filled in correctly."
+                Severity="Success">
+                <interactivity:Interaction.Behaviors>
+                    <interactions:EventTriggerBehavior EventName="FormSubmissionCompleted" SourceObject="{x:Bind ViewModel}">
+                        <interactions:ChangePropertyAction
+                            PropertyName="IsOpen"
+                            TargetObject="{x:Bind SuccessInfoBar}"
+                            Value="True" />
+                        <interactions:ChangePropertyAction
+                            PropertyName="IsOpen"
+                            TargetObject="{x:Bind FailureInfoBar}"
+                            Value="False" />
+                    </interactions:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </controls:InfoBar>
+            <controls:InfoBar
+                x:Name="FailureInfoBar"
+                Title="Error"
+                Message="The form was filled in with some errors."
+                Severity="Error">
+                <controls:InfoBar.ActionButton>
+                    <Button Command="{x:Bind ViewModel.ShowErrorsCommand}" Content="Show errors" />
+                </controls:InfoBar.ActionButton>
+                <interactivity:Interaction.Behaviors>
+                    <interactions:EventTriggerBehavior EventName="FormSubmissionFailed" SourceObject="{x:Bind ViewModel}">
+                        <interactions:ChangePropertyAction
+                            PropertyName="IsOpen"
+                            TargetObject="{x:Bind SuccessInfoBar}"
+                            Value="False" />
+                        <interactions:ChangePropertyAction
+                            PropertyName="IsOpen"
+                            TargetObject="{x:Bind FailureInfoBar}"
+                            Value="True" />
+                    </interactions:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </controls:InfoBar>
+        </Grid>-->
     </StackPanel>
 </Page>
 

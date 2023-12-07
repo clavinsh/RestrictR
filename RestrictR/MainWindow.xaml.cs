@@ -1,12 +1,15 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using Windows.AI.MachineLearning;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -25,13 +28,28 @@ namespace RestrictR
 
         BlockingConfigurator blockingConfig;
 
-        public MainWindow()
+        IMessenger _messenger;
+
+        public MainWindow(IMessenger messenger)
         {
             this.InitializeComponent();
 
             LoadApps();
 
             blockingConfig = new BlockingConfigurator();
+            _messenger = messenger;
+            _messenger.Register<FormValidityChangedMessage>(this, OnFormValidityChanged);
+        }
+
+        private void OnFormValidityChanged(object recipient, FormValidityChangedMessage message)
+        {
+            eventFormContentDialog.IsPrimaryButtonEnabled = message.IsFormValid;
+        }
+
+        // Unregister the message when the ContentDialog is closed
+        private void OnContentDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            _messenger.Unregister<FormValidityChangedMessage>(this);
         }
 
         // Fills the list of all apps and the collection that will hold the filtered data
@@ -144,26 +162,25 @@ namespace RestrictR
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            ContentDialog dialog = new()
-            {
-                // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
-                XamlRoot = this.Content.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                Title = "Save your work?",
-                PrimaryButtonText = "Save",
-                CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary,
-                Content = new EventForm()
-            };
+            eventFormContentDialog.Content = new EventForm(_messenger);
 
-            var result = await dialog.ShowAsync();
+            //EventForm form = new EventForm();
 
+            //ContentDialog dialog = new()
+            //{
+            //    // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+            //    XamlRoot = this.Content.XamlRoot,
+            //    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            //    Title = "Save your work?",
+            //    PrimaryButtonText = "Save",
+            //    CloseButtonText = "Cancel",
+            //    DefaultButton = ContentDialogButton.Primary,
+            //    Content = form
+            //};
 
-            if (result == ContentDialogResult.Primary)
-            {
-                var model = ((EventForm)dialog.Content).ViewModel;
+            //BindingOperations.SetBinding(dialog, ContentDialog.IsPrimaryButtonEnabledProperty, binding);
 
-            }
+            var result = await eventFormContentDialog.ShowAsync();
         }
 
         //private async void Button_Click_2(object sender, RoutedEventArgs e)

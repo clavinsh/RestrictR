@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -23,18 +25,13 @@ namespace RestrictR
     /// </summary>
     public sealed partial class EventForm : Page
     {
-        public EventViewModel ViewModel { get; } = new EventViewModel();
+        public EventViewModel ViewModel { get; set;}
 
-        public EventForm()
+        public EventForm(IMessenger messenger)
         {
             this.InitializeComponent();
-
+            ViewModel = new EventViewModel(messenger);
             DataContext = ViewModel;
-        }
-
-        private void OnSubmitClick(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
