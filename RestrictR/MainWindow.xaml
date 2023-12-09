@@ -14,6 +14,21 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Click="BackButton_Click" IsEnabled="{x:Bind mainFrame.CanGoBack, Mode=OneWay}" Content="&lt;-"></Button>
+            <Button Click="ForwardButton_Click" IsEnabled="{x:Bind mainFrame.CanGoForward, Mode=OneWay}" Content="-&gt;"></Button>
+        </StackPanel>
+
+        <Frame x:Name="mainFrame" Grid.Row="1" Navigated="MainFrame_Navigated"></Frame>
+    </Grid>
+
+    
+    <!--<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
@@ -81,7 +96,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Config for data that will be displayed-->
+                        --><!-- Config for data that will be displayed--><!--
                         <Ellipse x:Name="Ellipse"
                              Grid.RowSpan="2"
                              Width ="32"
@@ -101,9 +116,9 @@
                                 x:Phase="2"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Margin="12,0,0,6"/>
-                        <!--<Button Grid.Column="2">
+                        --><!--<Button Grid.Column="2">
                             Block
-                        </Button>-->
+                        </Button>--><!--
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -115,11 +130,11 @@
 
         <Button Grid.Row="2" Grid.Column="1"
                 Content="Create a new blocking event"
-                Click="Button_Click_1" />
+                Click="OpenNewEventFormButton_Click" />
 
-        <!--<Button Grid.Row="2" Grid.Column="2"
+        --><!--<Button Grid.Row="2" Grid.Column="2"
         Content="Unblock ALL sites"
-        Click="Button_Click_2" />-->
+        Click="Button_Click_2" />--><!--
         
 
         <InfoBar 
@@ -135,5 +150,5 @@
             CloseButtonText="Cancel"
             DefaultButton="Primary">
         </controls:ContentDialog>
-    </Grid>
+    </Grid>-->
 </Window>

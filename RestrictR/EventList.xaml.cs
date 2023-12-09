@@ -1,5 +1,3 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -23,20 +21,16 @@ namespace RestrictR
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class EventForm : Page
+    public sealed partial class EventList : Page
     {
-        public EventViewModel ViewModel { get; set;}
-
-        public EventForm()
+        public EventList()
         {
             this.InitializeComponent();
-            ViewModel = new EventViewModel();
-            DataContext = ViewModel;
         }
 
-        private void SubmitButton_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.MainFrame.Navigate(typeof(EventForm));
         }
     }
 }
