@@ -38,5 +38,13 @@ namespace RestrictR
         {
 
         }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainWindow.MainFrame.CanGoBack)
+            {
+                MainWindow.MainFrame.GoBack();
+            }
+        }
     }
 }
