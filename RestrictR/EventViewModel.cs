@@ -18,21 +18,21 @@ namespace RestrictR
 {
     public partial class EventViewModel : ObservableValidator
     {
-        private IMessenger _messenger;
+//private IMessenger _messenger;
 
         // and sets the default values for the inputs
-        public EventViewModel(IMessenger messenger)
+        public EventViewModel()
         {
-            _messenger = messenger;
+            //_messenger = messenger;
 
             // used for form invalidation - disabling the primary button by sending a message to the main window
-            PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == "HasErrors")
-                {
-                    _messenger.Send(new FormValidityChangedMessage { IsFormValid = this.IsFormValid });
-                }
-            };
+            //PropertyChanged += (s, e) =>
+            //{
+            //    if (e.PropertyName == "HasErrors")
+            //    {
+            //        _messenger.Send(new FormValidityChangedMessage { IsFormValid = this.IsFormValid });
+            //    }
+            //};
 
 
             _startDate = DateTimeOffset.Now;

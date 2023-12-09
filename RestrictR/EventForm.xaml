@@ -9,6 +9,7 @@
     xmlns:interactions="using:Microsoft.Xaml.Interactions.Core"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    d:DataContext="{d:DesignInstance Type=local:EventViewModel}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     
@@ -22,6 +23,9 @@
                   SelectedValuePath="Value" 
                   DisplayMemberPath="Text" />
 
+        <Button Click="SubmitButton_Click">Submit</Button>
+        
+        
         <!--<Grid>
             <controls:InfoBar
                 x:Name="SuccessInfoBar"

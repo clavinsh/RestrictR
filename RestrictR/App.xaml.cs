@@ -15,7 +15,7 @@ namespace RestrictR
     /// </summary>
     public partial class App : Application
     {
-        private IMessenger _messenger { get; set; } = new();
+        //private IMessenger _messenger { get; set; } = new();
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -40,7 +40,7 @@ namespace RestrictR
             //    .BuildServiceProvider());
 
 
-            m_window = new MainWindow(_messenger);
+            m_window = new MainWindow();
             m_window.Activate();
         }
 
