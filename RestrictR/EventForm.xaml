@@ -24,6 +24,7 @@
                   DisplayMemberPath="Text" />
 
         <Button Click="SubmitButton_Click">Submit</Button>
+        <Button Click="CancelButton_Click">Cancel</Button>
         
         
         <!--<Grid>
