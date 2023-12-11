@@ -26,6 +26,16 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </DataTemplate>
+        <DataTemplate x:Key="ErrorTemplate">
+            <ItemsControl ItemsSource="{Binding}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                       Foreground="DeepPink" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DataTemplate>
     </Page.Resources>
     
     <!--<Page.Resources>
@@ -61,14 +71,15 @@
                   SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   SelectedValuePath="Value" 
                   DisplayMemberPath="Text" />
+
+        <TextBlock Text="{x:Bind ViewModel.ValidationErrorsMessage, Mode=OneWay}" Foreground="Red"></TextBlock>
         
-        <ContentPresenter x:Name="ErrorPresenter"
-                          x:Load="False"
-                          Content="{x:Bind ValidationErrors, Mode=OneWay}"
-                          ContentTemplate="{x:Bind ErrorTemplate, Mode=OneWay}"
+        <!--<ContentPresenter x:Name="ErrorPresenter"
+                          Content="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}"
+                          ContentTemplate="{Binding ErrorTemplate}"
                           Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
-                          AutomationProperties.AccessibilityView="Raw" />
-        
+                          AutomationProperties.AccessibilityView="Raw" />-->
+        <!--x:Load="False"-->
         <!--<Button Command="{x:Bind ViewModel.SubmitCommand}" Content="Submit" />-->
 
         <Button Click="CancelButton_Click">Cancel</Button>
