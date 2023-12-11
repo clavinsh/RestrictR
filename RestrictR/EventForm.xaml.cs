@@ -25,13 +25,12 @@ namespace RestrictR
     /// </summary>
     public sealed partial class EventForm : Page
     {
-        public EventViewModel ViewModel { get; set;}
+        public EventViewModel ViewModel => (EventViewModel)DataContext;
 
         public EventForm()
         {
             this.InitializeComponent();
-            ViewModel = new EventViewModel();
-            DataContext = ViewModel;
+            DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
         }
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)

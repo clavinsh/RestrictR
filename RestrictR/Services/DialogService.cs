@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,8 @@ namespace RestrictR.Services
     {
         public Task ShowMessageDialogAsync(string title, string message)
         {
-            ContentDialog dialog = new();
+            ContentDialog dialog = new ContentDialog();
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.Title = title;
             dialog.CloseButtonText = "Close";
             dialog.DefaultButton = ContentDialogButton.Close;

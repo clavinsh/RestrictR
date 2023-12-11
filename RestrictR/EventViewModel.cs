@@ -13,16 +13,22 @@ using RestrictR.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using Windows.System;
+using Microsoft.UI.Xaml;
+using System.Runtime.CompilerServices;
 
 namespace RestrictR
 {
     public partial class EventViewModel : ObservableValidator
     {
-//private IMessenger _messenger;
+        public event EventHandler FormSubmissionCompleted;
+        public event EventHandler FormSubmissionFailed;
+
+        //private IDialogService DialogService;
 
         // and sets the default values for the inputs
         public EventViewModel()
         {
+
             //_messenger = messenger;
 
             // used for form invalidation - disabling the primary button by sending a message to the main window
@@ -51,12 +57,8 @@ namespace RestrictR
             };
 
             UpdateStartDateTime();
+            //DialogService = dialogService;
         }
-
-        //public event EventHandler FormSubmissionCompleted;
-        //public event EventHandler FormSubmissionFailed;
-
-        public bool IsFormValid => !HasErrors;
 
         private Event _event;
 
@@ -86,9 +88,6 @@ namespace RestrictR
                 {
                     SetProperty(ref _startDate, value, true);
                     UpdateStartDateTime();
-                    OnPropertyChanged(nameof(StartDate));
-
-                    //ValidateProperty(StartDate, nameof(StartDate));
                 }
             }
         }
@@ -160,11 +159,53 @@ namespace RestrictR
         }
 
 
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //protected new virtual void OnPropertyChanged(string propertyName)
+        //[RelayCommand]
+        //private void Submit()
         //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //    ValidateAllProperties();
+
+        //    if (HasErrors)
+        //    {
+        //        FormSubmissionFailed?.Invoke(this, EventArgs.Empty);
+        //    }
+        //    else
+        //    {
+        //        FormSubmissionCompleted?.Invoke(this, EventArgs.Empty);
+        //    }
+        //}
+
+
+        //[RelayCommand]
+        //private void ShowErrors()
+        //{
+        //    string message = string.Join(Environment.NewLine, GetErrors().Select(e => e.ErrorMessage));
+
+        //    //_ = DialogService.ShowMessageDialogAsync("Validation errors", message);
+        //}
+
+        //public new event PropertyChangedEventHandler PropertyChanged;
+
+        //private new void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        //    => PropertyChanged?.Invoke(this, new(propertyName));
+
+        //private void ValidateStartDate()
+        //{
+        //    var errors = new List<string>();
+
+        //    if (StartDate.Date >= DateTimeOffset.Now.Date)
+        //        errors.Add("Start date must be specified as the current day at the earliest, if no recurrence is present");
+
+        //    SetErrors()
+        //}
+
+        //        private void SetErrors(string key, ICollection<string> errors)
+        //{
+        //    if (errors.Any())
+        //        _validationErrors[key] = errors;
+        //    else
+        //        _ = _validationErrors.Remove(key);
+
+        //    OnErrorsChanged(key);
         //}
 
         //[RelayCommand]

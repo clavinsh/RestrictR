@@ -15,6 +15,7 @@
     <None Remove="DateTimePickerControl.xaml" />
     <None Remove="EventForm.xaml" />
     <None Remove="EventList.xaml" />
+    <None Remove="ValidationStyles.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataPacketLibrary\DataPacketLibrary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="ValidationStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="EventList.xaml">

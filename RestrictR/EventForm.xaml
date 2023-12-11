@@ -6,24 +6,71 @@
     xmlns:local="using:RestrictR"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:collections="using:System.Collections"
+    xmlns:dataannotations="using:System.ComponentModel.DataAnnotations"
     xmlns:interactions="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:attached="using:RestrictR.Attached"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls" xmlns:system="using:System"
     d:DataContext="{d:DesignInstance Type=local:EventViewModel}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     
+    <Page.Resources>
+        <DataTemplate x:Key="DefaultInputValidationErrorTemplate" x:DataType="collections:IEnumerable">
+            <ItemsControl ItemsSource="{x:Bind (collections:IEnumerable)}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="dataannotations:ValidationResult">
+                        <TextBlock Text="{x:Bind ErrorMessage}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DataTemplate>
+    </Page.Resources>
+    
+    <!--<Page.Resources>
+        <DataTemplate x:Key="ValidationTemplate" x:DataType="system:DateTimeOffset">
+            <TextBlock Foreground="{ThemeResource SystemFillColorCriticalBackgroundBrush}" Text="{x:Bind}"></TextBlock>
+        </DataTemplate>
+    </Page.Resources>-->
+    
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay}"></DatePicker>
-        <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay}"></TimePicker>
-        <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration}"></TimePicker>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="InputValidationErrorStates">
+                <VisualState x:Name="Errors">
+                    <VisualState.Setters>
+                        <Setter Target="ErrorPresenter.Visibility"
+                                Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ErrorsCleared" />
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+
+        <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+
+                    ></DatePicker>
+        <!--attached:Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                    attached:Validation.ValidationPropertyName="Start Date"
+                    attached:Validation.ValidationProvider="{x:Bind ViewModel}"-->
+        <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
+        <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
 
         <ComboBox ItemsSource="{x:Bind ViewModel.RecurrenceItems}"
-                  SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay}"
+                  SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   SelectedValuePath="Value" 
                   DisplayMemberPath="Text" />
+        
+        <ContentPresenter x:Name="ErrorPresenter"
+                          x:Load="False"
+                          Content="{x:Bind ValidationErrors, Mode=OneWay}"
+                          ContentTemplate="{x:Bind ErrorTemplate, Mode=OneWay}"
+                          Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
+                          AutomationProperties.AccessibilityView="Raw" />
+        
+        <!--<Button Command="{x:Bind ViewModel.SubmitCommand}" Content="Submit" />-->
 
-        <Button Click="SubmitButton_Click">Submit</Button>
         <Button Click="CancelButton_Click">Cancel</Button>
         
         
