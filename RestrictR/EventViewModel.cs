@@ -28,7 +28,7 @@ namespace RestrictR
         // and sets the default values for the inputs
         public EventViewModel()
         {
-
+            ErrorsChanged += SetValidationErrors;
             //_messenger = messenger;
 
             // used for form invalidation - disabling the primary button by sending a message to the main window
@@ -91,6 +91,21 @@ namespace RestrictR
                 }
             }
         }
+
+        private string validationErrorsMessage;
+        public string ValidationErrorsMessage
+        {
+            get { return validationErrorsMessage; }
+            set
+            {
+                if (validationErrorsMessage != value)
+                {
+                    SetProperty(ref validationErrorsMessage, value);
+                }
+            } 
+        }
+        //=> GetErrors();
+
 
         private TimeSpan _startTime;
 
@@ -156,6 +171,26 @@ namespace RestrictR
         private void UpdateStartDateTime()
         {
             Event.Start = _startDate.Date + _startTime;
+        }
+
+        private INotifyDataErrorInfo dataErrorSource;
+        //private void Profile_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        //{
+        //    var newDataErrorSource = args.NewValue as INotifyDataErrorInfo;
+        //    if (dataErrorSource is not null && dataErrorSource != newDataErrorSource)
+        //    {
+        //        dataErrorSource.ErrorsChanged -= ProfileErrorsChanged;
+        //    }
+        //    dataErrorSource = newDataErrorSource;
+        //    if (dataErrorSource is not null)
+        //    {
+        //        dataErrorSource.ErrorsChanged += ProfileErrorsChanged;
+        //    }
+        //}
+
+        private void SetValidationErrors(object sender, DataErrorsChangedEventArgs e)
+        {
+            ValidationErrorsMessage = string.Join(Environment.NewLine, GetErrors().Select(e => e.ErrorMessage));
         }
 
 
