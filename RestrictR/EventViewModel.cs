@@ -15,31 +15,16 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.System;
 using Microsoft.UI.Xaml;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace RestrictR
 {
     public partial class EventViewModel : ObservableValidator
     {
-        public event EventHandler FormSubmissionCompleted;
-        public event EventHandler FormSubmissionFailed;
-
-        //private IDialogService DialogService;
-
-        // and sets the default values for the inputs
         public EventViewModel()
         {
             ErrorsChanged += SetValidationErrors;
-            //_messenger = messenger;
-
-            // used for form invalidation - disabling the primary button by sending a message to the main window
-            //PropertyChanged += (s, e) =>
-            //{
-            //    if (e.PropertyName == "HasErrors")
-            //    {
-            //        _messenger.Send(new FormValidityChangedMessage { IsFormValid = this.IsFormValid });
-            //    }
-            //};
-
 
             _startDate = DateTimeOffset.Now;
             _startTime = DateTimeOffset.Now.TimeOfDay;
@@ -57,7 +42,6 @@ namespace RestrictR
             };
 
             UpdateStartDateTime();
-            //DialogService = dialogService;
         }
 
         private Event _event;
@@ -92,23 +76,20 @@ namespace RestrictR
             }
         }
 
-        private string validationErrorsMessage;
-        public string ValidationErrorsMessage
+        private IEnumerable<ValidationResult> validationErrors;
+        public IEnumerable<ValidationResult> ValidationErrors
         {
-            get { return validationErrorsMessage; }
+            get { return validationErrors; }
             set
             {
-                if (validationErrorsMessage != value)
+                if (validationErrors != value)
                 {
-                    SetProperty(ref validationErrorsMessage, value);
+                    SetProperty(ref validationErrors, value);
                 }
             } 
         }
-        //=> GetErrors();
-
 
         private TimeSpan _startTime;
-
         public TimeSpan StartTime
         {
             get { return _startTime; }
@@ -127,7 +108,6 @@ namespace RestrictR
 
 
         private int _recurrence;
-
         public int Recurrence
         {
             get { return _recurrence; }
@@ -159,7 +139,7 @@ namespace RestrictR
             Event.Recurrence = (Event.RecurrenceType)_recurrence;
         }
 
-        private IEnumerable<RecurrenceItem> GetRecurrenceItems()
+        private static IEnumerable<RecurrenceItem> GetRecurrenceItems()
         {
             yield return new RecurrenceItem() { Text = "None", Value = (int)Event.RecurrenceType.None };
             yield return new RecurrenceItem() { Text = "Daily", Value = (int)Event.RecurrenceType.Daily };
@@ -168,103 +148,89 @@ namespace RestrictR
             yield return new RecurrenceItem() { Text = "Yearly", Value = (int)Event.RecurrenceType.Yearly };
         }
 
+
+        // Property to add new app install location
+        private string _newAppInstallLocation;
+        public string NewAppInstallLocation
+        {
+            get => _newAppInstallLocation;
+            set => SetProperty(ref _newAppInstallLocation, value);
+        }
+
+        // Command to add new app install location
+        public ICommand AddAppInstallLocationCommand => new RelayCommand(AddAppInstallLocation);
+
+        private void AddAppInstallLocation()
+        {
+            if (!string.IsNullOrWhiteSpace(NewAppInstallLocation))
+            {
+                Event.BlockedAppInstallLocations.Add(NewAppInstallLocation);
+                NewAppInstallLocation = string.Empty;
+                OnPropertyChanged(nameof(Event.BlockedAppInstallLocations));
+            }
+        }
+
+        // Property to bind BlockAllSites CheckBox
+        public bool BlockAllSites
+        {
+            get => Event.BlockedSites.BlockAllSites;
+            set
+            {
+                if (Event.BlockedSites.BlockAllSites != value)
+                {
+                    if (value)
+                    {
+                        Event.BlockedSites.BlockedWebsiteUrls = null;
+                    }
+                    else if (Event.BlockedSites.BlockedWebsiteUrls == null)
+                    {
+                        Event.BlockedSites.BlockedWebsiteUrls = new List<string>();
+                    }
+
+                    Event.BlockedSites.BlockAllSites = value;
+                    OnPropertyChanged(nameof(BlockAllSites));
+                    OnPropertyChanged(nameof(Event.BlockedSites.BlockedWebsiteUrls));
+                }
+            }
+        }
+
+        // Property to add new blocked website URL
+        private string _newBlockedUrl;
+        public string NewBlockedUrl
+        {
+            get => _newBlockedUrl;
+            set => SetProperty(ref _newBlockedUrl, value);
+        }
+
+        // Command to add new blocked website URL
+        public ICommand AddBlockedUrlCommand => new RelayCommand(AddBlockedUrl);
+
+        private void AddBlockedUrl()
+        {
+            if (!string.IsNullOrWhiteSpace(NewBlockedUrl))
+            {
+                BlockAllSites = false;
+                if (Event.BlockedSites.BlockedWebsiteUrls == null)
+                {
+                    Event.BlockedSites.BlockedWebsiteUrls = new List<string>();
+                }
+
+                Event.BlockedSites.BlockedWebsiteUrls.Add(NewBlockedUrl);
+                NewBlockedUrl = string.Empty;
+                OnPropertyChanged(nameof(Event.BlockedSites.BlockedWebsiteUrls));
+            }
+        }
+
+
+
         private void UpdateStartDateTime()
         {
             Event.Start = _startDate.Date + _startTime;
         }
 
-        private INotifyDataErrorInfo dataErrorSource;
-        //private void Profile_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        //{
-        //    var newDataErrorSource = args.NewValue as INotifyDataErrorInfo;
-        //    if (dataErrorSource is not null && dataErrorSource != newDataErrorSource)
-        //    {
-        //        dataErrorSource.ErrorsChanged -= ProfileErrorsChanged;
-        //    }
-        //    dataErrorSource = newDataErrorSource;
-        //    if (dataErrorSource is not null)
-        //    {
-        //        dataErrorSource.ErrorsChanged += ProfileErrorsChanged;
-        //    }
-        //}
-
         private void SetValidationErrors(object sender, DataErrorsChangedEventArgs e)
         {
-            ValidationErrorsMessage = string.Join(Environment.NewLine, GetErrors().Select(e => e.ErrorMessage));
+            ValidationErrors = GetErrors(); 
         }
-
-
-        //[RelayCommand]
-        //private void Submit()
-        //{
-        //    ValidateAllProperties();
-
-        //    if (HasErrors)
-        //    {
-        //        FormSubmissionFailed?.Invoke(this, EventArgs.Empty);
-        //    }
-        //    else
-        //    {
-        //        FormSubmissionCompleted?.Invoke(this, EventArgs.Empty);
-        //    }
-        //}
-
-
-        //[RelayCommand]
-        //private void ShowErrors()
-        //{
-        //    string message = string.Join(Environment.NewLine, GetErrors().Select(e => e.ErrorMessage));
-
-        //    //_ = DialogService.ShowMessageDialogAsync("Validation errors", message);
-        //}
-
-        //public new event PropertyChangedEventHandler PropertyChanged;
-
-        //private new void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        //    => PropertyChanged?.Invoke(this, new(propertyName));
-
-        //private void ValidateStartDate()
-        //{
-        //    var errors = new List<string>();
-
-        //    if (StartDate.Date >= DateTimeOffset.Now.Date)
-        //        errors.Add("Start date must be specified as the current day at the earliest, if no recurrence is present");
-
-        //    SetErrors()
-        //}
-
-        //        private void SetErrors(string key, ICollection<string> errors)
-        //{
-        //    if (errors.Any())
-        //        _validationErrors[key] = errors;
-        //    else
-        //        _ = _validationErrors.Remove(key);
-
-        //    OnErrorsChanged(key);
-        //}
-
-        //[RelayCommand]
-        //private void Submit()
-        //{
-        //    ValidateAllProperties();
-
-        //    if (HasErrors)
-        //    {
-        //        FormSubmissionFailed?.Invoke(this, EventArgs.Empty);
-        //    }
-        //    else
-        //    {
-        //        FormSubmissionCompleted?.Invoke(this, EventArgs.Empty);
-        //    }
-
-        //}
-
-        //[RelayCommand]
-        //private void ShowErrors()
-        //{
-        //    string msg = string.Join(Environment.NewLine, GetErrors().Select(e => e.ErrorMessage));
-
-        //    //_ = DialogService.ShowMessageDialogAsync("Validation errors", msg);
-        //}
     }
 }
