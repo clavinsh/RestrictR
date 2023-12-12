@@ -11,59 +11,28 @@
     xmlns:interactions="using:Microsoft.Xaml.Interactions.Core"
     xmlns:attached="using:RestrictR.Attached"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:controls="using:Microsoft.UI.Xaml.Controls" xmlns:system="using:System"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
+    
     d:DataContext="{d:DesignInstance Type=local:EventViewModel}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    
+
     <Page.Resources>
-        <DataTemplate x:Key="DefaultInputValidationErrorTemplate" x:DataType="collections:IEnumerable">
-            <ItemsControl ItemsSource="{x:Bind (collections:IEnumerable)}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="dataannotations:ValidationResult">
-                        <TextBlock Text="{x:Bind ErrorMessage}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+        <DataTemplate x:Key="ValidationResultTemplate" x:DataType="dataannotations:ValidationResult">
+            <Border Margin="5" Padding="10" Background="LightPink" CornerRadius="5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text="Error: " FontWeight="Bold"/>
+                    <TextBlock Text="{Binding ErrorMessage}" />
+                </StackPanel>
+            </Border>
         </DataTemplate>
-        <DataTemplate x:Key="ErrorTemplate">
-            <ItemsControl ItemsSource="{Binding}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding ErrorMessage}"
-                                       Foreground="DeepPink" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </DataTemplate>
+
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Page.Resources>
     
-    <!--<Page.Resources>
-        <DataTemplate x:Key="ValidationTemplate" x:DataType="system:DateTimeOffset">
-            <TextBlock Foreground="{ThemeResource SystemFillColorCriticalBackgroundBrush}" Text="{x:Bind}"></TextBlock>
-        </DataTemplate>
-    </Page.Resources>-->
-    
+
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="InputValidationErrorStates">
-                <VisualState x:Name="Errors">
-                    <VisualState.Setters>
-                        <Setter Target="ErrorPresenter.Visibility"
-                                Value="Visible" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="ErrorsCleared" />
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        
-
-        <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-
-                    ></DatePicker>
-        <!--attached:Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
-                    attached:Validation.ValidationPropertyName="Start Date"
-                    attached:Validation.ValidationProvider="{x:Bind ViewModel}"-->
+        <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
         <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
         <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
 
@@ -72,8 +41,47 @@
                   SelectedValuePath="Value" 
                   DisplayMemberPath="Text" />
 
-        <TextBlock Text="{x:Bind ViewModel.ValidationErrorsMessage, Mode=OneWay}" Foreground="Red"></TextBlock>
-        
+        <StackPanel>
+            <TextBlock Text="Blocked App Install Locations" FontWeight="Bold"/>
+            <ListView ItemsSource="{x:Bind ViewModel.Event.BlockedAppInstallLocations, Mode=OneWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="200" PlaceholderText="Add new location" Text="{x:Bind ViewModel.NewAppInstallLocation, Mode=TwoWay}"/>
+                <Button Content="Add" Command="{x:Bind ViewModel.AddAppInstallLocationCommand}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Section for Blocked Sites -->
+        <StackPanel>
+            <CheckBox Content="Block All Websites" IsChecked="{x:Bind ViewModel.BlockAllSites, Mode=TwoWay}"/>
+
+            <!-- Visibility of this StackPanel depends on BlockAllSites -->
+            <StackPanel Visibility="{x:Bind ViewModel.BlockAllSites, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+                <TextBlock Text="Blocked Websites URLs" FontWeight="Bold"/>
+                <ListView ItemsSource="{x:Bind ViewModel.Event.BlockedSites.BlockedWebsiteUrls, Mode=OneWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Width="200" PlaceholderText="Add new URL" Text="{x:Bind ViewModel.NewBlockedUrl, Mode=TwoWay}"/>
+                    <Button Content="Add" Command="{x:Bind ViewModel.AddBlockedUrlCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+
+        <!--<TextBlock Text="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}" Style="{StaticResource ErrorTemplate}" />-->
+        <ItemsControl ItemsSource="{Binding ValidationErrors}" 
+              ItemTemplate="{StaticResource ValidationResultTemplate}" />
+
         <!--<ContentPresenter x:Name="ErrorPresenter"
                           Content="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}"
                           ContentTemplate="{Binding ErrorTemplate}"
