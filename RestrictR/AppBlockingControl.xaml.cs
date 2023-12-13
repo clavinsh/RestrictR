@@ -1,5 +1,3 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -21,42 +19,18 @@ using Windows.Foundation.Collections;
 
 namespace RestrictR
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class EventForm : Page
+    public sealed partial class AppBlockingControl : UserControl
     {
-        public EventViewModel ViewModel => (EventViewModel)DataContext;
-
         List<ApplicationInfo> Apps = new();
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
-        public EventForm()
+        public AppBlockingControl()
         {
             this.InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
+
             LoadApps();
         }
-
-        private void SubmitButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (MainWindow.MainFrame.CanGoBack)
-            {
-                MainWindow.MainFrame.GoBack();
-            }
-        }
-
-        //// collapses or shows the grid containing apps, search fn and the blocked/selected ones
-        //private void BlockAppsButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    AppBlockScrollViewer.Visibility = AppBlockScrollViewer.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-        //}
 
         // Fills the list of all apps and the collection that will hold the filtered data
         // The collection is also set as the ListView's ItemSource (viewable UI elem)
