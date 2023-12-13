@@ -6,12 +6,7 @@
     xmlns:local="using:RestrictR"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:collections="using:System.Collections"
     xmlns:dataannotations="using:System.ComponentModel.DataAnnotations"
-    xmlns:interactions="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:attached="using:RestrictR.Attached"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     
     d:DataContext="{d:DesignInstance Type=local:EventViewModel}"
     mc:Ignorable="d"
@@ -26,10 +21,8 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
-
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Page.Resources>
-    
+
 
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
@@ -41,99 +34,67 @@
                   SelectedValuePath="Value" 
                   DisplayMemberPath="Text" />
 
-        <StackPanel>
-            <TextBlock Text="Blocked App Install Locations" FontWeight="Bold"/>
-            <ListView ItemsSource="{x:Bind ViewModel.Event.BlockedAppInstallLocations, Mode=OneWay}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <StackPanel Orientation="Horizontal">
-                <TextBox Width="200" PlaceholderText="Add new location" Text="{x:Bind ViewModel.NewAppInstallLocation, Mode=TwoWay}"/>
-                <Button Content="Add" Command="{x:Bind ViewModel.AddAppInstallLocationCommand}"/>
-            </StackPanel>
-        </StackPanel>
+        <Expander Header="Block Apps" x:Name="AppBlockExpander">
+            <Grid x:Name="AppBlockGrid" MinWidth="400">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
 
-        <!-- Section for Blocked Sites -->
-        <StackPanel>
-            <CheckBox Content="Block All Websites" IsChecked="{x:Bind ViewModel.BlockAllSites, Mode=TwoWay}"/>
+                <StackPanel HorizontalAlignment="Left" Grid.Row="0">
+                    <TextBox x:Name="FilterByFirstName" Width="250" Header="Filter by application name" Margin="8" HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
+                </StackPanel>
 
-            <!-- Visibility of this StackPanel depends on BlockAllSites -->
-            <StackPanel Visibility="{x:Bind ViewModel.BlockAllSites, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
-                <TextBlock Text="Blocked Websites URLs" FontWeight="Bold"/>
-                <ListView ItemsSource="{x:Bind ViewModel.Event.BlockedSites.BlockedWebsiteUrls, Mode=OneWay}">
+                <ListView x:Name="FilteredListView"
+                          SelectionMode="Multiple"
+                          ItemsSource="{x:Bind AppsFiltered}"
+                          Grid.Row="1"
+                          Width="500">
                     <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}"/>
+                        <DataTemplate x:DataType="local:ApplicationInfo">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="500"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Ellipse x:Name="Ellipse"
+                                         Grid.RowSpan="2"
+                                         Width ="32"
+                                         Height="32"
+                                         Margin="6"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{x:Bind DisplayName}"
+                                           x:Phase="1"
+                                           Style="{ThemeResource BaseTextBlockStyle}"
+                                           Margin="12,6,0,0"/>
+
+                                <TextBlock Grid.Column="1" Grid.Row="1"
+                                           Text="{x:Bind DisplayVersion}"
+                                           x:Phase="2"
+                                           Style="{ThemeResource BodyTextBlockStyle}"
+                                           Margin="12,0,0,6"/>
+                            </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Width="200" PlaceholderText="Add new URL" Text="{x:Bind ViewModel.NewBlockedUrl, Mode=TwoWay}"/>
-                    <Button Content="Add" Command="{x:Bind ViewModel.AddBlockedUrlCommand}"/>
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
+            </Grid>
+        </Expander>
 
+        <!--<ScrollViewer x:Name="AppBlockScrollViewer" Visibility="Collapsed" MaxHeight="300">
+            
+        </ScrollViewer>-->
 
-        <!--<TextBlock Text="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}" Style="{StaticResource ErrorTemplate}" />-->
         <ItemsControl ItemsSource="{Binding ValidationErrors}" 
               ItemTemplate="{StaticResource ValidationResultTemplate}" />
 
-        <!--<ContentPresenter x:Name="ErrorPresenter"
-                          Content="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}"
-                          ContentTemplate="{Binding ErrorTemplate}"
-                          Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}"
-                          AutomationProperties.AccessibilityView="Raw" />-->
-        <!--x:Load="False"-->
-        <!--<Button Command="{x:Bind ViewModel.SubmitCommand}" Content="Submit" />-->
-
         <Button Click="CancelButton_Click">Cancel</Button>
-        
-        
-        <!--<Grid>
-            <controls:InfoBar
-                x:Name="SuccessInfoBar"
-                Title="Success"
-                Message="The form was filled in correctly."
-                Severity="Success">
-                <interactivity:Interaction.Behaviors>
-                    <interactions:EventTriggerBehavior EventName="FormSubmissionCompleted" SourceObject="{x:Bind ViewModel}">
-                        <interactions:ChangePropertyAction
-                            PropertyName="IsOpen"
-                            TargetObject="{x:Bind SuccessInfoBar}"
-                            Value="True" />
-                        <interactions:ChangePropertyAction
-                            PropertyName="IsOpen"
-                            TargetObject="{x:Bind FailureInfoBar}"
-                            Value="False" />
-                    </interactions:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </controls:InfoBar>
-            <controls:InfoBar
-                x:Name="FailureInfoBar"
-                Title="Error"
-                Message="The form was filled in with some errors."
-                Severity="Error">
-                <controls:InfoBar.ActionButton>
-                    <Button Command="{x:Bind ViewModel.ShowErrorsCommand}" Content="Show errors" />
-                </controls:InfoBar.ActionButton>
-                <interactivity:Interaction.Behaviors>
-                    <interactions:EventTriggerBehavior EventName="FormSubmissionFailed" SourceObject="{x:Bind ViewModel}">
-                        <interactions:ChangePropertyAction
-                            PropertyName="IsOpen"
-                            TargetObject="{x:Bind SuccessInfoBar}"
-                            Value="False" />
-                        <interactions:ChangePropertyAction
-                            PropertyName="IsOpen"
-                            TargetObject="{x:Bind FailureInfoBar}"
-                            Value="True" />
-                    </interactions:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </controls:InfoBar>
-        </Grid>-->
     </StackPanel>
 </Page>
-

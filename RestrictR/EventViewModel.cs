@@ -44,6 +44,7 @@ namespace RestrictR
             UpdateStartDateTime();
         }
 
+        
         private Event _event;
 
         public Event Event
