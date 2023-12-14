@@ -10,6 +10,8 @@ namespace DataPacketLibrary
 
     public class Event
     {
+        public Guid EventId { get; set; }
+
         public List<string>? BlockedAppInstallLocations { get; set; }
 
         public BlockedWebsites? BlockedSites { get; set; }
