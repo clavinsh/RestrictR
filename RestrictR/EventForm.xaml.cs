@@ -1,12 +1,14 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI;
+using DataPacketLibrary;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Media3D;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
@@ -29,15 +31,39 @@ namespace RestrictR
     {
         public EventViewModelNew ViewModel => (EventViewModelNew)DataContext;
 
+        private BlockingConfigurator blockingConfigurator;
+
         public EventForm()
         {
             this.InitializeComponent();
             DataContext = Ioc.Default.GetRequiredService<EventViewModelNew>();
+
+            blockingConfigurator = new BlockingConfigurator();
         }
 
+        // submits the new event to the service
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
+            // the viewmodel is converted to an event
+            if (!ViewModel.HasErrors)
+            {
+                Event submission = ConvertToEvent(ViewModel);
 
+            }
+
+        }
+
+        private static Event ConvertToEvent(EventViewModelNew viewModel)
+        {
+            Event converted = new()
+            {
+                Start = viewModel.StartDate.Date + viewModel.StartTime,
+                Duration = viewModel.Duration,
+                Recurrence = viewModel.RecurrenceType,
+                BlockedAppInstallLocations = viewModel.BlockedApplications.Select(app => app.InstallLocation).ToList()
+            };
+
+            return converted;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

@@ -141,7 +141,6 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    
                 </Grid>
             </Expander>
 
@@ -149,6 +148,7 @@
                   ItemTemplate="{StaticResource ValidationResultTemplate}" />
 
             <Button Click="CancelButton_Click">Cancel</Button>
+            <Button Click="SubmitButton_Click">Submit</Button>
         </StackPanel>
     </ScrollViewer>
 </Page>
