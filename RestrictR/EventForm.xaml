@@ -23,78 +23,131 @@
         </DataTemplate>
     </Page.Resources>
 
+    <ScrollViewer>
+        <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+            <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
+            <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
 
-    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
-        <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
-        <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
+            <ComboBox ItemsSource="{x:Bind ViewModel.RecurrenceItems}"
+                      SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedValuePath="Value" 
+                      DisplayMemberPath="Text" />
 
-        <ComboBox ItemsSource="{x:Bind ViewModel.RecurrenceItems}"
-                  SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedValuePath="Value" 
-                  DisplayMemberPath="Text" />
+            <Expander Header="Block Apps" x:Name="AppBlockExpander">
+                <Grid x:Name="AppBlockGrid" MinWidth="1000">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="500"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-        <Expander Header="Block Apps" x:Name="AppBlockExpander">
-            <Grid x:Name="AppBlockGrid" MinWidth="400">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
+                    <StackPanel HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0">
+                        <TextBox x:Name="FilterByFirstName" Width="250" Header="Filter by application name" Margin="8" HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
+                    </StackPanel>
 
-                <StackPanel HorizontalAlignment="Left" Grid.Row="0">
-                    <TextBox x:Name="FilterByFirstName" Width="250" Header="Filter by application name" Margin="8" HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
-                </StackPanel>
-
-                <ListView x:Name="FilteredListView"
-                          SelectionMode="Multiple"
-                          ItemsSource="{x:Bind AppsFiltered}"
-                          Grid.Row="1"
-                          Width="500">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="local:ApplicationInfo">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="500"/>
-                                </Grid.ColumnDefinitions>
+                    <ListView x:Name="FilteredListView"
+                              SelectionMode="Multiple"
+                              ItemsSource="{x:Bind ViewModel.AppsFiltered}"
+                              SelectionChanged="FilteredListView_SelectionChanged"
+                              Grid.Row="1"
+                              Grid.Column="0"
+                              Width="500">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:ApplicationInfo">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
                                 
-                                <Ellipse x:Name="Ellipse"
-                                         Grid.RowSpan="2"
-                                         Width ="32"
-                                         Height="32"
-                                         Margin="6"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"
-                                         Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
-                                <TextBlock Grid.Column="1"
-                                           Text="{x:Bind DisplayName}"
-                                           x:Phase="1"
-                                           Style="{ThemeResource BaseTextBlockStyle}"
-                                           Margin="12,6,0,0"/>
+                                    <Ellipse x:Name="Ellipse"
+                                             Grid.RowSpan="2"
+                                             Width ="32"
+                                             Height="32"
+                                             Margin="6"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{x:Bind DisplayName}"
+                                               x:Phase="1"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
+                                               Margin="12,6,0,0"/>
 
-                                <TextBlock Grid.Column="1" Grid.Row="1"
-                                           Text="{x:Bind DisplayVersion}"
-                                           x:Phase="2"
-                                           Style="{ThemeResource BodyTextBlockStyle}"
-                                           Margin="12,0,0,6"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-        </Expander>
+                                    <TextBlock Grid.Column="1" Grid.Row="1"
+                                               Text="{x:Bind DisplayVersion}"
+                                               x:Phase="2"
+                                               Style="{ThemeResource BodyTextBlockStyle}"
+                                               Margin="12,0,0,6"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
 
-        <!--<ScrollViewer x:Name="AppBlockScrollViewer" Visibility="Collapsed" MaxHeight="300">
-            
-        </ScrollViewer>-->
+                    <ListView Header="Blocked Apps"
+                              ItemsSource="{x:Bind ViewModel.BlockedApplications}"
+                              SelectionMode="None"
+                              Grid.Row="1"
+                              Grid.Column="1"
+                              Width="500">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:ApplicationInfo">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-        <ItemsControl ItemsSource="{Binding ValidationErrors}" 
-              ItemTemplate="{StaticResource ValidationResultTemplate}" />
+                                    <Ellipse x:Name="Ellipse" Grid.RowSpan="2"
+                                             Grid.Column="0"
+                                             Width ="32"
+                                             Height="32"
+                                             Margin="6"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{x:Bind DisplayName}"
+                                               x:Phase="1"
+                                               Style="{ThemeResource BaseTextBlockStyle}"
+                                               Margin="12,6,0,0"/>
 
-        <Button Click="CancelButton_Click">Cancel</Button>
-    </StackPanel>
+                                    <TextBlock Grid.Column="1" Grid.Row="1"
+                                               Text="{x:Bind DisplayVersion}"
+                                               x:Phase="2"
+                                               Style="{ThemeResource BodyTextBlockStyle}"
+                                               Margin="12,0,0,6"/>
+
+                                    <Button Content="Unblock"
+                                            Grid.RowSpan="2"
+                                            Grid.Column="2"
+                                            Click="UnblockAppButton_Click"
+                                            CommandParameter="{x:Bind}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    
+                </Grid>
+            </Expander>
+
+            <ItemsControl ItemsSource="{Binding ValidationErrors}" 
+                  ItemTemplate="{StaticResource ValidationResultTemplate}" />
+
+            <Button Click="CancelButton_Click">Cancel</Button>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

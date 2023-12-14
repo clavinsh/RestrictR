@@ -22,6 +22,12 @@ namespace RestrictR
 {
     public partial class EventViewModel : ObservableValidator
     {
+        public List<ApplicationInfo> Apps = new();
+
+        public ObservableCollection<ApplicationInfo> AppsFiltered;
+
+        public ObservableCollection<ApplicationInfo> BlockedApplications { get; private set; } = new ObservableCollection<ApplicationInfo>();
+
         public EventViewModel()
         {
             ErrorsChanged += SetValidationErrors;
@@ -42,9 +48,19 @@ namespace RestrictR
             };
 
             UpdateStartDateTime();
+
+            LoadApps();
         }
 
-        
+        // Fills the list of all apps and the collection that will hold the filtered data
+        private void LoadApps()
+        {
+            Apps = ApplicationRetriever.GetInstalledApplicationsFromRegistry();
+            AppsFiltered = new ObservableCollection<ApplicationInfo>(Apps);
+        }
+
+
+
         private Event _event;
 
         public Event Event
@@ -59,6 +75,7 @@ namespace RestrictR
                 }
             }
         }
+
 
         private DateTimeOffset _startDate;
 
@@ -108,6 +125,7 @@ namespace RestrictR
         }
 
 
+
         private int _recurrence;
         public int Recurrence
         {
@@ -135,10 +153,6 @@ namespace RestrictR
             get { return GetRecurrenceItems(); }
         }
 
-        private void UpdateRecurrence()
-        {
-            Event.Recurrence = (Event.RecurrenceType)_recurrence;
-        }
 
         private static IEnumerable<RecurrenceItem> GetRecurrenceItems()
         {
@@ -150,26 +164,7 @@ namespace RestrictR
         }
 
 
-        // Property to add new app install location
-        private string _newAppInstallLocation;
-        public string NewAppInstallLocation
-        {
-            get => _newAppInstallLocation;
-            set => SetProperty(ref _newAppInstallLocation, value);
-        }
 
-        // Command to add new app install location
-        public ICommand AddAppInstallLocationCommand => new RelayCommand(AddAppInstallLocation);
-
-        private void AddAppInstallLocation()
-        {
-            if (!string.IsNullOrWhiteSpace(NewAppInstallLocation))
-            {
-                Event.BlockedAppInstallLocations.Add(NewAppInstallLocation);
-                NewAppInstallLocation = string.Empty;
-                OnPropertyChanged(nameof(Event.BlockedAppInstallLocations));
-            }
-        }
 
         // Property to bind BlockAllSites CheckBox
         public bool BlockAllSites
@@ -227,6 +222,15 @@ namespace RestrictR
         private void UpdateStartDateTime()
         {
             Event.Start = _startDate.Date + _startTime;
+        }
+        private void UpdateRecurrence()
+        {
+            Event.Recurrence = (Event.RecurrenceType)_recurrence;
+        }
+
+        private void UpdateBlockedApps()
+        {
+            //Event.BlockedAppInstallLocations = AppsFiltered.sel;
         }
 
         private void SetValidationErrors(object sender, DataErrorsChangedEventArgs e)

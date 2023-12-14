@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -28,15 +29,12 @@ namespace RestrictR
     {
         public EventViewModel ViewModel => (EventViewModel)DataContext;
 
-        List<ApplicationInfo> Apps = new();
 
-        ObservableCollection<ApplicationInfo> AppsFiltered;
 
         public EventForm()
         {
             this.InitializeComponent();
             DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
-            LoadApps();
         }
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
@@ -52,36 +50,21 @@ namespace RestrictR
             }
         }
 
-        //// collapses or shows the grid containing apps, search fn and the blocked/selected ones
-        //private void BlockAppsButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    AppBlockScrollViewer.Visibility = AppBlockScrollViewer.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-        //}
-
-        // Fills the list of all apps and the collection that will hold the filtered data
-        // The collection is also set as the ListView's ItemSource (viewable UI elem)
-        private void LoadApps()
-        {
-            Apps = ApplicationRetriever.GetInstalledApplicationsFromRegistry();
-            AppsFiltered = new ObservableCollection<ApplicationInfo>(Apps);
-            FilteredListView.ItemsSource = AppsFiltered;
-        }
-
         // Event method that gets called every time the filtering input field gets changed
         // (something gets written). Updates the Collection 'AppsFiltered'
         // by querying 'Apps' - DisplayName based on the input 
         private void OnFilterChanged(object sender, TextChangedEventArgs args)
         {
-            List<ApplicationInfo> TempFiltered = Apps.Where(app => app.DisplayName.Contains(FilterByFirstName.Text, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            List<ApplicationInfo> TempFiltered = ViewModel.Apps.Where(app => app.DisplayName.Contains(FilterByFirstName.Text, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             // remove all apps from observ. collection 'AppsFiltered'
             // that are in not in the newly filtered list
-            for (int i = AppsFiltered.Count - 1; i >= 0; i--)
+            for (int i = ViewModel.AppsFiltered.Count - 1; i >= 0; i--)
             {
-                var item = AppsFiltered[i];
+                var item = ViewModel.AppsFiltered[i];
                 if (!TempFiltered.Contains(item))
                 {
-                    AppsFiltered.Remove(item);
+                    ViewModel.AppsFiltered.Remove(item);
                 }
             }
 
@@ -89,10 +72,39 @@ namespace RestrictR
             // to observ. collection that were missing
             foreach (var item in TempFiltered)
             {
-                if (!AppsFiltered.Contains(item))
+                if (!ViewModel.AppsFiltered.Contains(item))
                 {
-                    AppsFiltered.Add(item);
+                    ViewModel.AppsFiltered.Add(item);
                 }
+            }
+        }
+
+        private void FilteredListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListView)
+            {
+                //List<ApplicationInfo> appsToBlock = new();
+                //var selectedApps = FilteredListView.SelectedItems.OfType<ApplicationInfo>().ToList();
+
+                //ViewModel.Event.BlockedAppInstallLocations = appsToBlock.Select(app => app.InstallLocation).ToList();
+
+                foreach (var item in e.AddedItems)
+                {
+                    ViewModel.BlockedApplications.Add(item as ApplicationInfo);
+                }
+
+                foreach (var item in e.RemovedItems)
+                {
+                    ViewModel.BlockedApplications.Remove(item as ApplicationInfo);
+                }
+            }
+        }
+
+        private void UnblockAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is ApplicationInfo appToUnblock)
+            {
+                ViewModel.BlockedApplications.Remove(appToUnblock);
             }
         }
     }
