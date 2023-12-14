@@ -57,6 +57,23 @@ namespace RestrictR
             //await ConfigWriter.WriteToCommonFolder(configString);
         }
 
+        public async Task CreateEvent(Event newEvent)
+        {
+            string configString = JsonSerializer.Serialize(newEvent);
+
+            await SendConfig(configString);
+        }
+
+        public async Task UpdateEvent(int id, Event existingEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task DeleteEvent(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         // method blocks all websites (effectively 'all of internet')
         public async Task SetBlockALLSites()
         {
