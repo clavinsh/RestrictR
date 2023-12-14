@@ -68,7 +68,7 @@ namespace RestrictR
             public string Text { get; set; }
         }
 
-        public static IEnumerable<RecurrenceItem> RecurrenceItems
+        public IEnumerable<RecurrenceItem> RecurrenceItems
         {
             get { return GetRecurrenceItems(); }
         }
