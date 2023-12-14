@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dataannotations="using:System.ComponentModel.DataAnnotations"
     
-    d:DataContext="{d:DesignInstance Type=local:EventViewModel}"
+    d:DataContext="{d:DesignInstance Type=local:EventViewModelNew}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -27,7 +27,7 @@
         <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
             <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
-            <TimePicker Header="Duration" Time="{x:Bind ViewModel.Event.Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
+            <TimePicker Header="Duration" Time="{x:Bind ViewModel.Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
 
             <ComboBox ItemsSource="{x:Bind ViewModel.RecurrenceItems}"
                       SelectedValue="{x:Bind ViewModel.Recurrence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

@@ -37,6 +37,7 @@ namespace RestrictR
                 new ServiceCollection()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddTransient<EventViewModel>()
+                .AddTransient<EventViewModelNew>()
                 .BuildServiceProvider());
 
 
