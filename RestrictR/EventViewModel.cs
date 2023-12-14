@@ -17,6 +17,7 @@ using Microsoft.UI.Xaml;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace RestrictR
 {
@@ -50,6 +51,15 @@ namespace RestrictR
             UpdateStartDateTime();
 
             LoadApps();
+
+            BlockedApplications.CollectionChanged += OnBlockedApplicationsChanged;
+        }
+
+        private void OnBlockedApplicationsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Event.BlockedAppInstallLocations = BlockedApplications.Select(app => app.InstallLocation).ToList();
+
+            throw new NotImplementedException();
         }
 
         // Fills the list of all apps and the collection that will hold the filtered data
