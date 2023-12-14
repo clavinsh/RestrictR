@@ -50,7 +50,7 @@
                     </StackPanel>
 
                     <ListView x:Name="FilteredListView"
-                              SelectionMode="Multiple"
+                              SelectionMode="Extended"
                               ItemsSource="{x:Bind ViewModel.AppsFiltered}"
                               SelectionChanged="FilteredListView_SelectionChanged"
                               Grid.Row="1"
@@ -92,8 +92,9 @@
                         </ListView.ItemTemplate>
                     </ListView>
 
-                    <ListView Header="Blocked Apps"
-                              ItemsSource="{x:Bind ViewModel.BlockedApplications}"
+                    <TextBlock Text="Blocked Apps" Grid.Row="0" Grid.Column="1"></TextBlock>
+
+                    <ListView ItemsSource="{x:Bind ViewModel.BlockedApplications}"
                               SelectionMode="None"
                               Grid.Row="1"
                               Grid.Column="1"
