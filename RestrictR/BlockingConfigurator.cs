@@ -64,12 +64,12 @@ namespace RestrictR
             await SendConfig(configString);
         }
 
-        public async Task UpdateEvent(int id, Event existingEvent)
+        public async Task UpdateEvent(Guid id, Event existingEvent)
         {
             throw new NotImplementedException();
         }
 
-        public async Task DeleteEvent(int id)
+        public async Task DeleteEvent(Guid id)
         {
             throw new NotImplementedException();
         }
