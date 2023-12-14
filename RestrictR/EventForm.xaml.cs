@@ -83,19 +83,12 @@ namespace RestrictR
         {
             if (sender is ListView)
             {
-                //List<ApplicationInfo> appsToBlock = new();
-                //var selectedApps = FilteredListView.SelectedItems.OfType<ApplicationInfo>().ToList();
-
-                //ViewModel.Event.BlockedAppInstallLocations = appsToBlock.Select(app => app.InstallLocation).ToList();
-
                 foreach (var item in e.AddedItems)
                 {
-                    ViewModel.BlockedApplications.Add(item as ApplicationInfo);
-                }
-
-                foreach (var item in e.RemovedItems)
-                {
-                    ViewModel.BlockedApplications.Remove(item as ApplicationInfo);
+                    if (!ViewModel.BlockedApplications.Contains(item as ApplicationInfo))
+                    {
+                        ViewModel.BlockedApplications.Add(item as ApplicationInfo);
+                    }
                 }
             }
         }
