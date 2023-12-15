@@ -1,4 +1,5 @@
 using RestrictRService;
+using RestrictRService.Models;
 
 ApplicationBlocker applicationBlocker = new();
 WebsiteBlocker websiteBlocker = new();
@@ -26,6 +27,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         //    return new PipeCommunication(applicationBlocker);
         //});
         services.AddHostedService<Worker>();
+
+        services.AddDbContext<RestrictRContext>();
     })
     .Build();
 
