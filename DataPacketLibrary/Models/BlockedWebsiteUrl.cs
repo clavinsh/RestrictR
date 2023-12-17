@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace DataPacketLibrary.Models;
+﻿namespace DataPacketLibrary.Models;
 
 public class BlockedWebsiteUrl
 {

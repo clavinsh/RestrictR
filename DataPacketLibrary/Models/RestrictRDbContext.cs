@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +11,13 @@ public partial class RestrictRDbContext : DbContext
     public RestrictRDbContext(DbContextOptions<RestrictRDbContext> options)
         : base(options) {}
 
-    public virtual DbSet<ApplicationInfo> BlockedApplications { get; set; }
+    public virtual DbSet<ApplicationInfo> BlockedApplications { get; set; } = null!;
 
-    public virtual DbSet<BlockedWebsites> BlockedWebsites { get; set; }
+    public virtual DbSet<BlockedWebsites> BlockedWebsites { get; set; } = null!;
 
-    public virtual DbSet<BlockedWebsiteUrl> BlockedWebsiteUrls { get; set; }
+    public virtual DbSet<BlockedWebsiteUrl> BlockedWebsiteUrls { get; set; } = null!;
 
-    public virtual DbSet<Event> Events { get; set; }
+    public virtual DbSet<Event> Events { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

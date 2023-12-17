@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace DataPacketLibrary.Models;
+﻿namespace DataPacketLibrary.Models;
 
 public partial class ApplicationInfo
 {
@@ -7,19 +6,19 @@ public partial class ApplicationInfo
 
     public int EventId { get; set; }
 
-    public string DisplayName { get; }
+    public string DisplayName { get; set; }
 
-    public string DisplayVersion { get; }
+    public string DisplayVersion { get; set; }
 
-    public string Publisher { get; }
+    public string Publisher { get; set; }
 
-    public string InstallDate { get; }
+    public string InstallDate { get; set; }
 
-    public string InstallLocation { get; }
+    public string InstallLocation { get; set; }
 
-    public string Comments { get; }
+    public string Comments { get; set; }
 
-    public string UninstallString { get; }
+    public string UninstallString { get; set; }
 
-    public string RegistryPath { get; }
+    public string RegistryPath { get; set; }
 }
