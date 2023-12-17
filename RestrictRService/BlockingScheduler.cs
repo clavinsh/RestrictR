@@ -15,11 +15,13 @@ namespace RestrictRService
 
         private readonly ApplicationBlocker _appBlocker;
         private readonly WebsiteBlocker _webBlocker;
+        private readonly EventController _controller;
 
-        public BlockingScheduler(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker)
+        public BlockingScheduler(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker, EventController controller)
         {
             _appBlocker = appBlocker;
             _webBlocker = webBlocker;
+            _controller = controller;
 
             events = new();
         }

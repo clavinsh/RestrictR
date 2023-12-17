@@ -18,24 +18,11 @@ IHost host = Host.CreateDefaultBuilder(args)
     //})
     .ConfigureServices((hostContext, services) =>
     {
-        string? connectionString = hostContext.Configuration.GetConnectionString("Database");
-
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException("Database connection string is not configured.");
-        }
-
-        services.AddDbContext<RestrictRDbContext>(options => options.UseSqlite(connectionString));
+        services.AddDbContext<RestrictRDbContext>();
         services.AddSingleton(applicationBlocker);
         services.AddSingleton(websiteBlocker);
         services.AddSingleton(blockingScheduler);
         services.AddSingleton(pipe);
-
-        //services.AddSingleton(provider =>
-        //{
-        //    var applicationBlocker = provider.GetRequiredService<ApplicationBlocker>();
-        //    return new PipeCommunication(applicationBlocker);
-        //});
         services.AddHostedService<Worker>();
     })
     .Build();
