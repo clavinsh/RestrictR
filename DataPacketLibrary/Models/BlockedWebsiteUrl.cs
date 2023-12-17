@@ -6,5 +6,5 @@ public class BlockedWebsiteUrl
 
     public int BlockedWebsiteId { get; set; }
 
-    public string Url { get; set; }
+    public string Url { get; set; } = null!;
 }

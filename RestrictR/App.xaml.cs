@@ -39,8 +39,8 @@ namespace RestrictR
                 .AddSingleton<IDialogService, DialogService>()
                 .AddTransient<EventViewModel>()
                 .AddDbContext<RestrictRDbContext>()
+                .AddScoped<EventController>()
                 .BuildServiceProvider());
-
 
             m_window = new MainWindow();
             m_window.Activate();

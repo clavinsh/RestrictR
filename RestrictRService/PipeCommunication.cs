@@ -43,15 +43,16 @@ namespace RestrictRService
 
                 int bytesRead = namedPipeServerStream.Read(buffer);
 
-                string config = Encoding.UTF8.GetString(buffer);
+                string data = Encoding.UTF8.GetString(buffer);
 
                 // process new config data
-                Debug.WriteLine("new config received: " + config);
+                Debug.WriteLine("new config received: " + data);
 
-                IEnumerable<Event> receivedPacket = ConvertJsonString(config)
-                    ?? throw new Exception("Received packet from pipe is null");
-
-                _blockingScheduler.UpdateConfiguration(receivedPacket.ToList());
+                // received data from the GUI is for telling that the database has been updated
+                if (data == "updated")
+                {
+                    _blockingScheduler.UpdateConfiguration();
+                }
 
                 Thread.Sleep(1000);
             }

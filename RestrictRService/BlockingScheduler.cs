@@ -9,7 +9,6 @@ namespace RestrictRService
 {
     public class BlockingScheduler
     {
-        //private Timer timer;
         private List<Event> events;
         private Event? currentEvent;
 
@@ -26,9 +25,16 @@ namespace RestrictRService
             events = new();
         }
 
-        public void UpdateConfiguration(List<Event> newConfig)
+        // updates the configuration (list of events) by retrieving them from the database
+        // through the use of the event controller
+        public async void UpdateConfiguration()
         {
+            using var scope = _serviceScopeFactory.CreateScope();
+            var eventController = scope.ServiceProvider.GetRequiredService<EventController>();
+
+            var newConfig = (await eventController.GetEvents()).ToList();
             events = newConfig;
+
             CheckSchedule();
         }
 

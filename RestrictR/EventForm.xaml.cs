@@ -36,28 +36,42 @@ namespace RestrictR
         private EventController _controller;
 
 
-        public EventForm(
-            //EventController controller
-            )
+        public EventForm()
         {
             this.InitializeComponent();
             DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
 
-            //blockingConfigurator = new BlockingConfigurator();
-            //_controller = controller;
+            _controller = Ioc.Default.GetRequiredService<EventController>();
         }
 
         // submits the new event to the service
-        private void SubmitButton_Click(object sender, RoutedEventArgs e)
+        private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             // the viewmodel is converted to an event
             if (!ViewModel.HasErrors)
             {
                 Event submission = ConvertToEvent(ViewModel);
 
+                var result = await _controller.CreateEvent(submission);
 
+                if (result.Success)
+                {
+                    MainWindow.MainFrame.Navigate(typeof(EventList));
+                }
+                else
+                {
+                    ContentDialog dialog = new()
+                    {
+                        XamlRoot = this.XamlRoot,
+                        Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                        Title = "Ran into an error while trying to save the blocking event",
+                        CloseButtonText = "OK",
+                        DefaultButton = ContentDialogButton.Close,
+                        Content = result.Error
+                    };
+                    await dialog.ShowAsync();
+                }
             }
-
         }
 
         private static Event ConvertToEvent(EventViewModel viewModel)

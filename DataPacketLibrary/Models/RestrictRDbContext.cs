@@ -25,7 +25,9 @@ public partial class RestrictRDbContext : DbContext
         {
             entity.HasKey(e => e.EventId);
 
-            entity.OwnsOne(e => e.BlockedSites);
+            entity.HasOne(e => e.BlockedSites)
+            .WithOne()
+            .HasForeignKey<BlockedWebsites>(e => e.EventId);
 
             entity.HasMany(e => e.BlockedApps)
             .WithOne()
@@ -34,6 +36,7 @@ public partial class RestrictRDbContext : DbContext
 
         modelBuilder.Entity<BlockedWebsites>(entity =>
         {
+            entity.HasKey(e => e.Id);
 
             entity.HasMany(e => e.BlockedWebsiteUrls)
             .WithOne()
@@ -47,11 +50,13 @@ public partial class RestrictRDbContext : DbContext
     {
         string databaseFilename = "RestrictR_DB.db";
         string programDataPath = GetFolderPath(SpecialFolder.CommonApplicationData);
-        string databasePath = Path.Combine(programDataPath, "RestrictR", databaseFilename);
+        string databaseDirectoryPath = Path.Combine(programDataPath, "RestrictR");
 
-        Directory.CreateDirectory(databasePath);
+        Directory.CreateDirectory(databaseDirectoryPath);
 
-        string connectionString = $"Data Source={databasePath}";
+        string dbPath = Path.Combine(databaseDirectoryPath, databaseFilename);
+
+        string connectionString = $"Data Source={dbPath}";
         optionsBuilder.UseSqlite(connectionString);
     }
 

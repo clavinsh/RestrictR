@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static RestrictR.PipeCommunication;
 
 namespace RestrictR
 {
@@ -38,12 +39,13 @@ namespace RestrictR
             return ev;
         }
 
-        public async Task<OperationResult> CreateEvent(DataPacketLibrary.Models.Event newEvent)
+        public async Task<OperationResult> CreateEvent(Event newEvent)
         {
             try
             {
                 _context.Add(newEvent);
                 await _context.SaveChangesAsync();
+                await SendConfig("updated");
                 return new OperationResult(success: true, newEvent);
             }
             catch (DbUpdateException ex)

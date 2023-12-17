@@ -29,6 +29,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
+// Apply pending database migrations - used for client database setup
+using (var scope = host.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<RestrictRDbContext>();
+    dbContext.Database.Migrate();
+}
 //PipeClient pipeClient = new PipeClient();
 
 await host.RunAsync();
