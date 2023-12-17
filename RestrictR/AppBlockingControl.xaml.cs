@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using DataPacketLibrary.Models;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
