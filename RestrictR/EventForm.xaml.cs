@@ -30,19 +30,21 @@ namespace RestrictR
     /// </summary>
     public sealed partial class EventForm : Page
     {
-        public EventViewModelNew ViewModel => (EventViewModelNew)DataContext;
+        public EventViewModel ViewModel => (EventViewModel)DataContext;
 
         //private BlockingConfigurator blockingConfigurator;
         private EventController _controller;
 
 
-        public EventForm(EventController controller)
+        public EventForm(
+            //EventController controller
+            )
         {
             this.InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<EventViewModelNew>();
+            DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
 
             //blockingConfigurator = new BlockingConfigurator();
-            _controller = controller;
+            //_controller = controller;
         }
 
         // submits the new event to the service
@@ -51,21 +53,21 @@ namespace RestrictR
             // the viewmodel is converted to an event
             if (!ViewModel.HasErrors)
             {
-                DataPacketLibrary.Models.Event submission = ConvertToEvent(ViewModel);
+                Event submission = ConvertToEvent(ViewModel);
 
 
             }
 
         }
 
-        private static Event ConvertToEvent(EventViewModelNew viewModel)
+        private static Event ConvertToEvent(EventViewModel viewModel)
         {
             Event converted = new()
             {
                 Start = viewModel.StartDate.Date + viewModel.StartTime,
                 Duration = viewModel.Duration,
                 Recurrence = viewModel.RecurrenceType,
-                BlockedAppInstallLocations = viewModel.BlockedApplications.Select(app => app.InstallLocation).ToList()
+                BlockedApps = viewModel.BlockedApplications.ToList()
             };
 
             return converted;

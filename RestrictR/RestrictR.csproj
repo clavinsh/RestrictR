@@ -12,7 +12,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="AppBlockingControl.xaml" />
     <None Remove="DateTimePickerControl.xaml" />
     <None Remove="EventForm.xaml" />
     <None Remove="EventList.xaml" />
@@ -50,11 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataPacketLibrary\DataPacketLibrary.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="AppBlockingControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="ValidationStyles.xaml">

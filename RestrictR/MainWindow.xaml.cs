@@ -28,8 +28,6 @@ namespace RestrictR
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
-        BlockingConfigurator blockingConfig;
-
         //IMessenger _messenger;
 
         public static Frame MainFrame { get; private set; }
