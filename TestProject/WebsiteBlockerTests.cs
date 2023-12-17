@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RestrictRService;
+using DataPacketLibrary;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using NetFwTypeLib; // For managing Windows Firewall rules
 using System.Xml.Linq;
 
-namespace RestrictRService.Tests
+namespace DataPacketLibrary.Tests
 {
     [TestClass()]
     public class WebsiteBlockerTests

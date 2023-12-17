@@ -5,7 +5,7 @@ using Laraue.EfCoreTriggers.Common.Extensions;
 using Microsoft.EntityFrameworkCore;
 using static System.Environment;
 
-namespace RestrictRService.Models;
+namespace DataPacketLibrary.Models;
 
 public partial class RestrictRDbContext : DbContext
 {

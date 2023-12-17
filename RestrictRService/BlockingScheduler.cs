@@ -1,4 +1,4 @@
-﻿using DataPacketLibrary;
+﻿using DataPacketLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +15,13 @@ namespace RestrictRService
 
         private readonly ApplicationBlocker _appBlocker;
         private readonly WebsiteBlocker _webBlocker;
-        private readonly EventController _controller;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public BlockingScheduler(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker, EventController controller)
+        public BlockingScheduler(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker, IServiceScopeFactory serviceScopeFactory)
         {
             _appBlocker = appBlocker;
             _webBlocker = webBlocker;
-            _controller = controller;
+            _serviceScopeFactory = serviceScopeFactory;
 
             events = new();
         }
@@ -104,9 +104,11 @@ namespace RestrictRService
 
         private void ImplementEventBlocking(Event configEvent)
         {
-            if (configEvent.BlockedAppInstallLocations != null)
+            var BlockedAppInstallLocations = configEvent.BlockedApps.Select(app => app.InstallLocation).ToList();
+
+            if (BlockedAppInstallLocations.Count > 0)
             {
-                _appBlocker.SetBlockedApps(configEvent.BlockedAppInstallLocations);
+                _appBlocker.SetBlockedApps(BlockedAppInstallLocations);
             }
 
             if (configEvent.BlockedSites != null)

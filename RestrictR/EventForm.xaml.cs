@@ -18,6 +18,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using DataPacketLibrary.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,14 +32,17 @@ namespace RestrictR
     {
         public EventViewModelNew ViewModel => (EventViewModelNew)DataContext;
 
-        private BlockingConfigurator blockingConfigurator;
+        //private BlockingConfigurator blockingConfigurator;
+        private EventController _controller;
 
-        public EventForm()
+
+        public EventForm(EventController controller)
         {
             this.InitializeComponent();
             DataContext = Ioc.Default.GetRequiredService<EventViewModelNew>();
 
-            blockingConfigurator = new BlockingConfigurator();
+            //blockingConfigurator = new BlockingConfigurator();
+            _controller = controller;
         }
 
         // submits the new event to the service
@@ -47,7 +51,8 @@ namespace RestrictR
             // the viewmodel is converted to an event
             if (!ViewModel.HasErrors)
             {
-                Event submission = ConvertToEvent(ViewModel);
+                DataPacketLibrary.Models.Event submission = ConvertToEvent(ViewModel);
+
 
             }
 

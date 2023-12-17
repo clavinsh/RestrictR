@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using DataPacketLibrary;
+using DataPacketLibrary.Models;
 using RestrictRService;
-using RestrictRService.Models;
 
-ApplicationBlocker applicationBlocker = new();
-WebsiteBlocker websiteBlocker = new();
-BlockingScheduler blockingScheduler = new(applicationBlocker, websiteBlocker);
-PipeCommunication pipe = new(blockingScheduler);
+//ApplicationBlocker applicationBlocker = new();
+//WebsiteBlocker websiteBlocker = new();
+//BlockingScheduler blockingScheduler = new(applicationBlocker, websiteBlocker);
+//PipeCommunication pipe = new(blockingScheduler);
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
@@ -19,10 +20,11 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddDbContext<RestrictRDbContext>();
-        services.AddSingleton(applicationBlocker);
-        services.AddSingleton(websiteBlocker);
-        services.AddSingleton(blockingScheduler);
-        services.AddSingleton(pipe);
+        services.AddSingleton<ApplicationBlocker>();
+        services.AddSingleton<WebsiteBlocker>();
+        services.AddScoped<EventController>();
+        services.AddSingleton<BlockingScheduler>();
+        services.AddSingleton<PipeCommunication>();
         services.AddHostedService<Worker>();
     })
     .Build();

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DataPacketLibrary;
+using DataPacketLibrary.Models;
 using RestrictR.ValidationAttributes;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ namespace RestrictR
             {
                 if (SetProperty(ref _recurrence, value, true))
                 {
-                    RecurrenceType = (Event.RecurrenceType)Enum.ToObject(typeof(Event.RecurrenceType), _recurrence);
+                    RecurrenceType = (Event.RecurrenceType)Enum.ToObject(typeof(DataPacketLibrary.Models.Event.RecurrenceType), _recurrence);
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿using DataPacketLibrary;
+﻿using DataPacketLibrary.Models;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Security.AccessControl;

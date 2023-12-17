@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace RestrictRService.Models;
+namespace DataPacketLibrary.Models;
 
 public class BlockedWebsites
 {

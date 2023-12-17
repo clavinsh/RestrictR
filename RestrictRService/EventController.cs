@@ -1,6 +1,6 @@
 ﻿using DataPacketLibrary;
 using Microsoft.EntityFrameworkCore;
-using RestrictRService.Models;
+using DataPacketLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace RestrictRService
             _context = context;
         }
 
-        public async Task<IEnumerable<RestrictRService.Models.Event>> GetEvents()
+        public async Task<IEnumerable<Event>> GetEvents()
         {
             var list = await _context.Events
                 .Include(e => e.BlockedApps)
@@ -30,7 +30,7 @@ namespace RestrictRService
             return list;
         }
 
-        public async Task<RestrictRService.Models.Event?> GetEvent(int eventId)
+        public async Task<Event?> GetEvent(int eventId)
         {
             var ev = await _context.Events
                 .Include(e => e.BlockedApps)

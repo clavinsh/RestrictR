@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using RestrictR.Services;
+using DataPacketLibrary.Models;
 using System.Security.Cryptography.X509Certificates;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -38,6 +39,7 @@ namespace RestrictR
                 .AddSingleton<IDialogService, DialogService>()
                 .AddTransient<EventViewModel>()
                 .AddTransient<EventViewModelNew>()
+                .AddDbContext<RestrictRDbContext>()
                 .BuildServiceProvider());
 
 

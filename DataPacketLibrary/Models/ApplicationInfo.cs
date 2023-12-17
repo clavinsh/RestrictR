@@ -1,5 +1,5 @@
 ﻿#nullable disable
-namespace RestrictRService.Models;
+namespace DataPacketLibrary.Models;
 
 public partial class ApplicationInfo
 {
