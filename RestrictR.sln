@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestrictRService", "Restric
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPacketLibrary", "DataPacketLibrary\DataPacketLibrary.csproj", "{6CD4F4FD-EB13-46BA-8B99-11DFF1DB02AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{E04949C4-D128-4FB2-A2C7-44A0B29671EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestProject\TestProject.csproj", "{E04949C4-D128-4FB2-A2C7-44A0B29671EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

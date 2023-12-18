@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DataPacketLibrary;
 using DataPacketLibrary.Models;
 using RestrictRService;
+using System.Security.Principal;
 
 //ApplicationBlocker applicationBlocker = new();
 //WebsiteBlocker websiteBlocker = new();
@@ -29,12 +30,11 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-// Apply pending database migrations - used for client database setup
+// essentially used for first time setup - creates the database
 using (var scope = host.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<RestrictRDbContext>();
-    dbContext.Database.Migrate();
+    dbContext.Database.EnsureCreated();
 }
-//PipeClient pipeClient = new PipeClient();
 
 await host.RunAsync();
