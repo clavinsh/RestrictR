@@ -38,10 +38,4 @@
   <ItemGroup>
     <ProjectReference Include="..\DataPacketLibrary\DataPacketLibrary.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="RestrictR_DB.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>
