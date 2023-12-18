@@ -3,6 +3,7 @@ using DataPacketLibrary;
 using DataPacketLibrary.Models;
 using RestrictRService;
 using System.Security.Principal;
+using Microsoft.Extensions.FileProviders;
 
 //ApplicationBlocker applicationBlocker = new();
 //WebsiteBlocker websiteBlocker = new();
@@ -21,11 +22,17 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddDbContext<RestrictRDbContext>();
-        services.AddSingleton<ApplicationBlocker>();
-        services.AddSingleton<WebsiteBlocker>();
+
+        services.AddSingleton<IApplicationBlocker, ApplicationBlocker>();
+        services.AddSingleton<IWebsiteBlocker, WebsiteBlocker>();
+
         services.AddScoped<EventController>();
+
+        services.AddSingleton<IClock, SystemClock>();
+
         services.AddSingleton<BlockingScheduler>();
         services.AddSingleton<PipeCommunication>();
+
         services.AddHostedService<Worker>();
     })
     .Build();

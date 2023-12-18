@@ -16,14 +16,16 @@ namespace RestrictRService
         private readonly IApplicationBlocker _appBlocker;
         private readonly IWebsiteBlocker _webBlocker;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IClock _clock;
 
-        public BlockingScheduler(IApplicationBlocker appBlocker, IWebsiteBlocker webBlocker, IServiceScopeFactory serviceScopeFactory)
+        public BlockingScheduler(IApplicationBlocker appBlocker, IWebsiteBlocker webBlocker, IServiceScopeFactory serviceScopeFactory, IClock clock)
         {
             _appBlocker = appBlocker;
             _webBlocker = webBlocker;
             _serviceScopeFactory = serviceScopeFactory;
 
             events = new();
+            _clock = clock;
         }
 
         // updates the configuration (list of events) by retrieving them from the database
@@ -49,40 +51,36 @@ namespace RestrictRService
 
         // checks and updates the event schedule as needed
         // adds the necessary config to website, software blockers as needed.
-        private void CheckSchedule()
+        public void CheckSchedule()
         {
-            DateTime currentTime = DateTime.Now;
+            DateTime currentTime = _clock.Now;
 
             // Find the next or ongoing event
             Event? nextEvent = FindNextEvent(currentTime);
 
-            // Check if the next event is currently active
-            if (nextEvent != null && IsEventActive(nextEvent, currentTime))
+            // Check if there's a change in the event
+            if (currentEvent == null || !currentEvent.Equals(nextEvent))
             {
-                if (currentEvent != null && !Equals(currentEvent, nextEvent))
+                // If the current event is different from the next event, update blockers
+                if (currentEvent != null)
                 {
                     RemoveEventBlocking(currentEvent);
                 }
 
-                ImplementEventBlocking(nextEvent);
                 currentEvent = nextEvent;
-            }
-            else if (currentEvent != null)
-            {
-                // If there's a current event but it's no longer active, remove its blocking
-                RemoveEventBlocking(currentEvent);
-                currentEvent = null;
-            }
 
-            // Optionally, schedule the next check if nextEvent is in the future
-            ScheduleNextCheck(nextEvent?.Start ?? DateTime.MaxValue);
+                if (currentEvent != null && IsEventActive(currentEvent, currentTime))
+                {
+                    ImplementEventBlocking(currentEvent);
+                }
+            }
         }
 
         private void ScheduleNextCheck(DateTime nextEventStart)
         {
             if (nextEventStart == DateTime.MaxValue) return; // No upcoming events
 
-            var timeUntilNextEvent = nextEventStart.Subtract(DateTime.Now);
+            var timeUntilNextEvent = nextEventStart.Subtract(_clock.Now);
             if (timeUntilNextEvent <= TimeSpan.Zero) return; // The next event has already started
 
             _timer?.Dispose(); // Dispose previous timer if exists
