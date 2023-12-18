@@ -29,8 +29,6 @@ namespace RestrictR
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
-        //IMessenger _messenger;
-
         public static Frame MainFrame { get; private set; }
 
         public readonly bool Admin;

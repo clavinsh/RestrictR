@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.DependencyInjection;
+using DataPacketLibrary.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -23,9 +26,29 @@ namespace RestrictR
     /// </summary>
     public sealed partial class EventList : Page
     {
+
+        public ObservableCollection<Event> Events;
+
+        private EventController _controller;
+
         public EventList()
         {
             this.InitializeComponent();
+            _controller = Ioc.Default.GetRequiredService<EventController>();
+
+            Events = new ObservableCollection<Event>();
+
+            Loaded += EventList_Loaded;
+        }
+
+        private async void EventList_Loaded(object sender, RoutedEventArgs e)
+        {
+            var eventsList = await _controller.GetEvents();
+
+            foreach (var ev in eventsList)
+            {
+                Events.Add(ev);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

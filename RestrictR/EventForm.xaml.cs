@@ -78,6 +78,7 @@ namespace RestrictR
         {
             Event converted = new()
             {
+                Title = viewModel.Title,
                 Start = viewModel.StartDate.Date + viewModel.StartTime,
                 Duration = viewModel.Duration,
                 Recurrence = viewModel.RecurrenceType,

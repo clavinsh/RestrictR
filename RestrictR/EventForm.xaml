@@ -26,6 +26,7 @@
 
     <ScrollViewer>
         <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <TextBox Header="Title" Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="200" HorizontalAlignment="Left"></TextBox>
             <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
             <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
             <TimePicker Header="Duration" Time="{x:Bind ViewModel.Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>

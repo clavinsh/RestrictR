@@ -15,6 +15,17 @@ namespace RestrictR
 {
     public class EventViewModel : ObservableValidator
     {
+        private string _title;
+        [Required]
+        public string Title
+        {
+            get { return _title; }
+            set
+            { 
+                SetProperty(ref _title, value, true);
+            }
+        }
+
         private DateTimeOffset _startDate;
         [Required]
         [StartDateValidation]
