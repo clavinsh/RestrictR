@@ -45,6 +45,9 @@ namespace RestrictRService
 
                 string data = Encoding.UTF8.GetString(buffer);
 
+                // since the buffer is filled no matter what, remove the empty zeroes
+                data = data.TrimEnd('\0');
+
                 // process new config data
                 Debug.WriteLine("new config received: " + data);
 

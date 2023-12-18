@@ -9,7 +9,7 @@ using static System.Net.WebRequestMethods;
 
 namespace RestrictRService
 {
-    public class WebsiteBlocker
+    public class WebsiteBlocker : IWebsiteBlocker
     {
         private const string BlockAllSitesRuleName = "Block Internet";
         private const string RuleGroupName = "RestrictR";

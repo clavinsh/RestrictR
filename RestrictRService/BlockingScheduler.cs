@@ -1,4 +1,5 @@
 ﻿using DataPacketLibrary.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,12 @@ namespace RestrictRService
     {
         private List<Event> events;
         private Event? currentEvent;
-
-        private readonly ApplicationBlocker _appBlocker;
-        private readonly WebsiteBlocker _webBlocker;
+        private Timer _timer;
+        private readonly IApplicationBlocker _appBlocker;
+        private readonly IWebsiteBlocker _webBlocker;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public BlockingScheduler(ApplicationBlocker appBlocker, WebsiteBlocker webBlocker, IServiceScopeFactory serviceScopeFactory)
+        public BlockingScheduler(IApplicationBlocker appBlocker, IWebsiteBlocker webBlocker, IServiceScopeFactory serviceScopeFactory)
         {
             _appBlocker = appBlocker;
             _webBlocker = webBlocker;
@@ -38,31 +39,54 @@ namespace RestrictRService
             CheckSchedule();
         }
 
+
+        // primarily used for testing purposes
+        public void SetConfiguration(List<Event> newEvents)
+        {
+            events = newEvents;
+            CheckSchedule();
+        }
+
         // checks and updates the event schedule as needed
         // adds the necessary config to website, software blockers as needed.
         private void CheckSchedule()
         {
             DateTime currentTime = DateTime.Now;
 
-            // If the current event is still active, nothing has changed
-            if (currentEvent != null && IsEventActive(currentEvent, currentTime))
-            {
-                return;
-            }
+            // Find the next or ongoing event
+            Event? nextEvent = FindNextEvent(currentTime);
 
-            // The current is over or null, need to find the next one
-            Event? nextevent = FindNextEvent(currentTime);
-            if (currentEvent != null)
+            // Check if the next event is currently active
+            if (nextEvent != null && IsEventActive(nextEvent, currentTime))
             {
+                if (currentEvent != null && !Equals(currentEvent, nextEvent))
+                {
+                    RemoveEventBlocking(currentEvent);
+                }
+
+                ImplementEventBlocking(nextEvent);
+                currentEvent = nextEvent;
+            }
+            else if (currentEvent != null)
+            {
+                // If there's a current event but it's no longer active, remove its blocking
                 RemoveEventBlocking(currentEvent);
+                currentEvent = null;
             }
 
-            // Sets the next event as the current one and implements it
-            currentEvent = nextevent;
-            if (currentEvent != null)
-            {
-                ImplementEventBlocking(currentEvent);
-            }
+            // Optionally, schedule the next check if nextEvent is in the future
+            ScheduleNextCheck(nextEvent?.Start ?? DateTime.MaxValue);
+        }
+
+        private void ScheduleNextCheck(DateTime nextEventStart)
+        {
+            if (nextEventStart == DateTime.MaxValue) return; // No upcoming events
+
+            var timeUntilNextEvent = nextEventStart.Subtract(DateTime.Now);
+            if (timeUntilNextEvent <= TimeSpan.Zero) return; // The next event has already started
+
+            _timer?.Dispose(); // Dispose previous timer if exists
+            _timer = new Timer(_ => CheckSchedule(), null, timeUntilNextEvent, Timeout.InfiniteTimeSpan);
         }
 
         // Check if an event is still active based on start time and duration, recurrence
@@ -103,6 +127,15 @@ namespace RestrictRService
         // Find the next scheduled event based on the current time
         private Event? FindNextEvent(DateTime currentTime)
         {
+            // if there is a situation where the next event is already on going,
+            // then return that event
+            var ongoingEvent = events.FirstOrDefault(e => IsEventActive(e, currentTime));
+            if (ongoingEvent != null)
+            {
+                return ongoingEvent;
+            }
+
+            // if there isn't an ongoing one, then return the next upcoming event
             return events.Where(e => e.Start > currentTime)
                 .OrderBy(e => e.Start)
                 .FirstOrDefault(e => IsEventActive(e, currentTime));
