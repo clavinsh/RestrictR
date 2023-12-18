@@ -209,11 +209,11 @@ namespace TestProject
 
             _mockAppBlocker.Verify(appBlocker => appBlocker.SetBlockedApps(
                 It.Is<List<string>>(apps => apps.Contains("installLocation"))),
-                Times.Never);
+                Times.Once);
 
             _mockWebBlocker.Verify(webBlocker => webBlocker.SetBlockedWebsites(
                 It.Is<BlockedWebsites>(site => site.BlockedWebsiteUrls.Any(url => url.Url == "example.com"))),
-                Times.Never);
+                Times.Once);
         }
 
         [TestMethod]

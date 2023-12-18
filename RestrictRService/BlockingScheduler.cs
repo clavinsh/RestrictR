@@ -58,23 +58,30 @@ namespace RestrictRService
             // Find the next or ongoing event
             Event? nextEvent = FindNextEvent(currentTime);
 
-            // Check if there's a change in the event
-            if (currentEvent == null || !currentEvent.Equals(nextEvent))
+            // Implement or remove blocking based on event changes
+            if (nextEvent != null && IsEventActive(nextEvent, currentTime))
             {
-                // If the current event is different from the next event, update blockers
-                if (currentEvent != null)
+                if (currentEvent == null || !currentEvent.Equals(nextEvent))
                 {
-                    RemoveEventBlocking(currentEvent);
-                }
+                    if (currentEvent != null)
+                    {
+                        RemoveEventBlocking(currentEvent);
+                    }
 
-                currentEvent = nextEvent;
-
-                if (currentEvent != null && IsEventActive(currentEvent, currentTime))
-                {
-                    ImplementEventBlocking(currentEvent);
+                    ImplementEventBlocking(nextEvent);
+                    currentEvent = nextEvent;
                 }
             }
+            else if (currentEvent != null)
+            {
+                RemoveEventBlocking(currentEvent);
+                currentEvent = null;
+            }
+
+            // Schedule the next check
+            ScheduleNextCheck(nextEvent?.Start ?? DateTime.MaxValue);
         }
+
 
         private void ScheduleNextCheck(DateTime nextEventStart)
         {
