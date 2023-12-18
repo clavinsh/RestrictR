@@ -1,7 +1,8 @@
 {
   "profiles": {
     "RestrictR (Package)": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "nativeDebugging": false
     },
     "RestrictR (Unpackaged)": {
       "commandName": "Project"
