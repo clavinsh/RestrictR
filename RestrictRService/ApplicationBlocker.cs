@@ -6,7 +6,7 @@ namespace RestrictRService
 {
     // ApplicationBlocker class deals with blocking (killing active processes)
     // applications and providing methods to set which apps need to be blocked
-    public class ApplicationBlocker
+    public class ApplicationBlocker : IApplicationBlocker
     {
         private List<string> BlockedApplicationsInstallLocations = new();
 

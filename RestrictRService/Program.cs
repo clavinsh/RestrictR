@@ -1,9 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using DataPacketLibrary;
+using DataPacketLibrary.Models;
 using RestrictRService;
+using System.Security.Principal;
+using Microsoft.Extensions.FileProviders;
 
-ApplicationBlocker applicationBlocker = new();
-WebsiteBlocker websiteBlocker = new();
-BlockingScheduler blockingScheduler = new(applicationBlocker, websiteBlocker);
-PipeCommunication pipe = new(blockingScheduler);
+//ApplicationBlocker applicationBlocker = new();
+//WebsiteBlocker websiteBlocker = new();
+//BlockingScheduler blockingScheduler = new(applicationBlocker, websiteBlocker);
+//PipeCommunication pipe = new(blockingScheduler);
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
@@ -14,21 +19,29 @@ IHost host = Host.CreateDefaultBuilder(args)
     //    config.SetBasePath(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     //    config.AddJsonFile("myconfig.json", optional: false, reloadOnChange: true);
     //})
-    .ConfigureServices(services =>
+    .ConfigureServices((hostContext, services) =>
     {
-        services.AddSingleton(applicationBlocker);
-        services.AddSingleton(websiteBlocker);
-        services.AddSingleton(blockingScheduler);
-        services.AddSingleton(pipe);
-        //services.AddSingleton(provider =>
-        //{
-        //    var applicationBlocker = provider.GetRequiredService<ApplicationBlocker>();
-        //    return new PipeCommunication(applicationBlocker);
-        //});
+        services.AddDbContext<RestrictRDbContext>();
+
+        services.AddSingleton<IApplicationBlocker, ApplicationBlocker>();
+        services.AddSingleton<IWebsiteBlocker, WebsiteBlocker>();
+
+        services.AddScoped<EventController>();
+
+        services.AddSingleton<IClock, SystemClock>();
+
+        services.AddSingleton<BlockingScheduler>();
+        services.AddSingleton<PipeCommunication>();
+
         services.AddHostedService<Worker>();
     })
     .Build();
 
-//PipeClient pipeClient = new PipeClient();
+// essentially used for first time setup - creates the database
+using (var scope = host.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<RestrictRDbContext>();
+    dbContext.Database.EnsureCreated();
+}
 
 await host.RunAsync();

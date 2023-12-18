@@ -1,4 +1,4 @@
-﻿using DataPacketLibrary;
+﻿using DataPacketLibrary.Models;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Security.AccessControl;
@@ -43,15 +43,19 @@ namespace RestrictRService
 
                 int bytesRead = namedPipeServerStream.Read(buffer);
 
-                string config = Encoding.UTF8.GetString(buffer);
+                string data = Encoding.UTF8.GetString(buffer);
+
+                // since the buffer is filled no matter what, remove the empty zeroes
+                data = data.TrimEnd('\0');
 
                 // process new config data
-                Debug.WriteLine("new config received: " + config);
+                Debug.WriteLine("new config received: " + data);
 
-                IEnumerable<Event> receivedPacket = ConvertJsonString(config)
-                    ?? throw new Exception("Received packet from pipe is null");
-
-                _blockingScheduler.UpdateConfiguration(receivedPacket.ToList());
+                // received data from the GUI is for telling that the database has been updated
+                if (data == "updated")
+                {
+                    _blockingScheduler.UpdateConfiguration();
+                }
 
                 Thread.Sleep(1000);
             }

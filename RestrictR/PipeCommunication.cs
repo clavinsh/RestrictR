@@ -24,6 +24,7 @@ namespace RestrictR
         {
             using NamedPipeClientStream namedPipeClientStream = new(".", pipeName, PipeDirection.Out);
             await namedPipeClientStream.ConnectAsync();
+
             Debug.WriteLine("Connected to server!");
 
             byte[] configBytes = Encoding.UTF8.GetBytes(config);

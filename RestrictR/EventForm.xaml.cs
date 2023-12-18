@@ -18,6 +18,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using DataPacketLibrary.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,38 +30,59 @@ namespace RestrictR
     /// </summary>
     public sealed partial class EventForm : Page
     {
-        public EventViewModelNew ViewModel => (EventViewModelNew)DataContext;
+        public EventViewModel ViewModel => (EventViewModel)DataContext;
 
-        private BlockingConfigurator blockingConfigurator;
+        //private BlockingConfigurator blockingConfigurator;
+        private EventController _controller;
+
 
         public EventForm()
         {
             this.InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<EventViewModelNew>();
+            DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
 
-            blockingConfigurator = new BlockingConfigurator();
+            _controller = Ioc.Default.GetRequiredService<EventController>();
         }
 
         // submits the new event to the service
-        private void SubmitButton_Click(object sender, RoutedEventArgs e)
+        private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             // the viewmodel is converted to an event
             if (!ViewModel.HasErrors)
             {
                 Event submission = ConvertToEvent(ViewModel);
 
-            }
+                var result = await _controller.CreateEvent(submission);
 
+                if (result.Success)
+                {
+                    MainWindow.MainFrame.Navigate(typeof(EventList));
+                }
+                else
+                {
+                    ContentDialog dialog = new()
+                    {
+                        XamlRoot = this.XamlRoot,
+                        Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                        Title = "Ran into an error while trying to save the blocking event",
+                        CloseButtonText = "OK",
+                        DefaultButton = ContentDialogButton.Close,
+                        Content = result.Error
+                    };
+                    await dialog.ShowAsync();
+                }
+            }
         }
 
-        private static Event ConvertToEvent(EventViewModelNew viewModel)
+        private static Event ConvertToEvent(EventViewModel viewModel)
         {
             Event converted = new()
             {
+                Title = viewModel.Title,
                 Start = viewModel.StartDate.Date + viewModel.StartTime,
                 Duration = viewModel.Duration,
                 Recurrence = viewModel.RecurrenceType,
-                BlockedAppInstallLocations = viewModel.BlockedApplications.Select(app => app.InstallLocation).ToList()
+                BlockedApps = viewModel.BlockedApplications.ToList()
             };
 
             return converted;

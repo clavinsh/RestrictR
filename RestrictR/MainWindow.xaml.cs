@@ -12,7 +12,8 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Windows.AI.MachineLearning;
+using DataPacketLibrary.Models;
+using System.Security.Principal;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,11 +29,9 @@ namespace RestrictR
 
         ObservableCollection<ApplicationInfo> AppsFiltered;
 
-        BlockingConfigurator blockingConfig;
-
-        //IMessenger _messenger;
-
         public static Frame MainFrame { get; private set; }
+
+        public readonly bool Admin;
 
         public MainWindow()
         {
@@ -41,13 +40,8 @@ namespace RestrictR
             MainFrame = mainFrame;
             mainFrame.Navigate(typeof(EventList));
 
-            //LoadApps();
-
-            //blockingConfig = new BlockingConfigurator();
-            //_messenger = messenger;
-            //_messenger.Register<FormValidityChangedMessage>(this, OnFormValidityChanged);
+            Admin = IsUserAdmin();
         }
-        
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
@@ -83,6 +77,16 @@ namespace RestrictR
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private static bool IsUserAdmin()
+        {
+            WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal currentPrincipal = new WindowsPrincipal(currentIdentity);
+
+            // Check if the current user is a member of the Administrator group
+            bool isAdmin = currentPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
+
+            return isAdmin;
+        }
 
 
         //private void OnFormValidityChanged(object recipient, FormValidityChangedMessage message)

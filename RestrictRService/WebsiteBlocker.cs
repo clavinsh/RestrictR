@@ -2,18 +2,19 @@
 using NetFwTypeLib; // For managing Windows Firewall rules
 using System.Net;
 using System.Net.Sockets;
+using DataPacketLibrary.Models;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Networking.NetworkOperators;
 using static System.Net.WebRequestMethods;
 
 namespace RestrictRService
 {
-    public class WebsiteBlocker
+    public class WebsiteBlocker : IWebsiteBlocker
     {
         private const string BlockAllSitesRuleName = "Block Internet";
         private const string RuleGroupName = "RestrictR";
 
-        private DataPacketLibrary.Event.BlockedWebsites BlockedWebsites = new();
+        private BlockedWebsites BlockedWebsites = new();
 
         private Type _firewallPolicyType;
         private INetFwPolicy2 _firewallPolicy;
@@ -29,14 +30,9 @@ namespace RestrictRService
             _firewallPolicy = (INetFwPolicy2)fwPolicyObj;
         }
 
-        public void SetBlockedWebsites(DataPacketLibrary.Event.BlockedWebsites blockedWebsites)
+        public void SetBlockedWebsites(BlockedWebsites blockedWebsites)
         {
-            if (blockedWebsites == null)
-            {
-                throw new ArgumentNullException(nameof(blockedWebsites));
-            }
-
-            BlockedWebsites = blockedWebsites;
+            BlockedWebsites = blockedWebsites ?? throw new ArgumentNullException(nameof(blockedWebsites));
 
             SynchronizeRulesFromBlockedWebsites();
         }
@@ -113,7 +109,7 @@ namespace RestrictRService
                 if (BlockedWebsites.BlockedWebsiteUrls != null)
                 {
                     // add missing rules to the firewall that exist in the list
-                    foreach (var rule in BlockedWebsites.BlockedWebsiteUrls)
+                    foreach (var rule in BlockedWebsites.BlockedWebsiteUrls.Select(website => website.Url))
                     {
                         if (!RuleExists(rule))
                         {
@@ -127,7 +123,7 @@ namespace RestrictRService
                     var appCreatedRules = _firewallPolicy.Rules.Cast<INetFwRule>().Where(r => r.Grouping == RuleGroupName);
                     foreach (var rule in appCreatedRules)
                     {
-                        if (!BlockedWebsites.BlockedWebsiteUrls.Contains(rule.Name))
+                        if (!BlockedWebsites.BlockedWebsiteUrls.Select(website => website.Url).Contains(rule.Name))
                         {
                             _firewallPolicy.Rules.Remove(rule.Name);
                         }
