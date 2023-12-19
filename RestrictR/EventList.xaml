@@ -58,6 +58,7 @@
                             </Grid>
                         </Expander.Header>
                         <Expander.Content>
+                            <StackPanel>
                             <ListView Header="Blocked Applications" ItemsSource="{x:Bind BlockedApps}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="dpl:ApplicationInfo">
@@ -94,9 +95,11 @@
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
-                            <!--<ListView Header="Blocked Websites" ItemsSource="{x:Bind BlockedSites}">
+
+                            <ListView Header="Blocked Websites" ItemsSource="{x:Bind BlockedSites}">
                                 
-                            </ListView>-->
+                            </ListView>
+                            </StackPanel>
                         </Expander.Content>
                     </Expander>
                 </DataTemplate>

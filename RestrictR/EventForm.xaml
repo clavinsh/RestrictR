@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:RestrictR"
+    xmlns:converters="using:RestrictR.Converters"
     xmlns:dpl="using:DataPacketLibrary.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -22,6 +23,8 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
+
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Page.Resources>
 
     <ScrollViewer>
@@ -69,7 +72,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                
+
                                     <Ellipse x:Name="Ellipse"
                                              Grid.RowSpan="2"
                                              Width ="32"
@@ -146,6 +149,38 @@
                 </Grid>
             </Expander>
 
+            <Expander Header="Block Websites">
+                <StackPanel>
+                    <CheckBox Content="Block All Websites" 
+                  IsChecked="{x:Bind ViewModel.BlockAllSites, Mode=TwoWay}"/>
+
+                    <!-- List and Add Function for Specific URLs -->
+                    <StackPanel Visibility="{x:Bind ViewModel.BlockAllSites, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Invert'}">
+                        <TextBlock Text="Specific Websites:"/>
+
+                        <!-- TextBox for New URL Input -->
+                        <TextBox Text="{x:Bind ViewModel.NewUrl, Mode=TwoWay}"
+                     PlaceholderText="Enter URL here" 
+                     Margin="0,5,0,5"/>
+
+                        <!-- Button to Add URL to the List -->
+                        <Button Content="Add Website" 
+                    Command="{x:Bind ViewModel.AddUrlCommand}" 
+                    Margin="0,0,0,10"/>
+
+                        <!-- ListView for Displaying URLs -->
+                        <ListView ItemsSource="{x:Bind ViewModel.BlockedUrls}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+
+
             <ItemsControl ItemsSource="{Binding ValidationErrors}" 
                   ItemTemplate="{StaticResource ValidationResultTemplate}" />
 
@@ -154,3 +189,4 @@
         </StackPanel>
     </ScrollViewer>
 </Page>
+ 
