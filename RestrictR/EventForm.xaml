@@ -169,10 +169,16 @@
                     Margin="0,0,0,10"/>
 
                         <!-- ListView for Displaying URLs -->
-                        <ListView ItemsSource="{x:Bind ViewModel.BlockedUrls}">
+                        <ListView ItemsSource="{x:Bind ViewModel.BlockedUrls}"
+                                  SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding}"/>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                        <Button Click="UrlDeleteButton_Click" CommandParameter="{Binding}" Style="{StaticResource AlternateCloseButtonStyle}">
+                                            <SymbolIcon Symbol="Cancel"></SymbolIcon>
+                                        </Button>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>

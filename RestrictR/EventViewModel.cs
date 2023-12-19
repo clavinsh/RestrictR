@@ -150,6 +150,7 @@ namespace RestrictR
         }
 
         private string _newUrl;
+        [ValidUrl]
         public string NewUrl
         { 
             get { return _newUrl; }
@@ -165,10 +166,15 @@ namespace RestrictR
 
         private void AddUrl()
         {
-            if (!string.IsNullOrWhiteSpace(NewUrl) && !BlockedUrls.Contains(NewUrl))
+            ValidateProperty(NewUrl, nameof(NewUrl));
+
+            if (!GetErrors(nameof(NewUrl)).Any())
             {
-                BlockedUrls.Add(NewUrl);
-                NewUrl = string.Empty; // Reset the new URL field
+                if (!string.IsNullOrWhiteSpace(NewUrl) && !BlockedUrls.Contains(NewUrl))
+                {
+                    BlockedUrls.Add(NewUrl);
+                    NewUrl = string.Empty; // Reset the new URL field
+                }
             }
         }
 
@@ -182,6 +188,11 @@ namespace RestrictR
             {
                 SetProperty(ref validationErrors, value);
             }
+        }
+
+        public void ValidateAll()
+        {
+            ValidateAllProperties();
         }
 
         private void SetValidationErrors(object sender, DataErrorsChangedEventArgs e)

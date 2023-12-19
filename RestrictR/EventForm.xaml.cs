@@ -47,6 +47,8 @@ namespace RestrictR
         // submits the new event to the service
         private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
+            ViewModel.ValidateAll();
+
             // the viewmodel is converted to an event
             if (!ViewModel.HasErrors)
             {
@@ -144,6 +146,14 @@ namespace RestrictR
             if (sender is Button button && button.CommandParameter is ApplicationInfo appToUnblock)
             {
                 ViewModel.BlockedApplications.Remove(appToUnblock);
+            }
+        }
+
+        private void UrlDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is string blockedUrl)
+            {
+                ViewModel.BlockedUrls.Remove(blockedUrl);
             }
         }
     }
