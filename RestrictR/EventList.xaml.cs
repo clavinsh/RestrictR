@@ -55,5 +55,10 @@ namespace RestrictR
         {
             MainWindow.MainFrame.Navigate(typeof(EventForm));
         }
+
+        public string FormatStartDuration(Event someEvent)
+        {
+            return $"{someEvent.Start} - {someEvent.Start.Add(someEvent.Duration)}";
+        }
     }
 }
