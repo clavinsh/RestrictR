@@ -96,9 +96,9 @@
                                 </ListView.ItemTemplate>
                             </ListView>
 
-                            <ListView Header="Blocked Websites" ItemsSource="{x:Bind BlockedSites}">
+                            <!--<ListView Header="Blocked Websites" ItemsSource="{x:Bind BlockedSites}">
                                 
-                            </ListView>
+                            </ListView>-->
                             </StackPanel>
                         </Expander.Content>
                     </Expander>

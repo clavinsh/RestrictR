@@ -19,6 +19,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using DataPacketLibrary.Models;
+using ABI.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -78,13 +79,41 @@ namespace RestrictR
 
         private static Event ConvertToEvent(EventViewModel viewModel)
         {
+            #nullable enable
+
+            // when blocking all sites, the list must be empty
+            // otherwise check if viewmodel list has elements and set those,
+            // if not - do not create the containing object at all
+            BlockedWebsites? blockedWebsites = null;
+            if (viewModel.BlockAllSites)
+            {
+                blockedWebsites = new()
+                {
+                    BlockAllSites = true
+                };
+                
+            }
+            else if(viewModel.BlockedUrls.Count > 0)
+            {
+                var blockedWebsiteUrls = viewModel.BlockedUrls
+                    .Select(url => new BlockedWebsiteUrl { Url = url })
+                    .ToList();
+
+                blockedWebsites = new()
+                {
+                    BlockAllSites = false,
+                    BlockedWebsiteUrls = blockedWebsiteUrls
+                };
+            }
+
             Event converted = new()
             {
                 Title = viewModel.Title,
                 Start = viewModel.StartDate.Date + viewModel.StartTime,
                 Duration = viewModel.Duration,
                 Recurrence = viewModel.RecurrenceType,
-                BlockedApps = viewModel.BlockedApplications.ToList()
+                BlockedApps = viewModel.BlockedApplications.ToList(),
+                BlockedSites = blockedWebsites
             };
 
             return converted;
