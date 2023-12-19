@@ -44,11 +44,15 @@
                                 </StackPanel>
                                 
                                 <StackPanel Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Button Click="EditButton_Click">Edit</Button>
+                                    <Button Click="EditButton_Click">
+                                        <SymbolIcon Symbol="Edit"></SymbolIcon>
+                                    </Button>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Button Click="DeleteButton_Click">Delete</Button>
+                                    <Button Click="DeleteButton_Click">
+                                        <SymbolIcon Symbol="Delete"></SymbolIcon>
+                                    </Button>
                                 </StackPanel>
                                 
                             </Grid>
