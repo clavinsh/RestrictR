@@ -54,6 +54,22 @@ namespace RestrictR
                 return new OperationResult(success: false, error: ex.Message);
             }
         }
+
+        public async Task<OperationResult> DeleteEvent(Event eventForDeletion)
+        {
+            try
+            {
+                _context.Remove(eventForDeletion);
+                await _context.SaveChangesAsync();
+                await SendConfig("updated");
+                return new OperationResult(success: true);
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log the exception details, return an error message, etc.
+                return new OperationResult(success: false, error: ex.Message);
+            }
+        }
     }
 
     public class OperationResult
