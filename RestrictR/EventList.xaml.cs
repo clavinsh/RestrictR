@@ -60,5 +60,31 @@ namespace RestrictR
         {
             return $"{someEvent.Start} - {someEvent.Start.Add(someEvent.Duration)}";
         }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.DataContext is Event eventItem)
+            {
+
+            }
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.DataContext is Event eventItem)
+            {
+                
+            }
+        }
+
+        private void EditEvent(Event evItem)
+        {
+            
+        }
+
+        private void DeleteEvent(Event evItem)
+        {
+        
+        }
     }
 }
