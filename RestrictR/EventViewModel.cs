@@ -18,6 +18,8 @@ namespace RestrictR
 {
     public class EventViewModel : ObservableValidator
     {
+        public int EventId { get; set; }
+
         private string _title;
         [Required]
         public string Title

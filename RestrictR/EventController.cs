@@ -55,6 +55,25 @@ namespace RestrictR
             }
         }
 
+        public async Task<OperationResult> EditEvent(Event eventEdited)
+        {
+            try
+            {
+                var eventForEditing = await _context.Events.FindAsync(eventEdited.EventId)
+                    ?? throw new KeyNotFoundException("Event does not exist"); // perhaps a better entry
+                _context.Entry(eventForEditing).CurrentValues.SetValues(eventEdited);
+
+                await _context.SaveChangesAsync();
+                await SendConfig("updated");
+                return new OperationResult(success: true, eventEdited);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details, return an error message, etc.
+                return new OperationResult(success: false, error: ex.Message);
+            }
+        }
+
         public async Task<OperationResult> DeleteEvent(Event eventForDeletion)
         {
             try

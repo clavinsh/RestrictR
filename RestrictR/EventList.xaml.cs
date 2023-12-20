@@ -65,10 +65,8 @@ namespace RestrictR
         {
             if (sender is FrameworkElement element && element.DataContext is Event eventItem)
             {
-                //// navigate to an event form with the event loaded 
-                //var editForm = new EventForm();
-                //editForm.InitializeForEdit(eventItem);
-                //MainWindow.MainFrame.Navigate(typeof(EventForm), editForm);
+
+                MainWindow.MainFrame.Navigate(typeof(EventEditForm), eventItem.EventId);
             }
         }
 

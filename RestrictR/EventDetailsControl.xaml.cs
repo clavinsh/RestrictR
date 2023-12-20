@@ -22,7 +22,9 @@ namespace RestrictR
 {
     public sealed partial class EventDetailsControl : UserControl
     {
-        public EventViewModel ViewModel => (EventViewModel)DataContext;
+        //public EventViewModel ViewModel => (EventViewModel)DataContext;
+
+        public EventViewModel ViewModel { get; set; }
 
         public event EventHandler<RoutedEventArgs> CancelButtonClick;
         public event EventHandler<RoutedEventArgs> SubmitButtonClick;
@@ -32,6 +34,12 @@ namespace RestrictR
             this.InitializeComponent();
 
             DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
+            ViewModel = (EventViewModel)DataContext;
+        }
+
+        public void InitializeForEdit(EventViewModel eventToEdit)
+        {
+            ViewModel = eventToEdit;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
