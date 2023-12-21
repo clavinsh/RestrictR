@@ -13,6 +13,7 @@
 
     <Page.Resources>
         <converters:StartDurationToStringConverter x:Key="StartDurationConverter"></converters:StartDurationToStringConverter>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></converters:BooleanToVisibilityConverter>
     </Page.Resources>
 
     <Grid>
@@ -99,10 +100,9 @@
                                 </Expander>
                                 <Expander Header="Blocked Websites">
                                     <StackPanel>
-                                        <!--<CheckBox Content="Block All Sites" IsChecked="{x:Bind BlockedSites.BlockAllSites, Mode=OneWay}" IsEnabled="False" />-->
+                                        <CheckBox Content="Block All Sites" IsChecked="{x:Bind BlockedSites.BlockAllSites}" IsEnabled="False" />
 
-                                        <!--Visibility="{x:Bind BlockedSites.BlockAllSites, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Invert'}"-->
-                                        <StackPanel>
+                                        <StackPanel Visibility="{x:Bind BlockedSites.BlockAllSites, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Invert'}">
                                             <ListView ItemsSource="{x:Bind BlockedSites.BlockedWebsiteUrls}" SelectionMode="None">
                                                 <ListView.ItemTemplate>
                                                     <DataTemplate x:DataType="dpl:BlockedWebsiteUrl">
