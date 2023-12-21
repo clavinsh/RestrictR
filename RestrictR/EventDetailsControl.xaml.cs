@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using DataPacketLibrary.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -90,6 +91,10 @@ namespace RestrictR
                     if (!ViewModel.BlockedApplications.Contains(item as ApplicationInfo))
                     {
                         ViewModel.BlockedApplications.Add(item as ApplicationInfo);
+                        //ViewModel.ValidateSomeProperty(ViewModel.BlockedApplications, nameof(ViewModel.BlockedApplications));
+                        //ViewModel.ChangeSomeProperty(nameof(ViewModel.IsBlockingValid));
+
+                        ViewModel.ValidateSomeProperty(ViewModel.IsBlockingValid, nameof(ViewModel.IsBlockingValid));
                     }
                 }
             }
@@ -100,6 +105,9 @@ namespace RestrictR
             if (sender is Button button && button.CommandParameter is ApplicationInfo appToUnblock)
             {
                 ViewModel.BlockedApplications.Remove(appToUnblock);
+                //ViewModel.ValidateSomeProperty(ViewModel.BlockedApplications, nameof(ViewModel.BlockedApplications));
+                //ViewModel.ChangeSomeProperty(nameof(ViewModel.IsBlockingValid));
+                ViewModel.ValidateSomeProperty(ViewModel.IsBlockingValid, nameof(ViewModel.IsBlockingValid));
             }
         }
 
@@ -108,6 +116,9 @@ namespace RestrictR
             if (sender is Button button && button.CommandParameter is string blockedUrl)
             {
                 ViewModel.BlockedUrls.Remove(blockedUrl);
+                //ViewModel.ValidateSomeProperty(ViewModel.BlockedUrls, nameof(ViewModel.BlockedUrls));
+                //ViewModel.ChangeSomeProperty(nameof(ViewModel.IsBlockingValid));
+                ViewModel.ValidateSomeProperty(ViewModel.IsBlockingValid, nameof(ViewModel.IsBlockingValid));
             }
         }
     }

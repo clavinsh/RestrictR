@@ -111,14 +111,5 @@ namespace RestrictR
             }
         }
 
-        private void EditEvent(Event evItem)
-        {
-            
-        }
-
-        private void DeleteEvent(Event evItem)
-        {
-        
-        }
     }
 }
