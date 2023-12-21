@@ -128,6 +128,11 @@ namespace RestrictRService
                             _firewallPolicy.Rules.Remove(rule.Name);
                         }
                     }
+
+                    // similarily as with the firewall rules, find all the entries in the hosts file
+                    // and remove those not mentioned in the list
+                    SynchronizeHostsFile();
+
                 }
             }
             else
@@ -170,6 +175,21 @@ namespace RestrictRService
             firewallRule.RemoteAddresses = addresses;
 
             _firewallPolicy.Rules.Add(firewallRule);
+
+            // fallback mechanism if the firewall is not enough
+            // add the url to hosts file
+            try
+            {
+                ipaddresses = GetIpAddresses(websiteUrl);
+                if (ipaddresses.Length > 0)
+                {
+                    AddEntryToHostsFile(websiteUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
         }
 
         // adds a firewall rule to block all internet access
@@ -252,6 +272,64 @@ namespace RestrictRService
             string csv = string.Join(",", ips.Select(x => x.ToString()).ToArray());
 
             return csv;
+        }
+
+        private void AddEntryToHostsFile(string url)
+        {
+            var hostsFilePath = Path.Combine(Environment.SystemDirectory, "drivers/etc/hosts");
+            var entry = $"127.0.0.1 {url} # Added by RestrictR";
+
+            // add if it doesn't already exist
+            if (!HostsFileContainsLine(hostsFilePath, entry))
+            {
+                using var sw = System.IO.File.AppendText(hostsFilePath);
+                sw.WriteLine(entry);
+            }
+        }
+
+        private bool HostsFileContainsLine(string filePath, string lineToCheck)
+        {
+            var lines = System.IO.File.ReadAllLines(filePath);
+            foreach (var line in lines)
+            {
+                if (line.Trim().Equals(lineToCheck.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void SynchronizeHostsFile()
+        {
+            var hostsFilePath = Path.Combine(Environment.SystemDirectory, "drivers/etc/hosts");
+            var lines = System.IO.File.ReadAllLines(hostsFilePath).ToList();
+            var updatedLines = new List<string>();
+
+            foreach (var line in lines)
+            {
+                if (line.Contains("# Added by RestrictR"))
+                {
+                    var url = ExtractUrlFromHostsEntry(line);
+                    if (BlockedWebsites.BlockedWebsiteUrls.Select(url => url.Url).Contains(url))
+                    {
+                        updatedLines.Add(line); // Keep the entry
+                        continue;
+                    }
+                }
+                else
+                {
+                    updatedLines.Add(line); // Keep non-service entries
+                }
+            }
+
+            System.IO.File.WriteAllLines(hostsFilePath, updatedLines);
+        }
+
+        // Extracts the URL part of the entry based on your entry format
+        private string ExtractUrlFromHostsEntry(string line)
+        {
+            return line.Split(' ')[1];
         }
     }
 }
