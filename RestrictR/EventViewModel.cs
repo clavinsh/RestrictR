@@ -26,14 +26,14 @@ namespace RestrictR
         {
             get { return _title; }
             set
-            { 
+            {
                 SetProperty(ref _title, value, true);
             }
         }
 
         private DateTimeOffset _startDate;
         [Required]
-        [StartDateValidation]
+        //[StartDateValidation]
         public DateTimeOffset StartDate
         {
             get { return _startDate; }
@@ -43,18 +43,19 @@ namespace RestrictR
             }
         }
 
-
         private TimeSpan _startTime;
+        [Required]
+        [TimeSpansInOneDayValidation(nameof(Duration))]
         public TimeSpan StartTime
         {
             get { return _startTime; }
-            set 
+            set
             {
                 SetProperty(ref _startTime, value, true);
             }
         }
 
-
+        [Required]
         private TimeSpan _duration;
         public TimeSpan Duration
         {
@@ -62,11 +63,13 @@ namespace RestrictR
             set
             {
                 SetProperty(ref _duration, value, true);
+                ValidateProperty(StartTime, nameof(StartTime));
             }
         }
 
 
         private int _recurrence;
+        [Required]
         public int Recurrence
         {
             get { return _recurrence; }
@@ -118,8 +121,9 @@ namespace RestrictR
         public ObservableCollection<ApplicationInfo> AppsFiltered;
         // a collection of apps that the user has selected for blocking
         private ObservableCollection<ApplicationInfo> _blockedApplications;
+
         public ObservableCollection<ApplicationInfo> BlockedApplications
-        { 
+        {
             get { return _blockedApplications; }
             set
             {
@@ -129,6 +133,7 @@ namespace RestrictR
 
 
         private bool _blockAllSites;
+
         public bool BlockAllSites
         {
             get { return _blockAllSites; }
@@ -137,11 +142,13 @@ namespace RestrictR
                 {
                     OnPropertyChanged(nameof(IsUrlListEnabled));
                 }
+
+                ValidateProperty(IsBlockingValid, nameof(IsBlockingValid));
             }
         }
 
         private ObservableCollection<string> _blockedUrls;
-        
+
         public ObservableCollection<string> BlockedUrls
         {
             get { return _blockedUrls; }
@@ -154,7 +161,7 @@ namespace RestrictR
         private string _newUrl;
         [ValidUrl]
         public string NewUrl
-        { 
+        {
             get { return _newUrl; }
             set
             {
@@ -175,12 +182,11 @@ namespace RestrictR
                 if (!string.IsNullOrWhiteSpace(NewUrl) && !BlockedUrls.Contains(NewUrl))
                 {
                     BlockedUrls.Add(NewUrl);
+                    ValidateProperty(IsBlockingValid, nameof(IsBlockingValid));
                     NewUrl = string.Empty; // Reset the new URL field
                 }
             }
         }
-
-
 
         private IEnumerable<ValidationResult> validationErrors;
         public IEnumerable<ValidationResult> ValidationErrors
@@ -197,7 +203,20 @@ namespace RestrictR
             ValidateAllProperties();
         }
 
+        [BlockingValidation]
+        public bool IsBlockingValid => BlockAllSites || BlockedUrls.Any() || BlockedApplications.Any();
+
+        public void ValidateSomeProperty(object value, string propertyName)
+        {
+            ValidateProperty(value, propertyName);
+        }
+
         private void SetValidationErrors(object sender, DataErrorsChangedEventArgs e)
+        {
+            ValidationErrors = GetErrors();
+        }
+
+        public void SetValidationErrors()
         {
             ValidationErrors = GetErrors();
         }

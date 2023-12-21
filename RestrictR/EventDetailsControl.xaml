@@ -184,7 +184,7 @@
             </Expander>
 
 
-            <ItemsControl ItemsSource="{Binding ValidationErrors}" 
+            <ItemsControl ItemsSource="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}" 
               ItemTemplate="{StaticResource ValidationResultTemplate}" />
 
             <Button Click="CancelButton_Click">Cancel</Button>

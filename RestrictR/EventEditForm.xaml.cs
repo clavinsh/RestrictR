@@ -84,6 +84,11 @@ namespace RestrictR
         private async void SubmitButtonClick(object sender, RoutedEventArgs e)
         {
             eventDetailsControl.ViewModel.ValidateAll();
+            
+            // fallback if for some reason errors are not shown after validating all
+            // this can happen if some error was set but was not displayed and if it does not change
+            // then the event won't be invoked - this fixes that situation by setting them either way
+            eventDetailsControl.ViewModel.SetValidationErrors();
 
             if (!eventDetailsControl.ViewModel.HasErrors)
             {
