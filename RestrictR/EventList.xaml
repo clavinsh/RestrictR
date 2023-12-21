@@ -58,47 +58,69 @@
                             </Grid>
                         </Expander.Header>
                         <Expander.Content>
-                            <StackPanel>
-                            <ListView Header="Blocked Applications" ItemsSource="{x:Bind BlockedApps}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="dpl:ApplicationInfo">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
+                            <StackPanel HorizontalAlignment="Center">
+                                <Expander Header="Blocked Applications">
+                                    <ListView ItemsSource="{x:Bind BlockedApps}">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate x:DataType="dpl:ApplicationInfo">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
 
-                                            <Ellipse x:Name="Ellipse"
-                                                     Grid.RowSpan="2"
-                                                     Width ="32"
-                                                     Height="32"
-                                                     Margin="6"
-                                                     VerticalAlignment="Center"
-                                                     HorizontalAlignment="Center"
-                                                     Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{x:Bind DisplayName}"
-                                                       x:Phase="1"
-                                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                                       Margin="12,6,0,0"/>
+                                                    <Ellipse x:Name="Ellipse"
+                         Grid.RowSpan="2"
+                         Width ="32"
+                         Height="32"
+                         Margin="6"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
+                                                    <TextBlock Grid.Column="1"
+                           Text="{x:Bind DisplayName}"
+                           x:Phase="1"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12,6,0,0"/>
 
-                                            <TextBlock Grid.Column="1" Grid.Row="1"
-                                                       Text="{x:Bind DisplayVersion}"
-                                                       x:Phase="2"
-                                                       Style="{ThemeResource BodyTextBlockStyle}"
-                                                       Margin="12,0,0,6"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                                    <TextBlock Grid.Column="1" Grid.Row="1"
+                           Text="{x:Bind DisplayVersion}"
+                           x:Phase="2"
+                           Style="{ThemeResource BodyTextBlockStyle}"
+                           Margin="12,0,0,6"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </Expander>
+                                <Expander Header="Blocked Websites">
+                                    <StackPanel>
+                                        <!--<CheckBox Content="Block All Sites" IsChecked="{x:Bind BlockedSites.BlockAllSites, Mode=OneWay}" IsEnabled="False" />-->
 
-                            <!--<ListView Header="Blocked Websites" ItemsSource="{x:Bind BlockedSites}">
+                                        <!--Visibility="{x:Bind BlockedSites.BlockAllSites, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Invert'}"-->
+                                        <StackPanel>
+                                            <ListView ItemsSource="{x:Bind BlockedSites.BlockedWebsiteUrls}" SelectionMode="None">
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate x:DataType="dpl:BlockedWebsiteUrl">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <TextBlock Text="{x:Bind Url}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Expander>
+
+                                <!--<ListView Header="Blocked Websites" ItemsSource="{x:Bind BlockedSites}">
                                 
                             </ListView>-->
+                                
+                                
                             </StackPanel>
                         </Expander.Content>
                     </Expander>

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static RestrictR.PipeCommunication;
+using Microsoft.WindowsAppSDK.Runtime;
+using Microsoft.Extensions.Logging;
 
 namespace RestrictR
 {
@@ -59,9 +61,18 @@ namespace RestrictR
         {
             try
             {
-                var eventForEditing = await _context.Events.FindAsync(eventEdited.EventId)
-                    ?? throw new KeyNotFoundException("Event does not exist"); // perhaps a better entry
-                _context.Entry(eventForEditing).CurrentValues.SetValues(eventEdited);
+                var eventForEditing = await _context.Events
+                   .Include(e => e.BlockedApps)
+                   .Include(e => e.BlockedSites).ThenInclude(e => e.BlockedWebsiteUrls)
+                   .FirstOrDefaultAsync(e => e.EventId == eventEdited.EventId)
+                    ?? throw new KeyNotFoundException("Event does not exist");
+
+                eventForEditing.Title = eventEdited.Title;
+                eventForEditing.Start = eventEdited.Start;
+                eventForEditing.Duration = eventEdited.Duration;
+                eventForEditing.Recurrence = eventEdited.Recurrence;
+                eventForEditing.BlockedApps = eventEdited.BlockedApps;
+                eventForEditing.BlockedSites = eventEdited.BlockedSites;
 
                 await _context.SaveChangesAsync();
                 await SendConfig("updated");
