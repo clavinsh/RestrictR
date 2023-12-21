@@ -33,7 +33,7 @@ namespace RestrictR
 
         private DateTimeOffset _startDate;
         [Required]
-        [StartDateValidation]
+        //[StartDateValidation]
         public DateTimeOffset StartDate
         {
             get { return _startDate; }
@@ -45,6 +45,7 @@ namespace RestrictR
 
         private TimeSpan _startTime;
         [Required]
+        [TimeSpansInOneDayValidation(nameof(Duration))]
         public TimeSpan StartTime
         {
             get { return _startTime; }
@@ -62,6 +63,7 @@ namespace RestrictR
             set
             {
                 SetProperty(ref _duration, value, true);
+                ValidateProperty(StartTime, nameof(StartTime));
             }
         }
 
@@ -219,12 +221,10 @@ namespace RestrictR
             ValidationErrors = GetErrors();
         }
 
-        //public event EventHandler ValidationSummaryRequested;
 
         public EventViewModel()
         {
             ErrorsChanged += SetValidationErrors;
-            //ValidationSummaryRequested += SetValidationErrors;
 
             StartDate = DateTimeOffset.Now;
             StartTime = DateTimeOffset.Now.TimeOfDay;
