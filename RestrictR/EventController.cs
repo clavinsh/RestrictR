@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static RestrictR.PipeCommunication;
+using Microsoft.WindowsAppSDK.Runtime;
+using Microsoft.Extensions.Logging;
 
 namespace RestrictR
 {
@@ -47,6 +49,50 @@ namespace RestrictR
                 await _context.SaveChangesAsync();
                 await SendConfig("updated");
                 return new OperationResult(success: true, newEvent);
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log the exception details, return an error message, etc.
+                return new OperationResult(success: false, error: ex.Message);
+            }
+        }
+
+        public async Task<OperationResult> EditEvent(Event eventEdited)
+        {
+            try
+            {
+                var eventForEditing = await _context.Events
+                   .Include(e => e.BlockedApps)
+                   .Include(e => e.BlockedSites).ThenInclude(e => e.BlockedWebsiteUrls)
+                   .FirstOrDefaultAsync(e => e.EventId == eventEdited.EventId)
+                    ?? throw new KeyNotFoundException("Event does not exist");
+
+                eventForEditing.Title = eventEdited.Title;
+                eventForEditing.Start = eventEdited.Start;
+                eventForEditing.Duration = eventEdited.Duration;
+                eventForEditing.Recurrence = eventEdited.Recurrence;
+                eventForEditing.BlockedApps = eventEdited.BlockedApps;
+                eventForEditing.BlockedSites = eventEdited.BlockedSites;
+
+                await _context.SaveChangesAsync();
+                await SendConfig("updated");
+                return new OperationResult(success: true, eventEdited);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details, return an error message, etc.
+                return new OperationResult(success: false, error: ex.Message);
+            }
+        }
+
+        public async Task<OperationResult> DeleteEvent(Event eventForDeletion)
+        {
+            try
+            {
+                _context.Remove(eventForDeletion);
+                await _context.SaveChangesAsync();
+                await SendConfig("updated");
+                return new OperationResult(success: true);
             }
             catch (DbUpdateException ex)
             {

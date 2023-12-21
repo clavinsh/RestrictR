@@ -1,14 +1,11 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI.UI;
-using DataPacketLibrary;
+using DataPacketLibrary.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Media3D;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
@@ -18,8 +15,6 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using DataPacketLibrary.Models;
-using ABI.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,19 +24,53 @@ namespace RestrictR
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class EventForm : Page
+    public sealed partial class EventEditForm : Page
     {
-        //public EventViewModel ViewModel => (EventViewModel)DataContext;
         private EventController _controller;
 
-        public EventForm()
+        public EventEditForm()
         {
             this.InitializeComponent();
-            //DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
 
             _controller = Ioc.Default.GetRequiredService<EventController>();
             eventDetailsControl.SubmitButtonClick += SubmitButtonClick;
             eventDetailsControl.CancelButtonClick += CancelButtonClick;
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is int eventId)
+            {
+                var eventToEdit = await _controller.GetEvent(eventId);
+                EventViewModel viewModel = ConvertFromEvent(eventToEdit);
+
+                eventDetailsControl.InitializeForEdit(viewModel);
+            }
+        }
+
+        private static EventViewModel ConvertFromEvent(Event eventToEdit)
+        {
+            var evm = new EventViewModel()
+            {
+                EventId = eventToEdit.EventId,
+                Title = eventToEdit.Title,
+                StartDate = eventToEdit.Start.Date,
+                StartTime = eventToEdit.Start.TimeOfDay,
+                Duration = eventToEdit.Duration,
+                RecurrenceType = eventToEdit.Recurrence,
+                BlockedApplications = new ObservableCollection<ApplicationInfo>(eventToEdit.BlockedApps),
+                BlockAllSites = eventToEdit.BlockedSites?.BlockAllSites ?? false,
+                //BlockedUrls = new ObservableCollection<string>(
+                //    eventToEdit.BlockedSites?.BlockedWebsiteUrls.Select(url => url.Url)
+                //    ) 
+                //?? new ObservableCollection<string>(),
+                BlockedUrls = new ObservableCollection<string>(eventToEdit.BlockedSites?.BlockedWebsiteUrls?.Select(url => url.Url) ?? Enumerable.Empty<string>())
+
+            };
+
+            return evm;
         }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
@@ -60,7 +89,7 @@ namespace RestrictR
             {
                 Event submission = ConvertToEvent(eventDetailsControl.ViewModel);
 
-                var result = await _controller.CreateEvent(submission);
+                var result = await _controller.EditEvent(submission);
 
                 if (result.Success)
                 {
@@ -113,6 +142,7 @@ namespace RestrictR
 
             Event converted = new()
             {
+                EventId = viewModel.EventId,
                 Title = viewModel.Title,
                 Start = viewModel.StartDate.Date + viewModel.StartTime,
                 Duration = viewModel.Duration,
@@ -123,5 +153,15 @@ namespace RestrictR
 
             return converted;
         }
+
+        //public EventForm(Event eventToEdit)
+        //{
+        //    this.InitializeComponent();
+        //    _controller = Ioc.Default.GetRequiredService<EventController>();
+        //    eventDetailsControl.SubmitButtonClick += SubmitButtonClick;
+        //    eventDetailsControl.CancelButtonClick += CancelButtonClick;
+
+        //    eventDetailsControl.ViewModel.LoadEvent(eventToEdit);
+        //}
     }
 }

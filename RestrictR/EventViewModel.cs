@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DataPacketLibrary;
 using DataPacketLibrary.Models;
 using RestrictR.ValidationAttributes;
@@ -8,13 +9,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace RestrictR
 {
     public class EventViewModel : ObservableValidator
     {
+        public int EventId { get; set; }
+
         private string _title;
         [Required]
         public string Title
@@ -123,6 +128,58 @@ namespace RestrictR
         }
 
 
+        private bool _blockAllSites;
+        public bool BlockAllSites
+        {
+            get { return _blockAllSites; }
+            set {
+                if (SetProperty(ref _blockAllSites, value, true))
+                {
+                    OnPropertyChanged(nameof(IsUrlListEnabled));
+                }
+            }
+        }
+
+        private ObservableCollection<string> _blockedUrls;
+        
+        public ObservableCollection<string> BlockedUrls
+        {
+            get { return _blockedUrls; }
+            set
+            {
+                SetProperty(ref _blockedUrls, value, true);
+            }
+        }
+
+        private string _newUrl;
+        [ValidUrl]
+        public string NewUrl
+        { 
+            get { return _newUrl; }
+            set
+            {
+                SetProperty(ref _newUrl, value, true);
+            }
+        }
+
+        public bool IsUrlListEnabled => !BlockAllSites;
+
+        public ICommand AddUrlCommand { get; private set; }
+
+        private void AddUrl()
+        {
+            ValidateProperty(NewUrl, nameof(NewUrl));
+
+            if (!GetErrors(nameof(NewUrl)).Any())
+            {
+                if (!string.IsNullOrWhiteSpace(NewUrl) && !BlockedUrls.Contains(NewUrl))
+                {
+                    BlockedUrls.Add(NewUrl);
+                    NewUrl = string.Empty; // Reset the new URL field
+                }
+            }
+        }
+
 
 
         private IEnumerable<ValidationResult> validationErrors;
@@ -133,6 +190,11 @@ namespace RestrictR
             {
                 SetProperty(ref validationErrors, value);
             }
+        }
+
+        public void ValidateAll()
+        {
+            ValidateAllProperties();
         }
 
         private void SetValidationErrors(object sender, DataErrorsChangedEventArgs e)
@@ -153,6 +215,9 @@ namespace RestrictR
             Apps = ApplicationRetriever.GetInstalledApplicationsFromRegistry();
             AppsFiltered = new ObservableCollection<ApplicationInfo>(Apps);
             BlockedApplications = new ObservableCollection<ApplicationInfo>();
+            BlockedUrls = new ObservableCollection<string>();
+
+            AddUrlCommand = new RelayCommand(AddUrl);
         }
     }
 }
