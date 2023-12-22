@@ -36,11 +36,17 @@ namespace RestrictR
         public MainWindow()
         {
             this.InitializeComponent();
-
             MainFrame = mainFrame;
-            mainFrame.Navigate(typeof(EventList));
-
             Admin = IsUserAdmin();
+
+            if (Admin)
+            {
+                mainFrame.Navigate(typeof(EventList));
+            }
+            else
+            {
+                mainFrame.Navigate(typeof(EventListUser));
+            }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

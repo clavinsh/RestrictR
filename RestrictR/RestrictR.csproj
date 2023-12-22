@@ -19,6 +19,7 @@
     <None Remove="EventEditForm.xaml" />
     <None Remove="EventForm.xaml" />
     <None Remove="EventList.xaml" />
+    <None Remove="EventListUser.xaml" />
     <None Remove="ValidationStyles.xaml" />
   </ItemGroup>
 
@@ -54,6 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataPacketLibrary\DataPacketLibrary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="EventListUser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="EventEditForm.xaml">
