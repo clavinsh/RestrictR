@@ -26,6 +26,8 @@ namespace RestrictRService
 
             events = new();
             _clock = clock;
+
+            UpdateConfiguration();
         }
 
         // updates the configuration (list of events) by retrieving them from the database
@@ -78,8 +80,23 @@ namespace RestrictRService
                 currentEvent = null;
             }
 
+            DateTime nextCheckTime;
+
+            if (currentEvent != null)
+            {
+                nextCheckTime = currentEvent.Start + currentEvent.Duration;
+            }
+            else if(nextEvent != null)
+            {
+                nextCheckTime = nextEvent.Start;
+            }
+            else
+            {
+                nextCheckTime = currentTime.AddMinutes(5);
+            }
+
             // Schedule the next check
-            ScheduleNextCheck(nextEvent?.Start ?? DateTime.MaxValue);
+            ScheduleNextCheck(nextCheckTime);
         }
 
 
