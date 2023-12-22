@@ -10,6 +10,10 @@ namespace RestrictRService
     {
         private List<string> BlockedApplicationsInstallLocations = new();
 
+        // time in milliseconds for which the service waits for the process to close normally,
+        // before killing it by force
+        private int gracefulExitTimeout = 5000; 
+
         // Retrieves the full name of the executable image for the specified process.
         // From the ms docs: https://learn.microsoft.com/lv-lv/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamea?redirectedfrom=MSDN
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -44,7 +48,7 @@ namespace RestrictRService
             BlockedApplicationsInstallLocations.Clear();
         }
 
-        public void ManageActiveProcesses()
+        public async void ManageActiveProcesses()
         {
             // No need to evaluate processes if there will be nothing to block
             if (BlockedApplicationsInstallLocations.Count == 0)
@@ -72,7 +76,7 @@ namespace RestrictRService
 
                             if (fullProcessPath.StartsWith(fullInstallLocationPath))
                             {
-                                process.Kill();
+                                await TryKillProcessAsync(process);
                             }
                         }
                     }
@@ -88,11 +92,28 @@ namespace RestrictRService
             }
         }
 
-        // Method sets up the Windows Registry keys
-        // and values for application blocking
-        public void RegistrySetup()
+        private async Task TryKillProcessAsync(Process process)
         {
-            throw new NotImplementedException();
+            await Task.Run(() =>
+            {
+                // before bombarding the process constantly with closes and kills,
+                // check if it already has exited (can/will happen if the process takes some time to close,
+                // and we have reached the next loop of the main manage method (1 second delay)
+                if (!process.HasExited)
+                {
+                    bool hasExited = process.CloseMainWindow();
+
+                    if (!hasExited)
+                    {
+                        hasExited = process.WaitForExit(gracefulExitTimeout);
+                    }
+
+                    if (!hasExited)
+                    {
+                        process.Kill();
+                    }
+                }
+            });
         }
     }
 }
