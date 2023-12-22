@@ -26,6 +26,8 @@ namespace RestrictRService
 
             events = new();
             _clock = clock;
+
+            UpdateConfiguration();
         }
 
         // updates the configuration (list of events) by retrieving them from the database
