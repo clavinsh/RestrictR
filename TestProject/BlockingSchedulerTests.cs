@@ -1,11 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualBasic;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestProject
 {
@@ -61,7 +55,7 @@ namespace TestProject
                         }
                     }
                 }
-                    
+
             };
 
             List<Event> events = new()
@@ -120,11 +114,11 @@ namespace TestProject
 
             // Assert
             _mockAppBlocker.Verify(appBlocker => appBlocker.SetBlockedApps(
-                It.Is<List<string>>(apps => apps.Contains("installLocation"))), 
+                It.Is<List<string>>(apps => apps.Contains("installLocation"))),
                 Times.Never);
 
             _mockWebBlocker.Verify(webBlocker => webBlocker.SetBlockedWebsites(
-                It.Is<BlockedWebsites>(site => site.BlockedWebsiteUrls.Any(url => url.Url == "example.com"))), 
+                It.Is<BlockedWebsites>(site => site.BlockedWebsiteUrls.Any(url => url.Url == "example.com"))),
                 Times.Never);
         }
 

@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DataPacketLibrary;
 using DataPacketLibrary.Models;
 using RestrictR.ValidationAttributes;
 using System;
@@ -9,9 +8,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace RestrictR
@@ -137,7 +133,8 @@ namespace RestrictR
         public bool BlockAllSites
         {
             get { return _blockAllSites; }
-            set {
+            set
+            {
                 if (SetProperty(ref _blockAllSites, value, true))
                 {
                     OnPropertyChanged(nameof(IsUrlListEnabled));

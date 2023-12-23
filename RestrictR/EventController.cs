@@ -1,14 +1,10 @@
 ﻿#nullable enable
-using Microsoft.EntityFrameworkCore;
 using DataPacketLibrary.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static RestrictR.PipeCommunication;
-using Microsoft.WindowsAppSDK.Runtime;
-using Microsoft.Extensions.Logging;
 
 namespace RestrictR
 {

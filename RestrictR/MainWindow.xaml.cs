@@ -1,18 +1,6 @@
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Numerics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using DataPacketLibrary.Models;
 using System.Security.Principal;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -102,7 +90,7 @@ namespace RestrictR
             {
                 var tag = item.Tag.ToString();
 
-                switch(tag)
+                switch (tag)
                 {
                     case "EventsPage":
                         if (Admin)

@@ -1,9 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestrictR
 {
@@ -21,7 +17,7 @@ namespace RestrictR
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            if(value is DateTimeOffset dateTimeOffset)
+            if (value is DateTimeOffset dateTimeOffset)
             {
                 return dateTimeOffset.DateTime;
             }

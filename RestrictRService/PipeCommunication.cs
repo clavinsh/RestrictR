@@ -31,7 +31,7 @@ namespace RestrictRService
             {
                 PipeSecurity ps = new();
                 SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-                ps.AddAccessRule( new PipeAccessRule(
+                ps.AddAccessRule(new PipeAccessRule(
                     sid,
                     PipeAccessRights.ReadWrite,
                     AccessControlType.Allow

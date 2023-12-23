@@ -1,12 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using DataPacketLibrary;
 using DataPacketLibrary.Models;
 using RestrictRService;
-using System.Security.Principal;
-using Microsoft.Extensions.FileProviders;
-using Windows.ApplicationModel.Activation;
-using Serilog.Events;
 using Serilog;
+using Serilog.Events;
 using static System.Environment;
 
 

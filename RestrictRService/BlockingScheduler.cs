@@ -1,11 +1,5 @@
 ﻿using DataPacketLibrary.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestrictRService
 {
@@ -89,7 +83,7 @@ namespace RestrictRService
             {
                 nextCheckTime = currentEvent.Start + currentEvent.Duration;
             }
-            else if(nextEvent != null)
+            else if (nextEvent != null)
             {
                 nextCheckTime = nextEvent.Start;
             }
@@ -115,7 +109,7 @@ namespace RestrictRService
         }
 
         // Check if an event is still active based on start time and duration, recurrence
-        private static bool IsEventActive(Event configEvent,  DateTime currentTime)
+        private static bool IsEventActive(Event configEvent, DateTime currentTime)
         {
             // Non-recurring event, simply check if current time falls within event timeframe
             if (configEvent.Recurrence == Event.RecurrenceType.None)
@@ -167,7 +161,7 @@ namespace RestrictRService
         }
 
         private void ImplementEventBlocking(Event configEvent)
-        {            
+        {
             var BlockedAppInstallLocations = configEvent.BlockedApps.Select(app => app.InstallLocation).ToList();
 
             if (BlockedAppInstallLocations.Count > 0)

@@ -12,7 +12,7 @@ namespace RestrictRService
 
         // time in milliseconds for which the service waits for the process to close normally,
         // before killing it by force
-        private int gracefulExitTimeout = 5000; 
+        private int gracefulExitTimeout = 5000;
 
         // Retrieves the full name of the executable image for the specified process.
         // From the ms docs: https://learn.microsoft.com/lv-lv/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamea?redirectedfrom=MSDN

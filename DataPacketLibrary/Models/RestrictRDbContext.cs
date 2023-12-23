@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Laraue.EfCoreTriggers.Common.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using static System.Environment;
 
 namespace DataPacketLibrary.Models;
@@ -9,7 +6,7 @@ namespace DataPacketLibrary.Models;
 public partial class RestrictRDbContext : DbContext
 {
     public RestrictRDbContext(DbContextOptions<RestrictRDbContext> options)
-        : base(options) {}
+        : base(options) { }
 
     public virtual DbSet<ApplicationInfo> BlockedApplications { get; set; } = null!;
 

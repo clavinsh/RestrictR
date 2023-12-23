@@ -2,19 +2,10 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using DataPacketLibrary.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -84,7 +75,7 @@ namespace RestrictR
         private async void SubmitButtonClick(object sender, RoutedEventArgs e)
         {
             eventDetailsControl.ViewModel.ValidateAll();
-            
+
             // fallback if for some reason errors are not shown after validating all
             // this can happen if some error was set but was not displayed and if it does not change
             // then the event won't be invoked - this fixes that situation by setting them either way
@@ -118,7 +109,7 @@ namespace RestrictR
 
         private static Event ConvertToEvent(EventViewModel viewModel)
         {
-            #nullable enable
+#nullable enable
 
             // when blocking all sites, the list must be empty
             // otherwise check if viewmodel list has elements and set those,

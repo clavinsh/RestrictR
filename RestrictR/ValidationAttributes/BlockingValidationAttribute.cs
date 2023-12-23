@@ -1,12 +1,5 @@
-﻿using DataPacketLibrary.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestrictR.ValidationAttributes
 {
@@ -19,7 +12,7 @@ namespace RestrictR.ValidationAttributes
         {
             var viewModel = (EventViewModel)validationContext.ObjectInstance;
 
-            bool isBlockingSet = viewModel.BlockAllSites 
+            bool isBlockingSet = viewModel.BlockAllSites
                 || (viewModel.BlockedUrls != null && viewModel.BlockedUrls.Any())
                 || (viewModel.BlockedApplications != null && viewModel.BlockedApplications.Any());
 

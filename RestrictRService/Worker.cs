@@ -5,7 +5,7 @@ namespace RestrictRService
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IConfiguration _configuration; 
+        private readonly IConfiguration _configuration;
         private readonly IApplicationBlocker _appBlocker;
         private readonly IWebsiteBlocker _webBlocker;
         private readonly PipeCommunication _pipeCommunication;

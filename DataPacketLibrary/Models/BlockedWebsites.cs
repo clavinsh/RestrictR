@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DataPacketLibrary.Models;
+﻿namespace DataPacketLibrary.Models;
 
 public class BlockedWebsites
 {

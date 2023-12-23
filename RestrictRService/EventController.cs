@@ -1,18 +1,12 @@
-﻿using DataPacketLibrary;
+﻿using DataPacketLibrary.Models;
 using Microsoft.EntityFrameworkCore;
-using DataPacketLibrary.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestrictRService
 {
     //used to to retrieve events from the database
     public class EventController
     {
-        
+
         private RestrictRDbContext _context;
 
         public EventController(RestrictRDbContext context)

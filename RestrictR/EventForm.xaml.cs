@@ -1,25 +1,9 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI.UI;
-using DataPacketLibrary;
+using DataPacketLibrary.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Media3D;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using DataPacketLibrary.Models;
-using ABI.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -89,7 +73,7 @@ namespace RestrictR
 
         private static Event ConvertToEvent(EventViewModel viewModel)
         {
-            #nullable enable
+#nullable enable
 
             // when blocking all sites, the list must be empty
             // otherwise check if viewmodel list has elements and set those,

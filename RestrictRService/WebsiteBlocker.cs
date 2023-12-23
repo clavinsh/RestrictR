@@ -1,11 +1,7 @@
-﻿using Microsoft.VisualBasic;
+﻿using DataPacketLibrary.Models;
 using NetFwTypeLib; // For managing Windows Firewall rules
 using System.Net;
 using System.Net.Sockets;
-using DataPacketLibrary.Models;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.Networking.NetworkOperators;
-using static System.Net.WebRequestMethods;
 
 namespace RestrictRService
 {
@@ -93,7 +89,7 @@ namespace RestrictRService
             //{
             //    if(!RuleExists(name))
             //    {
-                    
+
             //    }
             //}
         }
@@ -245,14 +241,14 @@ namespace RestrictRService
 
                     return ips;
                 }
-                catch(SocketException ex)
+                catch (SocketException ex)
                 {
                     string msg = ex.Message; // LOG: error no such host is known 
                     throw;
                 }
-                
+
             }
-            else            
+            else
             {
                 throw new ArgumentException("Invalid URL specified");
             }
