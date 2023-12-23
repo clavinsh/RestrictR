@@ -1,4 +1,5 @@
 ﻿using DataPacketLibrary.Models;
+using Serilog;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Security.AccessControl;
@@ -39,6 +40,8 @@ namespace RestrictRService
                 using NamedPipeServerStream namedPipeServerStream = NamedPipeServerStreamAcl.Create(pipeName, PipeDirection.In, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.None, 4096, 4096, ps);
                 namedPipeServerStream.WaitForConnection();
 
+
+
                 byte[] buffer = new byte[bufferSize];
 
                 int bytesRead = namedPipeServerStream.Read(buffer);
@@ -51,10 +54,16 @@ namespace RestrictRService
                 // process new config data
                 Debug.WriteLine("new config received: " + data);
 
+                Log.Information("Received data from the pipe.");
+
                 // received data from the GUI is for telling that the database has been updated
                 if (data == "updated")
                 {
                     _blockingScheduler.UpdateConfiguration();
+                }
+                else
+                {
+                    Log.Warning("Received invalid data from the pipe. Change has been ignored.");
                 }
 
                 Thread.Sleep(1000);

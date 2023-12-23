@@ -1,5 +1,6 @@
 ﻿using DataPacketLibrary.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,8 @@ namespace RestrictRService
         public void CheckSchedule()
         {
             DateTime currentTime = _clock.Now;
+
+            Log.Information("Checking the schedule");
 
             // Find the next or ongoing event
             Event? nextEvent = FindNextEvent(currentTime);
@@ -164,7 +167,7 @@ namespace RestrictRService
         }
 
         private void ImplementEventBlocking(Event configEvent)
-        {
+        {            
             var BlockedAppInstallLocations = configEvent.BlockedApps.Select(app => app.InstallLocation).ToList();
 
             if (BlockedAppInstallLocations.Count > 0)
@@ -176,6 +179,8 @@ namespace RestrictRService
             {
                 _webBlocker.SetBlockedWebsites(configEvent.BlockedSites);
             }
+
+            Log.Information("Implemented blocking event with title: {@Title}", configEvent.Title);
         }
 
         private void RemoveEventBlocking(Event configEvent)

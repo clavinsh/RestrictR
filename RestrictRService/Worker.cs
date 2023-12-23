@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace RestrictRService
 {
     public class Worker : BackgroundService
@@ -19,10 +21,11 @@ namespace RestrictRService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            Log.Information("Service has succesfully started.");
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                var configValue = _configuration["someKey"];
+                //_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
                 _appBlocker.ManageActiveProcesses();
 
