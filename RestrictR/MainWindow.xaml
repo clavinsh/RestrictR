@@ -16,6 +16,7 @@
                 <NavigationViewItem Icon="Page" Content="Events" Tag="EventsPage" />
                 <NavigationViewItem Icon="Help" Content="Help" Tag="HelpPage" />
             </NavigationView.MenuItems>
+            
             <Frame x:Name="mainFrame" Navigated="MainFrame_Navigated"></Frame>
         </NavigationView>
     </Grid>

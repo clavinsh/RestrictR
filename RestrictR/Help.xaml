@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="RestrictR.Help"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RestrictR"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Help" Style="{StaticResource TitleTextBlockStyle}" Margin="20" Grid.Row="0"/>
+
+        <ScrollViewer Grid.Row="1">
+            <RichTextBlock Margin="20" TextWrapping="Wrap">
+                <!-- Help & Support Heading -->
+                <Paragraph FontWeight="SemiBold" FontSize="22">
+                    <Run Text="Help &amp; Support" />
+                </Paragraph>
+
+                <!-- Locating Log Files -->
+                <Paragraph FontWeight="SemiBold" FontSize="18" Margin="0,10,0,0">
+                    <Run Text="Locating Log Files" />
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="If you encounter any issues while using RestrictR, detailed log files can provide valuable information for troubleshooting. You can find these logs in the following directory:" />
+                </Paragraph>
+                <Paragraph Margin="0,0,0,10">
+                    <Run Text="C:\ProgramData\RestrictR\logs\" FontWeight="Bold" />
+                </Paragraph>
+
+                <!-- How to Use RestrictR -->
+                <Paragraph FontWeight="SemiBold" FontSize="18">
+                    <Run Text="How to Use RestrictR" />
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="RestrictR is designed to be intuitive and easy to use. Here are some quick tips to get you started:" />
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="Managing Events: Navigate to the 'Events' section to add, edit, or delete your scheduled blocking events." />
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="Customizing Blocking Rules: Under each event, specify which websites or applications you want to block." />
+                </Paragraph>
+
+                <!-- Reporting Issues -->
+                <Paragraph FontWeight="SemiBold" FontSize="18">
+                    <Run Text="Reporting Issues" />
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="If you encounter problems or have any questions about RestrictR, you can get in contact, look through the code and join the community at: " />
+                    <Hyperlink NavigateUri="http://www.github.com/clavinsh/RestrictR">
+                        <Run Text="www.github.com/clavinsh/RestrictR" />
+                    </Hyperlink>
+                </Paragraph>
+
+                <!-- Tips for Effective Usage -->
+                <Paragraph FontWeight="SemiBold" FontSize="18" Margin="0,20,0,0">
+                    <Run Text="Tips for Effective Usage" />
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="Regularly update your blocking rules to ensure they align with your current needs. Check the log files if you suspect an event didn't trigger as expected. Backup your settings periodically, especially before applying major updates to the application." />
+                </Paragraph>
+            </RichTextBlock>
+        </ScrollViewer>
+
+    </Grid>
+</Page>

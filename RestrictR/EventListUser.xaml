@@ -16,11 +16,19 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></converters:BooleanToVisibilityConverter>
     </Page.Resources>
 
-    <Grid>
+    <Grid RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Events" Style="{StaticResource TitleTextBlockStyle}" Margin="20" Grid.Row="0"/>
+        
         <ListView x:Name="EventListView"
-               ItemsSource="{x:Bind Events}"
-               Width="600"
-               SelectionMode="None">
+                  ItemsSource="{x:Bind Events}"
+                  Width="600"
+                  SelectionMode="None"
+                  Grid.Row="1"
+                  HorizontalAlignment="Left">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="dpl:Event">
                     <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">

@@ -23,9 +23,8 @@
 
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
-
-    <ScrollViewer>
-        <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <TextBox Header="Title" Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="200" HorizontalAlignment="Left"></TextBox>
             <DatePicker Header="Start Date" Date="{x:Bind ViewModel.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
             <TimePicker Header="Start Time" Time="{x:Bind ViewModel.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TimePicker>
@@ -190,5 +189,4 @@
             <Button Click="CancelButton_Click">Cancel</Button>
             <Button Click="SubmitButton_Click">Submit</Button>
         </StackPanel>
-    </ScrollViewer>
 </UserControl>

@@ -8,6 +8,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    
-    <local:EventDetailsControl x:Name="eventDetailsControl"></local:EventDetailsControl>
+
+    <Grid RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Edit an existing Event" Style="{StaticResource TitleTextBlockStyle}" Margin="20" Grid.Row="0"/>
+        <ScrollView VerticalScrollBarVisibility="Auto" Margin="20" Grid.Row="1">
+            <local:EventDetailsControl x:Name="eventDetailsControl"></local:EventDetailsControl>
+        </ScrollView>
+    </Grid>
 </Page>

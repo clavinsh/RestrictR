@@ -25,10 +25,6 @@ namespace RestrictR
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        List<ApplicationInfo> Apps = new();
-
-        ObservableCollection<ApplicationInfo> AppsFiltered;
-
         public static Frame MainFrame { get; private set; }
 
         public readonly bool Admin;
@@ -97,12 +93,12 @@ namespace RestrictR
 
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if(args.IsSettingsInvoked)
+            if (args.IsSettingsInvoked)
             {
-                //navigate to settings page
-                //mainFrame.Navigate()
+                mainFrame.Navigate(typeof(Settings));
             }
-            else if (args.InvokedItemContainer is NavigationViewItem item)
+            else
+            if (args.InvokedItemContainer is NavigationViewItem item)
             {
                 var tag = item.Tag.ToString();
 
@@ -119,6 +115,7 @@ namespace RestrictR
                         }
                         break;
                     case "HelpPage":
+                        mainFrame.Navigate(typeof(Help));
                         break;
                 }
             }

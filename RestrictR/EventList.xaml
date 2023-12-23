@@ -16,11 +16,22 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></converters:BooleanToVisibilityConverter>
     </Page.Resources>
 
-    <Grid>
+    <Grid RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Events" Style="{StaticResource TitleTextBlockStyle}" Margin="20" Grid.Row="0"/>
+
+        <Button Click="Button_Click" Grid.Row="1" Margin="20">New blocking event</Button>
+        
         <ListView x:Name="EventListView"
                   ItemsSource="{x:Bind Events}"
                   Width="600"
-                  SelectionMode="None">
+                  SelectionMode="None"
+                  Grid.Row="2"
+                  HorizontalAlignment="Left">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="dpl:Event">
                     <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
@@ -43,7 +54,7 @@
                                 <StackPanel Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <TextBlock Text="{x:Bind Recurrence}"/>
                                 </StackPanel>
-                                
+
                                 <StackPanel Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Button Click="EditButton_Click">
                                         <SymbolIcon Symbol="Edit"></SymbolIcon>
@@ -55,7 +66,7 @@
                                         <SymbolIcon Symbol="Delete"></SymbolIcon>
                                     </Button>
                                 </StackPanel>
-                                
+
                             </Grid>
                         </Expander.Header>
                         <Expander.Content>
@@ -119,17 +130,13 @@
                                 <!--<ListView Header="Blocked Websites" ItemsSource="{x:Bind BlockedSites}">
                                 
                             </ListView>-->
-                                
-                                
+
+
                             </StackPanel>
                         </Expander.Content>
                     </Expander>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-
-        <Button Click="Button_Click">New blocking event</Button>
-
     </Grid>
 </Page>
