@@ -12,6 +12,8 @@ using System.Windows.Input;
 
 namespace RestrictR
 {
+    // Used for data input for event creation, editing
+    // Documentation function IDs - EVENT_CREATE, EVENT_EDIT
     public class EventViewModel : ObservableValidator
     {
         public int EventId { get; set; }

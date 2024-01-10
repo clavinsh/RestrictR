@@ -24,6 +24,7 @@ namespace RestrictRService
 
         // this pipe connection on the worker service is used
         // for receiving configuration information from the GUI directly
+        // Documentation function ID - CONF_COMM
         private void ServerReadThread()
         {
             // listen continuously

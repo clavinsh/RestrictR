@@ -6,6 +6,8 @@ namespace RestrictRService
 {
     // ApplicationBlocker class deals with blocking (killing active processes)
     // applications and providing methods to set which apps need to be blocked
+    // Corresponds to the Lietotņu bloķētājs (Application blocker) module in the documentation
+    // Documentation function IDs - A_BLCK_SET, A_BLCK_MNG, A_BLCK_KILL, A_BLCK_LOG
     public class ApplicationBlocker : IApplicationBlocker
     {
         private List<string> BlockedApplicationsInstallLocations = new();
@@ -21,6 +23,7 @@ namespace RestrictRService
             [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpExeName,
             ref uint lpdwSize);
 
+        // Documentation function ID - A_BLCK_SET
         public void SetBlockedApps(List<string> appsInstallLocations)
         {
             foreach (string app in appsInstallLocations)
@@ -42,12 +45,13 @@ namespace RestrictRService
                 }
             }
         }
-
+        
         public void RemoveBlockedApps()
         {
             BlockedApplicationsInstallLocations.Clear();
         }
 
+        // Documentation function ID - A_BLCK_MNG
         public async void ManageActiveProcesses()
         {
             // No need to evaluate processes if there will be nothing to block
@@ -92,6 +96,7 @@ namespace RestrictRService
             }
         }
 
+        // Documentation function ID - A_BLCK_KILL
         private async Task TryKillProcessAsync(Process process)
         {
             await Task.Run(() =>

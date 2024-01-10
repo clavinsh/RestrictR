@@ -14,6 +14,10 @@ Directory.CreateDirectory(logDirectoryPath);
 
 string logFilePath = Path.Combine(logDirectoryPath, "log.txt");
 
+// Sets up the logger
+// Documentation function IDs - LOG_CURR, LOG_DELETE
+// Anywhere in the app where some write log method is called,
+// that would correspond to LOG_lOG function ID
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -48,10 +52,10 @@ try
     })
     .Build();
 
-
     using (var scope = host.Services.CreateScope())
     {
         // essentially used for first time setup - creates the database
+        // Documentation function ID - CONF_DB_ENSURE
         var dbContext = scope.ServiceProvider.GetRequiredService<RestrictRDbContext>();
         dbContext.Database.EnsureCreated();
 

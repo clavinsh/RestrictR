@@ -8,6 +8,7 @@ using static RestrictR.PipeCommunication;
 
 namespace RestrictR
 {
+    // This class partially corresponds to Notikums (Event) module in the documentation
     public class EventController
     {
         private RestrictRDbContext _context;
@@ -27,6 +28,7 @@ namespace RestrictR
             return list;
         }
 
+        // Documentation function ID - EVENT_VIEW
         public async Task<DataPacketLibrary.Models.Event?> GetEvent(int eventId)
         {
             var ev = await _context.Events
@@ -37,6 +39,7 @@ namespace RestrictR
             return ev;
         }
 
+        // Documentation function ID - EVENT_CREATE
         public async Task<OperationResult> CreateEvent(Event newEvent)
         {
             try
@@ -53,6 +56,7 @@ namespace RestrictR
             }
         }
 
+        // Documentation function ID - EVENT_EDIT
         public async Task<OperationResult> EditEvent(Event eventEdited)
         {
             try
@@ -81,6 +85,7 @@ namespace RestrictR
             }
         }
 
+        // Documentation function ID - EVENT_DELETE
         public async Task<OperationResult> DeleteEvent(Event eventForDeletion)
         {
             try

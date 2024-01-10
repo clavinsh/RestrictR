@@ -20,6 +20,7 @@ namespace RestrictR
         // this pipe connection on the GUI is used to send configuration information
         // to the worker service directly
         // method is meant to be called right when the configuration changes
+        // Documentation function ID - EVENT_COMM
         public static async Task SendConfig(string config)
         {
             using NamedPipeClientStream namedPipeClientStream = new(".", pipeName, PipeDirection.Out);

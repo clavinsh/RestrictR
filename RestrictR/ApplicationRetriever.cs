@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace RestrictR
 {
+    // This class corresponds to the Lietotne (App) module in the documentation
+    // Contains methods to retrieve installed application by looking at the registry values
+    // Documentation function ID - APPS_GET_ALL
     internal class ApplicationRetriever
     {
         const string UninstallPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";

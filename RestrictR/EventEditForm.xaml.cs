@@ -7,14 +7,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace RestrictR
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+    // This page renders a form for event editing
+    // Documentation function ID - EVENT_EDIT
     public sealed partial class EventEditForm : Page
     {
         private EventController _controller;
@@ -53,10 +49,6 @@ namespace RestrictR
                 RecurrenceType = eventToEdit.Recurrence,
                 BlockedApplications = new ObservableCollection<ApplicationInfo>(eventToEdit.BlockedApps),
                 BlockAllSites = eventToEdit.BlockedSites?.BlockAllSites ?? false,
-                //BlockedUrls = new ObservableCollection<string>(
-                //    eventToEdit.BlockedSites?.BlockedWebsiteUrls.Select(url => url.Url)
-                //    ) 
-                //?? new ObservableCollection<string>(),
                 BlockedUrls = new ObservableCollection<string>(eventToEdit.BlockedSites?.BlockedWebsiteUrls?.Select(url => url.Url) ?? Enumerable.Empty<string>())
 
             };
@@ -149,15 +141,5 @@ namespace RestrictR
 
             return converted;
         }
-
-        //public EventForm(Event eventToEdit)
-        //{
-        //    this.InitializeComponent();
-        //    _controller = Ioc.Default.GetRequiredService<EventController>();
-        //    eventDetailsControl.SubmitButtonClick += SubmitButtonClick;
-        //    eventDetailsControl.CancelButtonClick += CancelButtonClick;
-
-        //    eventDetailsControl.ViewModel.LoadEvent(eventToEdit);
-        //}
     }
 }

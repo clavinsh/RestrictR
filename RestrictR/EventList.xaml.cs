@@ -5,14 +5,10 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.ObjectModel;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace RestrictR
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+    // This page renders a list of all events in the database for administrators
+    // Documentation function IDs - EVENT_VIEW_LIST, EVENT_VIEW
     public sealed partial class EventList : Page
     {
 

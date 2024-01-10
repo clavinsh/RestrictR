@@ -3,6 +3,12 @@ using Serilog;
 
 namespace RestrictRService
 {
+    // This class partially corresponds to the Bloķēšanas konfigurators (Blocking configurator)
+    // module in the documentation
+    // Contains methods to update the current list of events and figure out if any event is active,
+    // if some event is, then implement it's blocking config 
+    // Documentation function IDs - CONF_CHECK_SCH, CONF_LOG, CONF_CHECK_SCH
+
     public class BlockingScheduler
     {
         private List<Event> events;
@@ -48,6 +54,7 @@ namespace RestrictRService
 
         // checks and updates the event schedule as needed
         // adds the necessary config to website, software blockers as needed.
+        // Documentation function ID - CONF_CHECK_SCH
         public void CheckSchedule()
         {
             DateTime currentTime = _clock.Now;

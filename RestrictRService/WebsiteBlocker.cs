@@ -5,6 +5,10 @@ using System.Net.Sockets;
 
 namespace RestrictRService
 {
+    // ApplicationBlocker class deals with blocking websites by managing the Windows Firewall,
+    // hosts file and providing methods to set which apps need to be blocked
+    // Corresponds to the Tīmekļa bloķētājs (Website blocker) module in the documentation
+    // Documentation function IDs - S_BLCK_SET, S_BLCK_FW_ADD, S_BLCK_FW_DEL, S_BLCK_FW_ALL, S_BLCK_HF_SYNC, S_BLCK_HF_ADD
     public class WebsiteBlocker : IWebsiteBlocker
     {
         private const string BlockAllSitesRuleName = "Block Internet";
@@ -26,6 +30,7 @@ namespace RestrictRService
             _firewallPolicy = (INetFwPolicy2)fwPolicyObj;
         }
 
+        // Documentation function ID - S_BLCK_SET
         public void SetBlockedWebsites(BlockedWebsites blockedWebsites)
         {
             BlockedWebsites = blockedWebsites ?? throw new ArgumentNullException(nameof(blockedWebsites));
@@ -33,6 +38,7 @@ namespace RestrictRService
             SynchronizeRulesFromBlockedWebsites();
         }
 
+        // Documentation function ID - S_BLCK_SET
         public void RemoveBlockedWebsites()
         {
             BlockedWebsites = new()
@@ -48,33 +54,6 @@ namespace RestrictRService
             return _firewallPolicy.Rules.Cast<INetFwRule>().Where(r => r.Grouping == RuleGroupName);
         }
 
-        //public void RemoveAllBlockingRules()
-        //{
-        //    // remove the block all sites rule if it is implemented
-        //    if (BlockedWebsites.BlockAllSites)
-        //    {
-        //        RemoveBlockALlInternetRule();
-        //        BlockedWebsites.BlockAllSites = false;
-        //        return;
-        //    }
-        //    // remove rules from the rule list and clear it
-        //    else if (BlockedWebsites.BlockedWebsiteUrls != null)
-        //    {
-        //        foreach (var rule in BlockedWebsites.BlockedWebsiteUrls)
-        //        {
-        //            if (RuleExists(rule))
-        //            {
-        //                _firewallPolicy.Rules.Remove(rule);
-        //            }
-        //            else
-        //            {
-        //                //log: warning
-        //            }
-        //        }
-        //        BlockedWebsites.BlockedWebsiteUrls.Clear();
-        //        return;
-        //    }
-        //}
 
         // sets the rule from the input parameter (usually retrieved from the config file)
         // and checks against the actual firewall rules in windows
@@ -121,6 +100,7 @@ namespace RestrictRService
                     {
                         if (!BlockedWebsites.BlockedWebsiteUrls.Select(website => website.Url).Contains(rule.Name))
                         {
+                            // Documentation function ID - S_BLCK_SET
                             _firewallPolicy.Rules.Remove(rule.Name);
                         }
                     }
@@ -138,6 +118,7 @@ namespace RestrictRService
         }
 
         // adds a firewall rule for a specific website url
+        // Documentation function ID - S_BLCK_FW_ADD
         private void AddWebsiteBlockingRule(string websiteUrl)
         {
             IPAddress[] ipaddresses;
@@ -189,6 +170,7 @@ namespace RestrictRService
         }
 
         // adds a firewall rule to block all internet access
+        // Documentation function ID - S_BLCK_FW_ALL
         private void AddBlockAllInternetRule()
         {
             if (RuleExists(BlockAllSitesRuleName))
@@ -215,6 +197,7 @@ namespace RestrictRService
         }
 
         // removes the firewall rule that blocks all internet access
+        // Documentation function ID - S_BLCK_FW_DEL
         private void RemoveBlockALlInternetRule()
         {
             if (RuleExists(BlockAllSitesRuleName))
@@ -270,6 +253,7 @@ namespace RestrictRService
             return csv;
         }
 
+        // Documentation function ID - S_BLCK_HF_ADD
         private void AddEntryToHostsFile(string url)
         {
             var hostsFilePath = Path.Combine(Environment.SystemDirectory, "drivers/etc/hosts");
@@ -296,6 +280,7 @@ namespace RestrictRService
             return false;
         }
 
+        // Documentation function ID - S_BLCK_HF_SYNC
         private void SynchronizeHostsFile()
         {
             var hostsFilePath = Path.Combine(Environment.SystemDirectory, "drivers/etc/hosts");

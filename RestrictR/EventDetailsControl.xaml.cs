@@ -6,15 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace RestrictR
 {
+    // user control that contains the vent form,
+    // which is common between event creation and editing
+    // Documentation function IDs - EVENT_EDIT, EVENT_CREATE
     public sealed partial class EventDetailsControl : UserControl
     {
-        //public EventViewModel ViewModel => (EventViewModel)DataContext;
-
         public EventViewModel ViewModel { get; set; }
 
         public event EventHandler<RoutedEventArgs> CancelButtonClick;
@@ -81,9 +79,6 @@ namespace RestrictR
                     if (!ViewModel.BlockedApplications.Contains(item as ApplicationInfo))
                     {
                         ViewModel.BlockedApplications.Add(item as ApplicationInfo);
-                        //ViewModel.ValidateSomeProperty(ViewModel.BlockedApplications, nameof(ViewModel.BlockedApplications));
-                        //ViewModel.ChangeSomeProperty(nameof(ViewModel.IsBlockingValid));
-
                         ViewModel.ValidateSomeProperty(ViewModel.IsBlockingValid, nameof(ViewModel.IsBlockingValid));
                     }
                 }
@@ -95,8 +90,6 @@ namespace RestrictR
             if (sender is Button button && button.CommandParameter is ApplicationInfo appToUnblock)
             {
                 ViewModel.BlockedApplications.Remove(appToUnblock);
-                //ViewModel.ValidateSomeProperty(ViewModel.BlockedApplications, nameof(ViewModel.BlockedApplications));
-                //ViewModel.ChangeSomeProperty(nameof(ViewModel.IsBlockingValid));
                 ViewModel.ValidateSomeProperty(ViewModel.IsBlockingValid, nameof(ViewModel.IsBlockingValid));
             }
         }
@@ -106,8 +99,6 @@ namespace RestrictR
             if (sender is Button button && button.CommandParameter is string blockedUrl)
             {
                 ViewModel.BlockedUrls.Remove(blockedUrl);
-                //ViewModel.ValidateSomeProperty(ViewModel.BlockedUrls, nameof(ViewModel.BlockedUrls));
-                //ViewModel.ChangeSomeProperty(nameof(ViewModel.IsBlockingValid));
                 ViewModel.ValidateSomeProperty(ViewModel.IsBlockingValid, nameof(ViewModel.IsBlockingValid));
             }
         }

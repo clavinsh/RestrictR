@@ -5,23 +5,18 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace RestrictR
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+    // This page renders a form for event creation
+    // Documentation function ID - EVENT_CREATE
     public sealed partial class EventForm : Page
     {
-        //public EventViewModel ViewModel => (EventViewModel)DataContext;
+
         private EventController _controller;
 
         public EventForm()
         {
             this.InitializeComponent();
-            //DataContext = Ioc.Default.GetRequiredService<EventViewModel>();
 
             _controller = Ioc.Default.GetRequiredService<EventController>();
             eventDetailsControl.SubmitButtonClick += SubmitButtonClick;

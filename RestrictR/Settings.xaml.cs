@@ -1,13 +1,9 @@
 using Microsoft.UI.Xaml.Controls;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace RestrictR
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+    // This page renders the help page
+    // Documentation function ID - HELP_VIEW
     public sealed partial class Settings : Page
     {
         public Settings()
